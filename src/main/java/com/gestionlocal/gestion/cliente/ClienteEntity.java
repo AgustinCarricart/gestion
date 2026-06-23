@@ -39,7 +39,6 @@ public class ClienteEntity
         if(this.publicId == null)
         {
             this.setPublicId(UUID.randomUUID());
-
         }
 
     }
