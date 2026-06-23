@@ -2,6 +2,7 @@ package com.gestionlocal.gestion.cliente;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,7 @@ public class ClienteEntity
     private String apellido;
 
     @Column(name = "num_telefono" , nullable = false)
+    @Pattern(regexp = "^[+]?[0-9]{8,15}$", message = "Formato de teléfono inválido")
     private String numero;
 
     @PrePersist
