@@ -1,6 +1,6 @@
 package com.gestionlocal.gestion.producto;
 
-public enum Categoria
+public enum TipoProducto
 {
     TORTA_COMUN,
     TORTA_POR_KILO,
