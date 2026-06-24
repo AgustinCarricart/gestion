@@ -1,0 +1,14 @@
+package com.gestionlocal.gestion.producto.mapper;
+
+import com.gestionlocal.gestion.producto.ProductoEntity;
+import com.gestionlocal.gestion.producto.dto.ProductoRequestDto;
+import com.gestionlocal.gestion.producto.dto.ProductoResponseDto;
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring")
+public interface ProductoMapper
+{
+    ProductoResponseDto toDto(ProductoEntity entity);
+    ProductoEntity toEntity(ProductoRequestDto productoRequestDto);
+
+}

@@ -25,7 +25,7 @@ public class ProductoEntity
 
     @Column(name = "categoria",nullable = false)
     @Enumerated(EnumType.STRING)
-    private Categoria categoria;
+    private TipoProducto tipoProducto;
 
     @Column(name = "precio",nullable = false)
     private Integer precio;

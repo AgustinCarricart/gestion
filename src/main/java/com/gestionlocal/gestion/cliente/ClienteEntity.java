@@ -32,7 +32,6 @@ public class ClienteEntity
     private String apellido;
 
     @Column(name = "num_telefono" , nullable = false)
-    @Pattern(regexp = "^[+]?[0-9]{8,15}$", message = "Formato de teléfono inválido")
     private String numero;
 
     @PrePersist
