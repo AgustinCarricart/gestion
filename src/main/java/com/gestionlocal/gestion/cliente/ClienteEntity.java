@@ -34,6 +34,9 @@ public class ClienteEntity
     @Column(name = "num_telefono" , nullable = false)
     private String numero;
 
+    @Column(name = "activo" , nullable = false)
+    private boolean activo;
+
     @PrePersist
     private void generateValue()
     {

@@ -10,6 +10,7 @@ import java.util.UUID;
 public interface ClienteRepository extends JpaRepository<ClienteEntity,Long>
 {
     Optional<ClienteEntity> findByPublicId(UUID publicId);
+    Optional<ClienteEntity> findByNumero(String numero);
 
     boolean existsByNumero(String numero);
 
