@@ -18,4 +18,6 @@ public interface ProductoRepository extends JpaRepository<ProductoEntity,Long>
 
     boolean existsByNombre(String nombre);
 
+    boolean existsByPublicId(UUID publicId);
+
 }

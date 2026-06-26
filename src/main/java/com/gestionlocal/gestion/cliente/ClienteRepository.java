@@ -14,4 +14,5 @@ public interface ClienteRepository extends JpaRepository<ClienteEntity,Long>
 
     boolean existsByNumero(String numero);
 
+
 }
