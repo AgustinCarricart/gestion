@@ -1,11 +1,9 @@
 package com.gestionlocal.gestion.producto.dto;
 
 import com.gestionlocal.gestion.producto.TipoProducto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+@Data
 @Getter
 @Setter
 @AllArgsConstructor
