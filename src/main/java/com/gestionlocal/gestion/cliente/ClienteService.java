@@ -1,7 +1,9 @@
 package com.gestionlocal.gestion.cliente;
 
 import com.gestionlocal.gestion.cliente.dto.ClienteRequestDto;
+import com.gestionlocal.gestion.cliente.dto.ClienteResponseDto;
 import com.gestionlocal.gestion.cliente.exception.ClienteAlreadyExists;
+import com.gestionlocal.gestion.cliente.exception.ClienteInactivoException;
 import com.gestionlocal.gestion.cliente.exception.ClienteNotFoundException;
 import com.gestionlocal.gestion.cliente.mapper.ClienteMapper;
 import jakarta.transaction.Transactional;
@@ -21,35 +23,45 @@ public class ClienteService
         this.clienteMapper = clienteMapper;
     }
 
-    public List<ClienteEntity> getAllClientes()
+    public List<ClienteResponseDto> getAllClientes()
     {
-        List<ClienteEntity>clientes = clienteRepository.findAll()
+        List<ClienteResponseDto>clientes = clienteRepository.findAll()
                 .stream()
+                .filter(c -> c.isActivo())
+                .map(clienteMapper :: toResponseDTO)
                 .toList();
+
         return clientes;
     }
 
-    public ClienteEntity getByPublicId(UUID publicId)
+    public ClienteResponseDto getByPublicId(UUID publicId)
     {
         ClienteEntity cliente = clienteRepository.findByPublicId(publicId)
                 .orElseThrow(()-> new ClienteNotFoundException("No se encontro al cliente con ese id"));
 
-        return cliente;
+        if(!cliente.isActivo())
+        {
+            throw new ClienteInactivoException("El cliente esta inactivo");
+        }
+
+        ClienteResponseDto clienteResponseDto = clienteMapper.toResponseDTO(cliente);
+        return clienteResponseDto;
     }
 
     @Transactional
-    public ClienteEntity updateEntity(UUID publicId,ClienteRequestDto clienteRequestDto)
+    public ClienteResponseDto updateEntity(UUID publicId,ClienteRequestDto clienteRequestDto)
     {
         ClienteEntity cliente = clienteRepository.findByPublicId(publicId)
                 .orElseThrow(()-> new ClienteNotFoundException("No se encontro cliente con ese Id"));
 
         clienteMapper.updateEntity(clienteRequestDto,cliente);
-        return cliente;
+
+        return clienteMapper.toResponseDTO(cliente);
 
     }
 
     @Transactional
-    public ClienteEntity createCliente(ClienteRequestDto clienteRequestDto) {
+    public ClienteResponseDto createCliente(ClienteRequestDto clienteRequestDto) {
         if (clienteRepository.existsByNumero(clienteRequestDto.getNumero())) {
             throw new ClienteAlreadyExists("Ya se creo un cliente con ese numero");
         }
@@ -58,11 +70,11 @@ public class ClienteService
         cliente.setActivo(true);
         clienteRepository.save(cliente);
 
-        return cliente;
+        return clienteMapper.toResponseDTO(cliente) ;
     }
 
     @Transactional
-    public ClienteEntity deleteCliente(UUID publicId)
+    public void deleteCliente(UUID publicId)
     {
         ClienteEntity cliente = clienteRepository.findByPublicId(publicId)
                 .orElseThrow(()-> new ClienteNotFoundException("No se encontro cliente con ese Id"));
@@ -71,7 +83,8 @@ public class ClienteService
             que no se pueda borrar
         }*/ //No genere todavia infraestructura de pedidos
         cliente.setActivo(false);
-        return cliente;
+
+
     }
 
 

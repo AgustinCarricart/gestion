@@ -15,4 +15,5 @@ public class ClienteResponseDto
     private String nombre;
     private String apellido;
     private String numero;
+    private boolean activo;
 }
