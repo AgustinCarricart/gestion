@@ -15,7 +15,7 @@ public interface PedidoMapper
 {
     @Mapping(target = "publicId",        ignore = true)
     @Mapping(target = "fechaCreacion",   ignore = true)
-    @Mapping(target = "estado",          ignore = true)
+    @Mapping(target = "estadoPedido",          ignore = true)
     @Mapping(target = "total",           ignore = true)
     @Mapping(target = "detalles",        ignore = true)
     @Mapping(target = "cliente",         ignore = true)

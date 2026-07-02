@@ -30,7 +30,7 @@ public class ProductoEntity
     @Enumerated(EnumType.STRING)
     private TipoProducto tipoProducto;
 
-    @Column(name = "precio",nullable = false)
+    @Column(name = "precio")
     private Double precio;
 
     @Column(name = "peso_kg")
