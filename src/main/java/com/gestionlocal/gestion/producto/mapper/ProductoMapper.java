@@ -13,12 +13,14 @@ public interface ProductoMapper
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "publicId", ignore = true)
     @Mapping(target = "activo", ignore = true)
+    @Mapping(target = "tipoProducto", source = "tipo")
     ProductoEntity toEntity(ProductoRequestDto dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "publicId", ignore = true)
     @Mapping(target = "activo", ignore = true)
+    @Mapping(target = "tipoProducto", source = "tipo")
     void updateEntity(ProductoRequestDto dto, @MappingTarget ProductoEntity entity);
 
 

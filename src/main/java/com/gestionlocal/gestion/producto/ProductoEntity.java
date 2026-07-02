@@ -23,18 +23,21 @@ public class ProductoEntity
     @Column(name = "public_id",nullable = false,updatable = false,unique = true)
     private UUID publicId;
 
+    @Column(name = "nombre_producto", nullable = false)
+    private String nombreProducto;
+
     @Column(name = "categoria",nullable = false)
     @Enumerated(EnumType.STRING)
     private TipoProducto tipoProducto;
 
     @Column(name = "precio",nullable = false)
-    private Integer precio;
+    private Double precio;
 
     @Column(name = "peso_kg")
     private Double peso;
 
     @Column(name = "precio_docena")
-    private Integer precioDocena;
+    private Double precioDocena;
 
     @Column(name = "activo")
     private boolean activo;

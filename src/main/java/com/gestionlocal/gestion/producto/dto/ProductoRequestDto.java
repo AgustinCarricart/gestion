@@ -15,9 +15,6 @@ import java.util.UUID;
 @NoArgsConstructor
 public class ProductoRequestDto
 {
-    @NotNull
-    private UUID publidId;
-
     @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
 
@@ -25,11 +22,11 @@ public class ProductoRequestDto
     private TipoProducto tipo;
 
     // Solo para TORTA_COMUN
-    private Integer precioFijo;
+    private Double precioFijo;
 
     // Solo para TORTA_POR_KILO y TORTA_POR_KILO_FRUTA
-    private Integer precioPorKilo;
+    private Double precioPorKilo;
 
     // Solo para MINI
-    private Integer precioDocena;
+    private Double precioDocena;
 }

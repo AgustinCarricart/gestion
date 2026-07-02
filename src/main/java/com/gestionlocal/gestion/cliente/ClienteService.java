@@ -83,8 +83,6 @@ public class ClienteService
             que no se pueda borrar
         }*/ //No genere todavia infraestructura de pedidos
         cliente.setActivo(false);
-
-
     }
 
 
