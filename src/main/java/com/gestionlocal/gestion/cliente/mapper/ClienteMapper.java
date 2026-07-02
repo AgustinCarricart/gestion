@@ -12,7 +12,7 @@ public interface ClienteMapper
     ClienteEntity toEntity(ClienteRequestDto dto);
 
 
-    @Mapping(target = "publicId", ignore = true)
+
     ClienteResponseDto toResponseDTO(ClienteEntity entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

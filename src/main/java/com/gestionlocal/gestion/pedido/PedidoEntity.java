@@ -2,7 +2,6 @@ package com.gestionlocal.gestion.pedido;
 
 
 import com.gestionlocal.gestion.cliente.ClienteEntity;
-import com.gestionlocal.gestion.producto.ProductoEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 

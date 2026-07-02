@@ -60,7 +60,7 @@ public class PedidoService
 
     public List<PedidoDtoResponse> getPedidosByEstado(EstadoPedido estado)
     {
-        List<PedidoDtoResponse> pedidoDtoResponses = pedidoRepository.findByEstado(estado)
+        List<PedidoDtoResponse> pedidoDtoResponses = pedidoRepository.findByEstadoPedido(estado)
                 .stream()
                 .map(pedidoMapper :: toDto)
                 .toList();
