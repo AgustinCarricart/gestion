@@ -21,7 +21,7 @@ public interface PedidoMapper
     @Mapping(target = "cliente",         ignore = true)
     PedidoEntity toEntity(PedidoDtoRequest pedidoDtoRequest);
 
-    @Mapping(target = "id",              ignore = true)
+    @Mapping(target = "estado",          source = "estadoPedido")
     @Mapping(target = "clientePublicId", source = "cliente.publicId")
     @Mapping(target = "clienteNombre",   source = "cliente.nombre")
     @Mapping(target = "clienteApellido", source = "cliente.apellido")
@@ -29,7 +29,7 @@ public interface PedidoMapper
     PedidoDtoResponse toDto(PedidoEntity pedidoEntity);
 
     @Mapping(target = "productoPublicId", source = "producto.publicId")
-    @Mapping(target = "productoNombre",   source = "producto.nombre")
+    @Mapping(target = "productoNombre", source = "producto.nombreProducto")
     @Mapping(target = "tipoProducto",     source = "producto.tipoProducto")
     DetallePedidoResponseDto detalleToDto(DetallePedidosEntity detalle);
 }

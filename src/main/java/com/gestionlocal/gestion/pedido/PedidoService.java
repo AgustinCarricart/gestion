@@ -60,9 +60,8 @@ public class PedidoService
 
     public List<PedidoDtoResponse> getPedidosByEstado(EstadoPedido estado)
     {
-        List<PedidoDtoResponse> pedidoDtoResponses = pedidoRepository.findAll()
+        List<PedidoDtoResponse> pedidoDtoResponses = pedidoRepository.findByEstado(estado)
                 .stream()
-                .filter(c -> c.getEstadoPedido().equals(estado))
                 .map(pedidoMapper :: toDto)
                 .toList();
 
@@ -195,7 +194,7 @@ public class PedidoService
                     "No se puede avanzar desde el estado: " + pedido.getEstadoPedido());
         };
 
-        pedido.getEstadoPedido(siguiente);
+        pedido.setEstadoPedido(siguiente);
 
         return pedidoMapper.toDto(pedido);
     }

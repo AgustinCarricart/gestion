@@ -13,7 +13,8 @@ public interface PedidoRepository extends JpaRepository<PedidoEntity,Long>
     List<PedidoEntity> getByCliente_PublicId(UUID clientePublicId);
 
     Optional<PedidoEntity> findByPublicId(UUID publicId);
-    PedidoEntity findByEstado(EstadoPedido estado);
+
+   List<PedidoEntity>  findByEstado(EstadoPedido estado);
    
 
 }
