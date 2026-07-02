@@ -218,4 +218,19 @@ public class PedidoService
         return pedidoMapper.toDto(pedido);
     }
 
+    @Transactional
+    public PedidoDtoResponse marcarNoRetiro(UUID publicId)
+    {
+        PedidoEntity pedido = pedidoRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new PedidoNotFoundException("No se encontró pedido con ese id"));
+
+        if (pedido.getEstado() != EstadoPedido.LISTO)
+        {
+            throw new EstadoTransicionInvalidaException("Solo se puede marcar NO_RETIRO desde LISTO");
+        }
+
+        pedido.setEstado(EstadoPedido.NO_RETIRO);
+        return pedidoMapper.toDto(pedido);
+    }
+
 }
