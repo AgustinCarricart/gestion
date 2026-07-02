@@ -48,9 +48,9 @@ public class ProductoService
     @Transactional
     public ProductoResponseDto createProducto(ProductoRequestDto productoRequestDto)
     {
-        if(productoRepository.existsByNombre(productoRequestDto.getNombre()))
+        if(productoRepository.existsByNombreProducto(productoRequestDto.getNombre()))
         {
-            throw new ProductoAlreadyExists("Ya existe producto con ese id");
+            throw new ProductoAlreadyExists("Ya existe un producto con ese nombre");
         }
         ProductoEntity producto = productoMapper.toEntity(productoRequestDto);
         producto.setActivo(true);

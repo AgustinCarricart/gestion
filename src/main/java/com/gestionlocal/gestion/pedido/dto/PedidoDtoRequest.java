@@ -28,6 +28,5 @@ public class PedidoDtoRequest
     private List<DetallePedidoRequestDto> detalles;
 
     private String observaciones;
-
-    private Double total;
+    
 }

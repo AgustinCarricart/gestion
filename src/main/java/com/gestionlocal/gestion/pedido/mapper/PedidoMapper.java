@@ -8,7 +8,7 @@ import com.gestionlocal.gestion.pedido.dto.PedidoDtoResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import javax.swing.*;
+
 
 @Mapper(componentModel = "spring")
 public interface PedidoMapper
