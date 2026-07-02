@@ -7,4 +7,5 @@ public enum TipoProducto
     TORTA_POR_KILO_FRUTA,
     MINI,
     INDIVIDUAL,
+    POR_DOCENA
 }
