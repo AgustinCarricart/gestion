@@ -3,9 +3,12 @@ package com.gestionlocal.gestion.cliente;
 import com.gestionlocal.gestion.cliente.dto.ClienteRequestDto;
 import com.gestionlocal.gestion.cliente.dto.ClienteResponseDto;
 import com.gestionlocal.gestion.cliente.exception.ClienteAlreadyExists;
+import com.gestionlocal.gestion.cliente.exception.ClienteConPedidosActivosException;
 import com.gestionlocal.gestion.cliente.exception.ClienteInactivoException;
 import com.gestionlocal.gestion.cliente.exception.ClienteNotFoundException;
 import com.gestionlocal.gestion.cliente.mapper.ClienteMapper;
+import com.gestionlocal.gestion.pedido.EstadoPedido;
+import com.gestionlocal.gestion.pedido.PedidoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +20,15 @@ public class ClienteService
 {
     private final ClienteRepository clienteRepository;
     private final ClienteMapper clienteMapper;
+    private final PedidoRepository pedidoRepository;
 
-    public ClienteService(ClienteRepository clienteRepository, ClienteMapper clienteMapper) {
+    public ClienteService(ClienteRepository clienteRepository,
+                          ClienteMapper clienteMapper,
+                          PedidoRepository pedidoRepository)
+    {
         this.clienteRepository = clienteRepository;
         this.clienteMapper = clienteMapper;
+        this.pedidoRepository = pedidoRepository;
     }
 
     public List<ClienteResponseDto> getAllClientes()
@@ -77,14 +85,20 @@ public class ClienteService
     public void deleteCliente(UUID publicId)
     {
         ClienteEntity cliente = clienteRepository.findByPublicId(publicId)
-                .orElseThrow(()-> new ClienteNotFoundException("No se encontro cliente con ese Id"));
-        /*if(cliente.tiene pedidos pendientes)
+                .orElseThrow(() -> new ClienteNotFoundException("No se encontro cliente con ese Id"));
+
+        boolean tienePedidosActivos = pedidoRepository.existsByCliente_PublicIdAndEstadoPedidoIn(
+                publicId,
+                List.of(EstadoPedido.PENDIENTE, EstadoPedido.LISTO)
+        );
+
+        if (tienePedidosActivos)
         {
-            que no se pueda borrar
-        }*/ //No genere todavia infraestructura de pedidos
+            throw new ClienteConPedidosActivosException("No se puede eliminar un cliente con pedidos pendientes o listos");
+        }
+
         cliente.setActivo(false);
     }
-
 
 
 }
