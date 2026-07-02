@@ -29,13 +29,6 @@ public class PedidoEntity
    @Column(name = "public_id",nullable = false)
     private UUID publicId;
 
-   @Column(name = "estado_pedido",nullable = false)
-    private EstadoPedido estadoPedido;
-
-    @JoinColumn(name = "producto_id",nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
-    private ProductoEntity productoEntity;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
     private ClienteEntity cliente;
@@ -50,8 +43,8 @@ public class PedidoEntity
     private LocalDateTime fechaEntrega;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "estado", nullable = false)
-    private EstadoPedido estado;
+    @Column(name = "estado_pedido", nullable = false)
+    private EstadoPedido estadoPedido;
 
     @Column(name = "total", nullable = false)
     private Double total;
@@ -67,7 +60,7 @@ public class PedidoEntity
             this.publicId = UUID.randomUUID();
         }
         this.fechaCreacion = LocalDateTime.now();
-        this.estado = EstadoPedido.PENDIENTE;
+        this.estadoPedido = EstadoPedido.PENDIENTE;
     }
 
 

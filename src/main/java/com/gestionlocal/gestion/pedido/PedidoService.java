@@ -168,16 +168,16 @@ public class PedidoService
         PedidoEntity pedido = pedidoRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new PedidoNotFoundException("No se encontró pedido con ese id"));
 
-        if (pedido.getEstado() == EstadoPedido.ENTREGADO)
+        if (pedido.getEstadoPedido() == EstadoPedido.ENTREGADO)
         {
             throw new EstadoTransicionInvalidaException("No se puede cancelar un pedido ya entregado");
         }
-        if (pedido.getEstado() == EstadoPedido.CANCELADO || pedido.getEstado() == EstadoPedido.NO_RETIRO)
+        if (pedido.getEstadoPedido() == EstadoPedido.CANCELADO || pedido.getEstadoPedido() == EstadoPedido.NO_RETIRO)
         {
-            throw new EstadoTransicionInvalidaException("El pedido ya está en estado: " + pedido.getEstado());
+            throw new EstadoTransicionInvalidaException("El pedido ya está en estado: " + pedido.getEstadoPedido());
         }
 
-        pedido.setEstado(EstadoPedido.CANCELADO);
+        pedido.setEstadoPedido(EstadoPedido.CANCELADO);
         return pedidoMapper.toDto(pedido);
     }
 
@@ -187,15 +187,15 @@ public class PedidoService
         PedidoEntity pedido = pedidoRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new PedidoNotFoundException("No se encontró pedido con ese id"));
 
-        EstadoPedido siguiente = switch (pedido.getEstado())
+        EstadoPedido siguiente = switch (pedido.getEstadoPedido())
         {
             case PENDIENTE -> EstadoPedido.LISTO;
             case LISTO     -> EstadoPedido.ENTREGADO;
             default -> throw new EstadoTransicionInvalidaException(
-                    "No se puede avanzar desde el estado: " + pedido.getEstado());
+                    "No se puede avanzar desde el estado: " + pedido.getEstadoPedido());
         };
 
-        pedido.setEstado(siguiente);
+        pedido.getEstadoPedido(siguiente);
 
         return pedidoMapper.toDto(pedido);
     }
@@ -206,14 +206,14 @@ public class PedidoService
         PedidoEntity pedido = pedidoRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new PedidoNotFoundException("No se encontró pedido con ese id"));
 
-        if (pedido.getEstado() == EstadoPedido.ENTREGADO ||
-                pedido.getEstado() == EstadoPedido.CANCELADO)
+        if (pedido.getEstadoPedido() == EstadoPedido.ENTREGADO ||
+                pedido.getEstadoPedido() == EstadoPedido.CANCELADO)
         {
             throw new EstadoTransicionInvalidaException(
-                    "No se puede modificar un pedido en estado: " + pedido.getEstado());
+                    "No se puede modificar un pedido en estado: " + pedido.getEstadoPedido());
         }
 
-        pedido.setEstado(nuevoEstado);
+        pedido.setEstadoPedido(nuevoEstado);
 
         return pedidoMapper.toDto(pedido);
     }
@@ -224,12 +224,12 @@ public class PedidoService
         PedidoEntity pedido = pedidoRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new PedidoNotFoundException("No se encontró pedido con ese id"));
 
-        if (pedido.getEstado() != EstadoPedido.LISTO)
+        if (pedido.getEstadoPedido() != EstadoPedido.LISTO)
         {
             throw new EstadoTransicionInvalidaException("Solo se puede marcar NO_RETIRO desde LISTO");
         }
 
-        pedido.setEstado(EstadoPedido.NO_RETIRO);
+        pedido.setEstadoPedido(EstadoPedido.NO_RETIRO);
         return pedidoMapper.toDto(pedido);
     }
 

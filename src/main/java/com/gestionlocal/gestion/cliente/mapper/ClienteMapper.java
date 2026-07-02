@@ -11,9 +11,8 @@ public interface ClienteMapper
 {
     ClienteEntity toEntity(ClienteRequestDto dto);
 
-    @Mapping(target = "id", ignore = true)
+
     @Mapping(target = "publicId", ignore = true)
-    @Mapping(target = "activo", ignore = true)
     ClienteResponseDto toResponseDTO(ClienteEntity entity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

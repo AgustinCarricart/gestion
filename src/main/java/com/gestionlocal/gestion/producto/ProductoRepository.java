@@ -16,7 +16,7 @@ public interface ProductoRepository extends JpaRepository<ProductoEntity,Long>
 
     List<ProductoEntity> findByActivoTrue();
 
-    boolean existsByNombre(String nombre);
+    boolean existsByNombreProducto(String nombre);
 
     boolean existsByPublicId(UUID publicId);
 

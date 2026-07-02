@@ -14,6 +14,8 @@ public interface ProductoMapper
     @Mapping(target = "publicId", ignore = true)
     @Mapping(target = "activo", ignore = true)
     @Mapping(target = "tipoProducto", source = "tipo")
+    @Mapping(target = "precio",      source = "precioFijo")
+    @Mapping(target = "precioDocena",source = "precioDocena")
     ProductoEntity toEntity(ProductoRequestDto dto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
