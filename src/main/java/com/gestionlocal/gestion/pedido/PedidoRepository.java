@@ -18,6 +18,7 @@ public interface PedidoRepository extends JpaRepository<PedidoEntity,Long>
 
     boolean existsByCliente_PublicIdAndEstadoPedidoIn(UUID clientePublicId, List<EstadoPedido> estados);
 
+    boolean existsByDetalles_Producto_PublicIdAndEstadoPedidoIn(UUID productoPublicId, List<EstadoPedido> estados);
 
    
 

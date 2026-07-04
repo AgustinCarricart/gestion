@@ -9,6 +9,7 @@ import com.gestionlocal.gestion.pedido.exception.EstadoTransicionInvalidaExcepti
 import com.gestionlocal.gestion.pedido.exception.PedidoNotFoundException;
 import com.gestionlocal.gestion.pedido.exception.PesoInvalidoException;
 import com.gestionlocal.gestion.producto.exception.ProductoAlreadyExists;
+import com.gestionlocal.gestion.producto.exception.ProductoConPedidosActivosException;
 import com.gestionlocal.gestion.producto.exception.ProductoInactivoException;
 import com.gestionlocal.gestion.producto.exception.ProductoNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -49,7 +50,8 @@ public class GlobalExceptionHandler
             EstadoTransicionInvalidaException.class,
             CantidadInvalidaException.class,
             PesoInvalidoException.class,
-            IllegalArgumentException.class
+            IllegalArgumentException.class,
+            ProductoConPedidosActivosException.class
     })
     public ResponseEntity<ErrorResponse> handleBadRequest(RuntimeException ex)
     {

@@ -42,7 +42,7 @@ public class ClienteService
         return clientes;
     }
 
-    public ClienteResponseDto getByPublicId(UUID publicId)
+    public ClienteResponseDto getClienteByPublicId(UUID publicId)
     {
         ClienteEntity cliente = clienteRepository.findByPublicId(publicId)
                 .orElseThrow(()-> new ClienteNotFoundException("No se encontro al cliente con ese id"));
@@ -57,7 +57,7 @@ public class ClienteService
     }
 
     @Transactional
-    public ClienteResponseDto updateEntity(UUID publicId,ClienteRequestDto clienteRequestDto)
+    public ClienteResponseDto updateCliente(UUID publicId,ClienteRequestDto clienteRequestDto)
     {
         ClienteEntity cliente = clienteRepository.findByPublicId(publicId)
                 .orElseThrow(()-> new ClienteNotFoundException("No se encontro cliente con ese Id"));
@@ -98,6 +98,8 @@ public class ClienteService
         }
 
         cliente.setActivo(false);
+        clienteRepository.save(cliente);
+
     }
 
 

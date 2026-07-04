@@ -1,3 +1,6 @@
 spring:
   application:
     name: gestion
+jwt:
+  secret: "clave-super-secreta-que-debe-tener-al-menos-256-bits-de-longitud"
+  expiration: 86400000

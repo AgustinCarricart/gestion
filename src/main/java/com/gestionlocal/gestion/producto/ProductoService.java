@@ -1,8 +1,11 @@
 package com.gestionlocal.gestion.producto;
 
+import com.gestionlocal.gestion.pedido.EstadoPedido;
+import com.gestionlocal.gestion.pedido.PedidoRepository;
 import com.gestionlocal.gestion.producto.dto.ProductoRequestDto;
 import com.gestionlocal.gestion.producto.dto.ProductoResponseDto;
 import com.gestionlocal.gestion.producto.exception.ProductoAlreadyExists;
+import com.gestionlocal.gestion.producto.exception.ProductoConPedidosActivosException;
 import com.gestionlocal.gestion.producto.exception.ProductoInactivoException;
 import com.gestionlocal.gestion.producto.exception.ProductoNotFoundException;
 import com.gestionlocal.gestion.producto.mapper.ProductoMapper;
@@ -17,10 +20,12 @@ public class ProductoService
 {
     private final ProductoRepository productoRepository;
     private final ProductoMapper productoMapper;
+    private final PedidoRepository pedidoRepository;
 
-    public ProductoService(ProductoRepository productoRepository, ProductoMapper productoMapper) {
+    public ProductoService(ProductoRepository productoRepository, ProductoMapper productoMapper, PedidoRepository pedidoRepository) {
         this.productoRepository = productoRepository;
         this.productoMapper = productoMapper;
+        this.pedidoRepository = pedidoRepository;
     }
 
     public List<ProductoResponseDto> getAllProductos()
@@ -44,6 +49,14 @@ public class ProductoService
         }
         return productoMapper.toDto(producto);
     }
+    public List<ProductoResponseDto> getProductosByTipo(TipoProducto tipo)
+    {
+        return productoRepository.findByTipoProducto(tipo)
+                .stream()
+                .filter(ProductoEntity::isActivo)
+                .map(productoMapper::toDto)
+                .toList();
+    }
 
     @Transactional
     public ProductoResponseDto createProducto(ProductoRequestDto productoRequestDto)
@@ -64,8 +77,32 @@ public class ProductoService
         ProductoEntity producto = productoRepository.findByPublicId(publicId)
                 .orElseThrow(()-> new ProductoNotFoundException("No se encontro el producto con ese id"));
 
-        ///Habria que poner tambien que si el producto existe en un pedido actual , no se pueda eliminar
+        boolean tienePedidosActivos = pedidoRepository.existsByDetalles_Producto_PublicIdAndEstadoPedidoIn(
+                publicId,
+                List.of(EstadoPedido.PENDIENTE, EstadoPedido.LISTO)
+        );
+
+        if (tienePedidosActivos)
+        {
+            throw new ProductoConPedidosActivosException(
+                    "No se puede eliminar un producto con pedidos pendientes o listos");
+        }
 
         producto.setActivo(false);
+    }
+
+    @Transactional
+    public ProductoResponseDto updateProducto(UUID publicId, ProductoRequestDto dto)
+    {
+        ProductoEntity producto = productoRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new ProductoNotFoundException("No se encontró producto con ese id"));
+
+        if (!producto.isActivo())
+        {
+            throw new ProductoInactivoException("El producto no está activo");
+        }
+
+        productoMapper.updateEntity(dto, producto);
+        return productoMapper.toDto(producto);
     }
 }
