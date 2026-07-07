@@ -38,6 +38,7 @@ public class PedidoService
         this.pedidoMapper = pedidoMapper;
     }
 
+    @Transactional
     public List<PedidoDtoResponse> getAllPedidos()
     {
         List<PedidoDtoResponse> pedidos = pedidoRepository.findAll()
@@ -48,6 +49,7 @@ public class PedidoService
         return pedidos;
     }
 
+    @Transactional
     public List<PedidoDtoResponse> getPedidosByCliente(UUID clientePublicId)
     {
         List<PedidoDtoResponse> pedidos = pedidoRepository.getByCliente_PublicId(clientePublicId)
@@ -58,6 +60,7 @@ public class PedidoService
         return pedidos;
     }
 
+    @Transactional
     public List<PedidoDtoResponse> getPedidosByEstado(EstadoPedido estado)
     {
         List<PedidoDtoResponse> pedidoDtoResponses = pedidoRepository.findByEstadoPedido(estado)
@@ -69,6 +72,7 @@ public class PedidoService
 
     }
 
+    @Transactional
     public PedidoDtoResponse getPedidoByPublicId(UUID publicId)
     {
         PedidoEntity pedido = pedidoRepository.findByPublicId(publicId)
