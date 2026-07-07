@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/productos/")
+@RequestMapping("api/productos")
 public class ProductoController
 {
 
@@ -59,4 +59,6 @@ public class ProductoController
         productoService.deleteProducto(publicId);
         return ResponseEntity.noContent().build();
     }
+
+
 }

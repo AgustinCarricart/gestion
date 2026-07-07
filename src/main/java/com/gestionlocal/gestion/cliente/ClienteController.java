@@ -44,7 +44,7 @@ public class ClienteController
         return ResponseEntity.ok(clienteService.updateCliente(publicId, dto));
     }
 
-    @PutMapping("/{publicId}")
+    @DeleteMapping("/{publicId}")
     public ResponseEntity<Void> deleteCliente(@PathVariable UUID publicId)
     {
         clienteService.deleteCliente(publicId);
