@@ -1,19 +1,19 @@
 server:
-  port: ${PORT:8082}
+  port: ${PORT:8080}
 
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/gestion?createDatabaseIfNotExist=true}
-    username: ${SPRING_DATASOURCE_USERNAME:root}
-    password: ${SPRING_DATASOURCE_PASSWORD:1234}
+    url: jdbc:mysql://${MYSQLHOST}:${MYSQLPORT}/${MYSQLDATABASE}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQLUSER}
+    password: ${MYSQLPASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.MySQLDialect
-    show-sql: true
+    show-sql: false
     open-in-view: false
 
 jwt:
-  secret: "${JWT_SECRET:claveSecretaSuperSeguraParaFirmarTokensJWT12345}"
+  secret: ${JWT_SECRET:claveSecretaSuperSeguraParaFirmarTokensJWT12345}
   expiration: 86400000
