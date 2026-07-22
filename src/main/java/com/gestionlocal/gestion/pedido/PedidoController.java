@@ -3,10 +3,12 @@ package com.gestionlocal.gestion.pedido;
 import com.gestionlocal.gestion.pedido.dto.PedidoDtoRequest;
 import com.gestionlocal.gestion.pedido.dto.PedidoDtoResponse;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -74,5 +76,28 @@ public class PedidoController
     public ResponseEntity<PedidoDtoResponse> marcarNoRetiro(@PathVariable UUID publicId)
     {
         return ResponseEntity.ok(pedidoService.marcarNoRetiro(publicId));
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<PedidoDtoResponse>> getPedidosByNombreCliente(
+            @RequestParam String nombre,
+            @RequestParam(required = false) String apellido)
+    {
+        return ResponseEntity.ok(pedidoService.getPedidosByNombreCliente(nombre, apellido));
+    }
+
+    // Empleado - pedidos del día a preparar
+    @GetMapping("/cocina/hoy")
+    public ResponseEntity<List<PedidoDtoResponse>> getPedidosCocinaHoy()
+    {
+        return ResponseEntity.ok(pedidoService.getPedidosCocinaHoy());
+    }
+
+    // Admin - buscar pedidos por día
+    @GetMapping("/fecha")
+    public ResponseEntity<List<PedidoDtoResponse>> getPedidosByFecha(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha)
+    {
+        return ResponseEntity.ok(pedidoService.getPedidosByFecha(fecha));
     }
 }

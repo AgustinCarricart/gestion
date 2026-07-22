@@ -26,6 +26,12 @@ public class ClienteController
         return ResponseEntity.ok(clienteService.getAllClientes());
     }
 
+    @GetMapping("/activos")
+    public ResponseEntity<List<ClienteResponseDto>> getAllClientesActivos()
+    {
+        return ResponseEntity.ok(clienteService.getAllClientesActivos());
+    }
+
     @GetMapping("/{publicId}")
     public ResponseEntity<ClienteResponseDto> getClienteByPublicId(@PathVariable UUID publicId)
     {
@@ -49,6 +55,20 @@ public class ClienteController
     {
         clienteService.deleteCliente(publicId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{publicId}/reactivar")
+    public ResponseEntity<ClienteResponseDto> reactivarCliente(@PathVariable UUID publicId)
+    {
+        return ResponseEntity.ok(clienteService.reactivarCliente(publicId));
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<ClienteResponseDto>> buscarClientes(
+            @RequestParam String nombre,
+            @RequestParam(required = false) String apellido)
+    {
+        return ResponseEntity.ok(clienteService.buscarClientes(nombre, apellido));
     }
 
 }
