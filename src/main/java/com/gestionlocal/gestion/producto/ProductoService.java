@@ -105,4 +105,19 @@ public class ProductoService
         productoMapper.updateEntity(dto, producto);
         return productoMapper.toDto(producto);
     }
+
+    @Transactional
+    public ProductoResponseDto reactivarProducto(UUID publicId)
+    {
+        ProductoEntity producto = productoRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new ProductoNotFoundException("No se encontró producto con ese id"));
+
+        if (producto.isActivo())
+        {
+            throw new IllegalArgumentException("El producto ya está activo");
+        }
+
+        producto.setActivo(true);
+        return productoMapper.toDto(producto);
+    }
 }

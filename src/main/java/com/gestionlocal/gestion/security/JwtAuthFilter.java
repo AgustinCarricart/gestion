@@ -44,16 +44,16 @@ public class JwtAuthFilter extends OncePerRequestFilter
         try
         {
             String username = jwtService.extractUsername(token);
-            System.out.println("Username extraído del token: " + username);
+//            System.out.println("Username extraído del token: " + username);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null)
             {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                System.out.println("Authorities: " + userDetails.getAuthorities());
+//                System.out.println("Authorities: " + userDetails.getAuthorities());
 
                 if (jwtService.isTokenValid(token, userDetails))
                 {
-                    System.out.println("Token válido");
+//                    System.out.println("Token válido");
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -61,13 +61,13 @@ public class JwtAuthFilter extends OncePerRequestFilter
                 }
                 else
                 {
-                    System.out.println("Token inválido");
+//                    System.out.println("Token inválido");
                 }
             }
         }
         catch (Exception e)
         {
-            System.out.println("Error en JWT: " + e.getMessage());
+//            System.out.println("Error en JWT: " + e.getMessage());
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }

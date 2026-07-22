@@ -60,5 +60,11 @@ public class ProductoController
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/{publicId}/reactivar")
+    public ResponseEntity<ProductoResponseDto> reactivarProducto(@PathVariable UUID publicId)
+    {
+        return ResponseEntity.ok(productoService.reactivarProducto(publicId));
+    }
+
 
 }

@@ -3,6 +3,7 @@ package com.gestionlocal.gestion.pedido;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,6 +21,11 @@ public interface PedidoRepository extends JpaRepository<PedidoEntity,Long>
 
     boolean existsByDetalles_Producto_PublicIdAndEstadoPedidoIn(UUID productoPublicId, List<EstadoPedido> estados);
 
+    List<PedidoEntity> findByEstadoPedidoInAndFechaEntregaBetweenOrderByFechaEntregaAsc(
+            List<EstadoPedido> estados, LocalDateTime inicio, LocalDateTime fin);
+
+    List<PedidoEntity> findByFechaEntregaBetweenOrderByFechaEntregaAsc(
+            LocalDateTime inicio, LocalDateTime fin);
    
 
 }

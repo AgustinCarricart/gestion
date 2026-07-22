@@ -3,6 +3,7 @@ package com.gestionlocal.gestion.auth;
 import com.gestionlocal.gestion.security.JwtService;
 import com.gestionlocal.gestion.usuario.UsuarioEntity;
 import com.gestionlocal.gestion.usuario.UsuarioRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,4 +38,5 @@ public class AuthService
 
         return new AuthResponse(token, usuario.getRol().name(), usuario.getUsername());
     }
+
 }

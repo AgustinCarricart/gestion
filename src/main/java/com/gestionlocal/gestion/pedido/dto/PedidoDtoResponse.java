@@ -1,5 +1,6 @@
 package com.gestionlocal.gestion.pedido.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gestionlocal.gestion.pedido.EstadoPedido;
 import com.gestionlocal.gestion.producto.TipoProducto;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,9 @@ public class PedidoDtoResponse
     private UUID clientePublicId;
     private String clienteNombre;
     private String clienteApellido;
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime fechaCreacion;
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime fechaEntrega;
     private EstadoPedido estado;
     private Double total;

@@ -33,15 +33,20 @@ public class ClienteService
 
     public List<ClienteResponseDto> getAllClientes()
     {
-        List<ClienteResponseDto>clientes = clienteRepository.findAll()
+        return clienteRepository.findAll()
                 .stream()
-                .filter(c -> c.isActivo())
-                .map(clienteMapper :: toResponseDTO)
+                .map(clienteMapper::toResponseDTO)
                 .toList();
-
-        return clientes;
     }
 
+    public List<ClienteResponseDto> getAllClientesActivos()
+    {
+        return clienteRepository.findAll()
+                .stream()
+                .filter(ClienteEntity::isActivo)
+                .map(clienteMapper::toResponseDTO)
+                .toList();
+    }
     public ClienteResponseDto getClienteByPublicId(UUID publicId)
     {
         ClienteEntity cliente = clienteRepository.findByPublicId(publicId)
@@ -55,6 +60,9 @@ public class ClienteService
         ClienteResponseDto clienteResponseDto = clienteMapper.toResponseDTO(cliente);
         return clienteResponseDto;
     }
+
+
+
 
     @Transactional
     public ClienteResponseDto updateCliente(UUID publicId,ClienteRequestDto clienteRequestDto)
@@ -100,6 +108,30 @@ public class ClienteService
         cliente.setActivo(false);
         clienteRepository.save(cliente);
 
+    }
+    @Transactional
+    public ClienteResponseDto reactivarCliente(UUID publicId)
+    {
+        ClienteEntity cliente = clienteRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new ClienteNotFoundException("No se encontró cliente con ese id"));
+
+        if (cliente.isActivo())
+        {
+            throw new IllegalArgumentException("El cliente ya está activo");
+        }
+
+        cliente.setActivo(true);
+        return clienteMapper.toResponseDTO(cliente);
+    }
+
+    public List<ClienteResponseDto> buscarClientes(String nombre, String apellido)
+    {
+        return clienteRepository.findAll()
+                .stream()
+                .filter(c -> c.getNombre().equalsIgnoreCase(nombre) &&
+                        (apellido == null || c.getApellido().equalsIgnoreCase(apellido)))
+                .map(clienteMapper::toResponseDTO)
+                .toList();
     }
 
 

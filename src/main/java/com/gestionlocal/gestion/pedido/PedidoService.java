@@ -20,6 +20,8 @@ import com.gestionlocal.gestion.producto.exception.ProductoNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -58,6 +60,17 @@ public class PedidoService
                 .toList();
 
         return pedidos;
+    }
+
+    @Transactional
+    public List<PedidoDtoResponse> getPedidosByNombreCliente(String nombre, String apellido)
+    {
+        return pedidoRepository.findAll()
+                .stream()
+                .filter(p -> p.getCliente().getNombre().equalsIgnoreCase(nombre) &&
+                        (apellido == null || p.getCliente().getApellido().equalsIgnoreCase(apellido)))
+                .map(pedidoMapper::toDto)
+                .toList();
     }
 
     @Transactional
@@ -234,6 +247,33 @@ public class PedidoService
 
         pedido.setEstadoPedido(EstadoPedido.NO_RETIRO);
         return pedidoMapper.toDto(pedido);
+    }
+
+    // Para el empleado - solo ve PENDIENTE y LISTO del día
+    @Transactional
+    public List<PedidoDtoResponse> getPedidosCocinaHoy()
+    {
+        LocalDateTime inicio = LocalDate.now().atStartOfDay();
+        LocalDateTime fin = LocalDate.now().atTime(23, 59, 59);
+
+        return pedidoRepository.findByEstadoPedidoInAndFechaEntregaBetweenOrderByFechaEntregaAsc(
+                        List.of(EstadoPedido.PENDIENTE, EstadoPedido.LISTO), inicio, fin)
+                .stream()
+                .map(pedidoMapper::toDto)
+                .toList();
+    }
+
+    // Para el admin - busca pedidos de cualquier estado por día
+    @Transactional
+    public List<PedidoDtoResponse> getPedidosByFecha(LocalDate fecha)
+    {
+        LocalDateTime inicio = fecha.atStartOfDay();
+        LocalDateTime fin = fecha.atTime(23, 59, 59);
+
+        return pedidoRepository.findByFechaEntregaBetweenOrderByFechaEntregaAsc(inicio, fin)
+                .stream()
+                .map(pedidoMapper::toDto)
+                .toList();
     }
 
 }
