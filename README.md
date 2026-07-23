@@ -1,6 +1,9 @@
-# Gestión Local 🏪
+# Gestión Local 🍰
 
-Sistema de gestión de pedidos para locales de comida. Desarrollado con Spring Boot, pensado inicialmente para una repostería pero diseñado de forma genérica para poder adaptarse a otros negocios.
+Sistema de gestión de pedidos para locales de repostería. Permite administrar clientes, productos y pedidos con control de estados, roles de usuario y autenticación JWT. Deployado en Railway y documentado con Swagger.
+
+🔗 **API en producción:** https://gestion-production-989a.up.railway.app  
+📄 **Documentación Swagger:** https://gestion-production-989a.up.railway.app/swagger-ui/index.html
 
 ---
 
@@ -8,178 +11,192 @@ Sistema de gestión de pedidos para locales de comida. Desarrollado con Spring B
 
 - Java 17
 - Spring Boot 3.4.5
+- Spring Security + JWT (jjwt 0.11.5)
 - Spring Data JPA / Hibernate
-- Spring Security (JWT — en progreso)
-- PostgreSQL
+- MySQL
 - MapStruct 1.5.5
 - Lombok
+- Springdoc OpenAPI (Swagger) 2.8.6
 - Maven
+- Railway (deploy)
 
 ---
 
 ## Arquitectura
 
-El proyecto sigue arquitectura en capas estricta:
+El proyecto sigue una arquitectura en capas estricta con separación por módulo:
 
 ```
 Controller → Service → Repository → Base de datos
 ```
 
-Cada módulo tiene su propia carpeta con todas sus clases:
-
 ```
 com.gestionlocal.gestion
+├── auth
+│   ├── AuthController
+│   ├── AuthService
+│   ├── AuthRequest
+│   └── AuthResponse
 ├── cliente
 │   ├── dto
-│   │   ├── ClienteRequestDTO
-│   │   └── ClienteResponseDTO
+│   ├── exception
 │   ├── mapper
-│   │   └── ClienteMapper
+│   ├── ClienteController
 │   ├── ClienteEntity
 │   ├── ClienteRepository
-│   ├── ClienteService
-│   └── ClienteController
+│   └── ClienteService
 ├── producto
 │   ├── dto
-│   │   ├── ProductoRequestDTO
-│   │   └── ProductoResponseDTO
+│   ├── exception
 │   ├── mapper
-│   │   └── ProductoMapper
+│   ├── ProductoController
 │   ├── ProductoEntity
 │   ├── ProductoRepository
 │   ├── ProductoService
-│   ├── ProductoController
 │   └── TipoProducto (enum)
 ├── pedido
-│   └── detalle
+│   ├── dto
+│   ├── exception
+│   ├── mapper
+│   ├── DetallePedidosEntity
+│   ├── EstadoPedido (enum)
+│   ├── PedidoController
+│   ├── PedidoEntity
+│   ├── PedidoRepository
+│   └── PedidoService
 ├── usuario
-├── seguridad
-├── exception
+│   ├── RolEnum
+│   ├── UsuarioDetailsServiceImpl
+│   ├── UsuarioEntity
+│   └── UsuarioRepository
+├── security
+│   ├── JwtAuthFilter
+│   ├── JwtService
+│   └── SecurityConfig
 └── config
+    ├── CorsConfig
+    ├── GlobalExceptionHandler
+    ├── ErrorResponse
+    ├── ValidationErrorResponse
+    └── SwaggerConfig
 ```
 
 ---
 
-## Modelo de base de datos
+## Seguridad
 
-### clientes
-| Campo | Tipo | Descripción |
-|---|---|---|
-| id | BIGINT | ID interno, nunca se expone |
-| public_id | UUID | ID público usado en la API |
-| nombre | VARCHAR | Nombre del cliente |
-| apellido | VARCHAR | Apellido del cliente |
-| num_telefono | VARCHAR | Teléfono de contacto |
+El sistema usa autenticación **JWT** con dos roles:
 
-### productos
-| Campo | Tipo | Descripción |
-|---|---|---|
-| id | BIGINT | ID interno |
-| public_id | UUID | ID público usado en la API |
-| nombre | VARCHAR | Nombre del producto |
-| tipo | VARCHAR | Enum: TORTA_COMUN, TORTA_POR_KILO, TORTA_POR_KILO_FRUTA, MINI |
-| precio_fijo | INTEGER | Solo para TORTA_COMUN |
-| precio_por_kilo | INTEGER | Solo para TORTA_POR_KILO y TORTA_POR_KILO_FRUTA |
-| precio_docena | INTEGER | Solo para MINI |
-| activo | BOOLEAN | Baja lógica del producto |
+| Rol | Permisos |
+|-----|----------|
+| `ADMIN` | Acceso total — crear/editar/eliminar clientes, productos y pedidos |
+| `EMPLEADO` | Ver pedidos del día y avanzar estado |
 
-### pedidos (en progreso)
-| Campo | Tipo | Descripción |
-|---|---|---|
-| id | BIGINT | ID interno |
-| public_id | UUID | ID público usado en la API |
-| fecha | DATE | Fecha del pedido |
-| estado | VARCHAR | Enum: PENDIENTE, EN_PREPARACION, LISTO, ENTREGADO |
-| id_cliente | BIGINT | FK a clientes |
-
-### pedido_detalle (en progreso)
-| Campo | Tipo | Descripción |
-|---|---|---|
-| id | BIGINT | ID interno |
-| id_pedido | BIGINT | FK a pedidos |
-| id_producto | BIGINT | FK a productos |
-| cantidad | INTEGER | Para MINI (cantidad de docenas) |
-| peso_kg | DOUBLE | Para TORTA_POR_KILO (kilos pedidos) |
-| precio_unitario | INTEGER | Precio en el momento del pedido |
-| subtotal | INTEGER | Total del ítem |
+El primer usuario ADMIN se crea directamente en la base de datos. A partir de ahí el ADMIN puede crear nuevos usuarios desde el endpoint `/api/auth/register`.
 
 ---
 
-## Reglas de negocio
-
-### Tipos de producto y cálculo de precio
+## Tipos de producto y cálculo de precio
 
 | Tipo | Descripción | Cálculo |
-|---|---|---|
-| TORTA_COMUN | Torta estándar ~1.2kg, precio fijo | `precioFijo` |
-| TORTA_POR_KILO | Torta grande de 1.5kg a 5kg | `precioPorKilo × pesoKg` |
-| TORTA_POR_KILO_FRUTA | Igual que anterior pero con fruta, precio por kilo más caro | `precioPorKilo × pesoKg` |
-| MINI | Se vende por docena, mínimo 12 unidades | `precioDocena × cantidad` |
-
-### Pedidos
-- Un pedido puede tener varios productos
-- El precio se registra en el detalle al momento del pedido (no cambia si el producto cambia de precio después)
-- El peso en kg se especifica en el detalle del pedido para las tortas por kilo
-- Mínimo 12 unidades (1 docena) para minis
-
-### Usuarios y roles (en progreso)
-- **ADMIN** — puede crear, modificar y ver pedidos. Acceso a reportes
-- **EMPLEADO** — puede ver pedidos y marcarlos como listos
+|------|-------------|---------|
+| `TORTA_COMUN` | Torta estándar precio fijo | `precioFijo` |
+| `TORTA_POR_KILO` | Torta grande vendida por peso | `precio × pesoKg` |
+| `TORTA_POR_KILO_FRUTA` | Igual que anterior con fruta | `precio × pesoKg` |
+| `INDIVIDUAL` | Porción individual precio fijo | `precio × cantidad` |
+| `MINI` | Porción pequeña precio fijo | `precio × cantidad` |
+| `POR_DOCENA` | Alfajores, medialunas, etc. Mínimo 12 unidades | `precioDocena × docenas` |
 
 ---
 
-## Endpoints planeados
+## Estados de pedido
+
+```
+PENDIENTE → LISTO → ENTREGADO
+                 ↘ NO_RETIRO
+CANCELADO (desde cualquier estado activo)
+```
+
+---
+
+## Endpoints
+
+### Auth
+| Método | Endpoint | Descripción | Rol |
+|--------|----------|-------------|-----|
+| POST | `/api/auth/login` | Login | Público |
+| POST | `/api/auth/register` | Crear usuario | ADMIN |
 
 ### Clientes
-| Método | Endpoint | Descripción |
-|---|---|---|
-| POST | /api/clientes | Crear cliente |
-| GET | /api/clientes | Listar clientes |
-| GET | /api/clientes/{publicId} | Buscar cliente |
-| PUT | /api/clientes/{publicId} | Modificar cliente |
-| DELETE | /api/clientes/{publicId} | Baja lógica |
+| Método | Endpoint | Descripción | Rol |
+|--------|----------|-------------|-----|
+| GET | `/api/clientes` | Listar todos | ADMIN |
+| GET | `/api/clientes/activos` | Listar activos | ADMIN |
+| GET | `/api/clientes/{publicId}` | Buscar por ID | ADMIN |
+| GET | `/api/clientes/buscar?nombre=&apellido=` | Buscar por nombre | ADMIN |
+| POST | `/api/clientes` | Crear cliente | ADMIN |
+| PUT | `/api/clientes/{publicId}` | Modificar cliente | ADMIN |
+| DELETE | `/api/clientes/{publicId}` | Baja lógica | ADMIN |
+| PATCH | `/api/clientes/{publicId}/reactivar` | Reactivar cliente | ADMIN |
 
 ### Productos
-| Método | Endpoint | Descripción |
-|---|---|---|
-| POST | /api/productos | Crear producto |
-| GET | /api/productos | Listar productos activos |
-| GET | /api/productos/{publicId} | Buscar producto |
-| PUT | /api/productos/{publicId} | Modificar producto |
-| DELETE | /api/productos/{publicId} | Baja lógica |
+| Método | Endpoint | Descripción | Rol |
+|--------|----------|-------------|-----|
+| GET | `/api/productos` | Listar todos | ADMIN |
+| GET | `/api/productos/{publicId}` | Buscar por ID | ADMIN |
+| GET | `/api/productos/tipo/{tipo}` | Filtrar por tipo | ADMIN |
+| POST | `/api/productos` | Crear producto | ADMIN |
+| PUT | `/api/productos/{publicId}` | Modificar producto | ADMIN |
+| DELETE | `/api/productos/{publicId}` | Baja lógica | ADMIN |
+| PATCH | `/api/productos/{publicId}/reactivar` | Reactivar producto | ADMIN |
 
-### Pedidos (en progreso)
-| Método | Endpoint | Descripción |
-|---|---|---|
-| POST | /api/pedidos | Crear pedido |
-| GET | /api/pedidos | Listar pedidos |
-| GET | /api/pedidos/{publicId} | Ver pedido con detalle |
-| POST | /api/pedidos/{publicId}/estado | Cambiar estado |
-
-### Reportes (en progreso)
-| Método | Endpoint | Descripción |
-|---|---|---|
-| GET | /api/reportes/ventas | Total vendido por período |
-| GET | /api/reportes/productos | Productos más vendidos |
+### Pedidos
+| Método | Endpoint | Descripción | Rol |
+|--------|----------|-------------|-----|
+| GET | `/api/pedidos` | Listar todos | ADMIN + EMPLEADO |
+| GET | `/api/pedidos/{publicId}` | Ver pedido | ADMIN + EMPLEADO |
+| GET | `/api/pedidos/cliente/{clientePublicId}` | Pedidos por cliente | ADMIN + EMPLEADO |
+| GET | `/api/pedidos/estado/{estado}` | Pedidos por estado | ADMIN + EMPLEADO |
+| GET | `/api/pedidos/fecha?fecha=YYYY-MM-DD` | Pedidos por fecha | ADMIN |
+| GET | `/api/pedidos/buscar?nombre=&apellido=` | Buscar por cliente | ADMIN + EMPLEADO |
+| GET | `/api/pedidos/cocina/hoy` | Pedidos del día (cocina) | ADMIN + EMPLEADO |
+| POST | `/api/pedidos` | Crear pedido | ADMIN |
+| PATCH | `/api/pedidos/{publicId}/avanzar` | Avanzar estado | ADMIN + EMPLEADO |
+| PATCH | `/api/pedidos/{publicId}/estado?nuevoEstado=` | Cambiar estado | ADMIN + EMPLEADO |
+| PATCH | `/api/pedidos/{publicId}/cancelar` | Cancelar pedido | ADMIN |
+| PATCH | `/api/pedidos/{publicId}/no-retiro` | Marcar no retiro | ADMIN |
 
 ---
 
-## Cómo correr el proyecto
+## Cómo correr el proyecto localmente
 
 ### Requisitos
 - Java 17
-- PostgreSQL corriendo localmente
+- MySQL corriendo localmente
 - Maven
 
 ### Configuración
-Creá un archivo `application.properties` en `src/main/resources` con:
+En `src/main/resources/application.yaml`:
 
-```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/gestion_local
-spring.datasource.username=TU_USUARIO
-spring.datasource.password=TU_PASSWORD
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
+```yaml
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/gestion?createDatabaseIfNotExist=true
+    username: tu_usuario
+    password: tu_contraseña
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+
+jwt:
+  secret: "claveSecretaSuperSeguraParaFirmarTokensJWT12345"
+  expiration: 86400000
 ```
 
 ### Correr
@@ -187,19 +204,38 @@ spring.jpa.show-sql=true
 ./mvnw spring-boot:run
 ```
 
+### Primer usuario
+Al levantar el proyecto las tablas se crean automáticamente. Insertá el primer usuario ADMIN en la BD:
+
+```sql
+INSERT INTO usuario (public_id, username, password, rol, activo)
+VALUES (UUID_TO_BIN(UUID()), 'admin', '$2a$12$TU_HASH_BCRYPT', 'ADMIN', 1);
+```
+
+Generá el hash en [bcrypt-generator.com](https://bcrypt-generator.com).
+
+---
+
+## Deploy
+
+El proyecto está deployado en **Railway** con MySQL como base de datos.
+
+Para el entorno de producción se usa `application-prod.yaml` activado con la variable de entorno `SPRING_PROFILES_ACTIVE=prod`.
+
 ---
 
 ## Estado del proyecto
 
-- [x] Estructura base del proyecto
-- [x] Entidad y Repository de Cliente
-- [x] Entidad y Repository de Producto
-- [x] DTO´s de Cliente y Producto
-- [x] Mappers de Cliente y Producto
-- [x] Service y Controller de Cliente
-- [x] Service y Controller de Producto
-- [x] Entidad Pedido y PedidoDetalle
-- [x] Lógica de cálculo de precios
-- [x] Autenticación JWT
+- [x] Gestión completa de Clientes (CRUD + baja lógica + reactivar + buscar)
+- [x] Gestión completa de Productos (CRUD + baja lógica + reactivar + filtrar por tipo)
+- [x] Gestión completa de Pedidos con múltiples ítems
+- [x] Cálculo automático de precios según tipo de producto
+- [x] Flujo de estados de pedido
+- [x] Vista de cocina (pedidos del día)
+- [x] Autenticación JWT con roles ADMIN y EMPLEADO
+- [x] Manejo global de excepciones con respuestas JSON estructuradas
+- [x] Documentación con Swagger / OpenAPI
+- [x] Deploy en Railway
+- [ ] Frontend
+- [ ] Tests unitarios
 - [ ] Reportes de ventas
-- [ ] Deploy en Railway
