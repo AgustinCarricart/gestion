@@ -36,7 +36,9 @@ com.gestionlocal.gestion
 │   ├── AuthController
 │   ├── AuthService
 │   ├── AuthRequest
-│   └── AuthResponse
+│   ├── AuthResponse
+│   ├── RegisterRequest
+│   └── ResetPasswordRequest
 ├── cliente
 │   ├── dto
 │   ├── exception
@@ -68,7 +70,9 @@ com.gestionlocal.gestion
 │   ├── RolEnum
 │   ├── UsuarioDetailsServiceImpl
 │   ├── UsuarioEntity
-│   └── UsuarioRepository
+│   ├── UsuarioRepository
+│   ├── UsuarioResponseDto
+│   └── UsernameAlreadyExistsException
 ├── security
 │   ├── JwtAuthFilter
 │   ├── JwtService
@@ -89,10 +93,8 @@ El sistema usa autenticación **JWT** con dos roles:
 
 | Rol | Permisos |
 |-----|----------|
-| `ADMIN` | Acceso total — crear/editar/eliminar clientes, productos y pedidos |
+| `ADMIN` | Acceso total — crear/editar/eliminar clientes, productos, pedidos y usuarios |
 | `EMPLEADO` | Ver pedidos del día y avanzar estado |
-
-El primer usuario ADMIN se crea directamente en la base de datos. A partir de ahí el ADMIN puede crear nuevos usuarios desde el endpoint `/api/auth/register`.
 
 ---
 
@@ -114,6 +116,7 @@ El primer usuario ADMIN se crea directamente en la base de datos. A partir de ah
 ```
 PENDIENTE → LISTO → ENTREGADO
                  ↘ NO_RETIRO
+
 CANCELADO (desde cualquier estado activo)
 ```
 
@@ -122,12 +125,16 @@ CANCELADO (desde cualquier estado activo)
 ## Endpoints
 
 ### Auth
+
 | Método | Endpoint | Descripción | Rol |
 |--------|----------|-------------|-----|
 | POST | `/api/auth/login` | Login | Público |
 | POST | `/api/auth/register` | Crear usuario | ADMIN |
+| GET | `/api/auth/usuarios` | Listar usuarios | ADMIN |
+| PATCH | `/api/auth/usuarios/{publicId}/reset-password` | Resetear contraseña | ADMIN |
 
 ### Clientes
+
 | Método | Endpoint | Descripción | Rol |
 |--------|----------|-------------|-----|
 | GET | `/api/clientes` | Listar todos | ADMIN |
@@ -140,6 +147,7 @@ CANCELADO (desde cualquier estado activo)
 | PATCH | `/api/clientes/{publicId}/reactivar` | Reactivar cliente | ADMIN |
 
 ### Productos
+
 | Método | Endpoint | Descripción | Rol |
 |--------|----------|-------------|-----|
 | GET | `/api/productos` | Listar todos | ADMIN |
@@ -151,6 +159,7 @@ CANCELADO (desde cualquier estado activo)
 | PATCH | `/api/productos/{publicId}/reactivar` | Reactivar producto | ADMIN |
 
 ### Pedidos
+
 | Método | Endpoint | Descripción | Rol |
 |--------|----------|-------------|-----|
 | GET | `/api/pedidos` | Listar todos | ADMIN + EMPLEADO |
@@ -171,14 +180,16 @@ CANCELADO (desde cualquier estado activo)
 ## Cómo correr el proyecto localmente
 
 ### Requisitos
+
 - Java 17
 - MySQL corriendo localmente
 - Maven
 
 ### Configuración
+
 En `src/main/resources/application.yaml`:
 
-```yaml
+### yaml
 server:
   port: 8080
 
@@ -200,11 +211,13 @@ jwt:
 ```
 
 ### Correr
+
 ```bash
 ./mvnw spring-boot:run
 ```
 
 ### Primer usuario
+
 Al levantar el proyecto las tablas se crean automáticamente. Insertá el primer usuario ADMIN en la BD:
 
 ```sql
@@ -212,14 +225,14 @@ INSERT INTO usuario (public_id, username, password, rol, activo)
 VALUES (UUID_TO_BIN(UUID()), 'admin', '$2a$12$TU_HASH_BCRYPT', 'ADMIN', 1);
 ```
 
-Generá el hash en [bcrypt-generator.com](https://bcrypt-generator.com).
+Generá el hash en [bcrypt-generator.com](https://bcrypt-generator.com).  
+A partir de ahí el ADMIN puede crear nuevos usuarios desde el endpoint `/api/auth/register`.
 
 ---
 
 ## Deploy
 
-El proyecto está deployado en **Railway** con MySQL como base de datos.
-
+El proyecto está deployado en **Railway** con MySQL como base de datos.  
 Para el entorno de producción se usa `application-prod.yaml` activado con la variable de entorno `SPRING_PROFILES_ACTIVE=prod`.
 
 ---
@@ -233,6 +246,7 @@ Para el entorno de producción se usa `application-prod.yaml` activado con la va
 - [x] Flujo de estados de pedido
 - [x] Vista de cocina (pedidos del día)
 - [x] Autenticación JWT con roles ADMIN y EMPLEADO
+- [x] Gestión de usuarios (crear, listar, resetear contraseña)
 - [x] Manejo global de excepciones con respuestas JSON estructuradas
 - [x] Documentación con Swagger / OpenAPI
 - [x] Deploy en Railway
