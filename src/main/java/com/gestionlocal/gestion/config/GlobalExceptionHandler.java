@@ -12,6 +12,7 @@ import com.gestionlocal.gestion.producto.exception.ProductoAlreadyExists;
 import com.gestionlocal.gestion.producto.exception.ProductoConPedidosActivosException;
 import com.gestionlocal.gestion.producto.exception.ProductoInactivoException;
 import com.gestionlocal.gestion.producto.exception.ProductoNotFoundException;
+import com.gestionlocal.gestion.usuario.exceptions.UsernameAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,7 +36,8 @@ public class GlobalExceptionHandler
 
     // --- 409 Conflict ---
 
-    @ExceptionHandler({ClienteAlreadyExists.class, ProductoAlreadyExists.class})
+
+    @ExceptionHandler({ClienteAlreadyExists.class, ProductoAlreadyExists.class, UsernameAlreadyExistsException.class})
     public ResponseEntity<ErrorResponse> handleAlreadyExists(RuntimeException ex)
     {
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
