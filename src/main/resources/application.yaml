@@ -3,9 +3,10 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/gestion?createDatabaseIfNotExist=true
-    username: root
-    password: 1234
+    # Utiliza variable de entorno DB_URL o el fallback local por defecto
+    url: ${DB_URL:jdbc:mysql://localhost:3306/gestion?createDatabaseIfNotExist=true}
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:1234}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -15,5 +16,7 @@ spring:
     open-in-view: false
 
 jwt:
-  secret: claveSecretaSuperSeguraParaFirmarTokensJWT12345
-  expiration: 86400000
+  # La clave secreta debe venir preferentemente de una variable de entorno
+  secret: ${JWT_SECRET:claveSecretaSuperSeguraParaFirmarTokensJWT12345}
+  # Tiempo de expiración en milisegundos (86400000 ms = 24 horas)
+  expiration: ${JWT_EXPIRATION:86400000}
