@@ -1,6 +1,6 @@
 package com.gestionlocal.gestion.cliente;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,6 +32,9 @@ public class ClienteEntity
 
     @Column(name = "num_telefono" , nullable = false)
     private String numero;
+
+    @Column(name = "activo" , nullable = false)
+    private boolean activo;
 
     @PrePersist
     private void generateValue()
