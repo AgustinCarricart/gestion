@@ -225,10 +225,18 @@ INSERT INTO usuario (public_id, username, password, rol, activo)
 VALUES (UUID_TO_BIN(UUID()), 'admin', '$2a$12$TU_HASH_BCRYPT', 'ADMIN', 1);
 ```
 
-Generá el hash en [bcrypt-generator.com](https://bcrypt-generator.com).  
+Generá el hash en [bcrypt-generator.com]( https://bcrypt-generator.com).  
 A partir de ahí el ADMIN puede crear nuevos usuarios desde el endpoint `/api/auth/register`.
 
 ---
+
+### Tests
+
+El proyecto cuenta con tests unitarios usando JUnit 5 y Mockito, con patrón AAA (Arrange, Act, Assert).
+
+Cobertura actual
+Módulo	Tests
+PedidoService	Búsqueda por publicId, búsqueda por estado, búsqueda por cliente, transiciones de estado (avanzar, cancelar, marcarNoRetiro, cambiarEstado)
 
 ## Deploy
 
@@ -250,6 +258,6 @@ Para el entorno de producción se usa `application-prod.yaml` activado con la va
 - [x] Manejo global de excepciones con respuestas JSON estructuradas
 - [x] Documentación con Swagger / OpenAPI
 - [x] Deploy en Railway
+- [x] Pruebas unitarias en capa Service con JUnit 5 y Mockito
 - [ ] Frontend
-- [ ] Tests unitarios
 - [ ] Reportes de ventas
