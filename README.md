@@ -189,7 +189,7 @@ CANCELADO (desde cualquier estado activo)
 
 En `src/main/resources/application.yaml`:
 
-### yaml
+```yaml
 server:
   port: 8080
 
