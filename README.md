@@ -1,9 +1,8 @@
 # Gestión Local 🍰
 
-Sistema de gestión de pedidos para locales de repostería. Permite administrar clientes, productos y pedidos con control de estados, roles de usuario y autenticación JWT. Deployado en Railway y documentado con Swagger.
+Sistema de gestión de pedidos para locales de repostería. Permite administrar clientes, productos y pedidos con control de estados, roles de usuario y autenticación JWT. Incluye frontend integrado accesible desde el navegador.
 
-🔗 **API en producción:** https://gestion-production-989a.up.railway.app  
-📄 **Documentación Swagger:** https://gestion-production-989a.up.railway.app/swagger-ui/index.html
+💻 **Código en GitHub:** [github.com/AgustinCarricart/gestion](https://github.com/AgustinCarricart)
 
 ---
 
@@ -17,8 +16,8 @@ Sistema de gestión de pedidos para locales de repostería. Permite administrar 
 - MapStruct 1.5.5
 - Lombok
 - Springdoc OpenAPI (Swagger) 2.8.6
+- JUnit 5 + Mockito (tests)
 - Maven
-- Railway (deploy)
 
 ---
 
@@ -122,6 +121,26 @@ CANCELADO (desde cualquier estado activo)
 
 ---
 
+## Frontend
+
+El proyecto incluye un frontend integrado en `src/main/resources/static/index.html` que se sirve automáticamente con Spring Boot.
+
+Al levantar el proyecto, accedés desde el navegador en `http://localhost:8080`.
+
+**Panel ADMIN:**
+- Gestión de pedidos con filtros combinados por fecha, estado y nombre de cliente
+- Crear pedidos con múltiples productos
+- Gestión de clientes y productos (CRUD completo)
+- Gestión de usuarios (crear, resetear contraseña)
+
+**Panel EMPLEADO (Cocina):**
+- Vista de pedidos del día ordenados por hora de entrega
+- Marcar pedidos como LISTO
+
+**Uso en red local:** si el servidor corre en una PC de la red, las demás pueden acceder reemplazando `localhost` por la IP local del servidor (ej: `http://192.168.1.100:8080`).
+
+---
+
 ## Endpoints
 
 ### Auth
@@ -166,7 +185,7 @@ CANCELADO (desde cualquier estado activo)
 | GET | `/api/pedidos/{publicId}` | Ver pedido | ADMIN + EMPLEADO |
 | GET | `/api/pedidos/cliente/{clientePublicId}` | Pedidos por cliente | ADMIN + EMPLEADO |
 | GET | `/api/pedidos/estado/{estado}` | Pedidos por estado | ADMIN + EMPLEADO |
-| GET | `/api/pedidos/fecha?fecha=YYYY-MM-DD` | Pedidos por fecha | ADMIN |
+| GET | `/api/pedidos/fecha?fecha=YYYY-MM-DD` | Pedidos por fecha | ADMIN + EMPLEADO |
 | GET | `/api/pedidos/buscar?nombre=&apellido=` | Buscar por cliente | ADMIN + EMPLEADO |
 | GET | `/api/pedidos/cocina/hoy` | Pedidos del día (cocina) | ADMIN + EMPLEADO |
 | POST | `/api/pedidos` | Crear pedido | ADMIN |
@@ -174,6 +193,22 @@ CANCELADO (desde cualquier estado activo)
 | PATCH | `/api/pedidos/{publicId}/estado?nuevoEstado=` | Cambiar estado | ADMIN + EMPLEADO |
 | PATCH | `/api/pedidos/{publicId}/cancelar` | Cancelar pedido | ADMIN |
 | PATCH | `/api/pedidos/{publicId}/no-retiro` | Marcar no retiro | ADMIN |
+
+---
+
+## Tests
+
+Tests unitarios con **JUnit 5** y **Mockito**, patrón AAA (Arrange, Act, Assert).
+
+| Módulo | Cobertura |
+|--------|-----------|
+| `ClienteService` | Listar todos, listar activos, buscar por ID, buscar por nombre, crear, actualizar, baja lógica, reactivar |
+| `ProductoService` | Listar todos, listar por tipo, buscar por ID, crear, actualizar, baja lógica, reactivar |
+| `PedidoService` | Buscar por ID, por estado, por cliente — transiciones de estado (avanzar, cancelar, marcarNoRetiro, cambiarEstado) |
+
+```bash
+./mvnw test
+```
 
 ---
 
@@ -225,23 +260,8 @@ INSERT INTO usuario (public_id, username, password, rol, activo)
 VALUES (UUID_TO_BIN(UUID()), 'admin', '$2a$12$TU_HASH_BCRYPT', 'ADMIN', 1);
 ```
 
-Generá el hash en [bcrypt-generator.com]( https://bcrypt-generator.com).  
-A partir de ahí el ADMIN puede crear nuevos usuarios desde el endpoint `/api/auth/register`.
-
----
-
-### Tests
-
-El proyecto cuenta con tests unitarios usando JUnit 5 y Mockito, con patrón AAA (Arrange, Act, Assert).
-
-Cobertura actual
-Módulo	Tests
-PedidoService	Búsqueda por publicId, búsqueda por estado, búsqueda por cliente, transiciones de estado (avanzar, cancelar, marcarNoRetiro, cambiarEstado)
-
-## Deploy
-
-El proyecto está deployado en **Railway** con MySQL como base de datos.  
-Para el entorno de producción se usa `application-prod.yaml` activado con la variable de entorno `SPRING_PROFILES_ACTIVE=prod`.
+Generá el hash en [bcrypt-generator.com](https://bcrypt-generator.com).  
+A partir de ahí el ADMIN puede crear nuevos usuarios desde el frontend o desde el endpoint `/api/auth/register`.
 
 ---
 
@@ -257,7 +277,6 @@ Para el entorno de producción se usa `application-prod.yaml` activado con la va
 - [x] Gestión de usuarios (crear, listar, resetear contraseña)
 - [x] Manejo global de excepciones con respuestas JSON estructuradas
 - [x] Documentación con Swagger / OpenAPI
-- [x] Deploy en Railway
-- [x] Pruebas unitarias en capa Service con JUnit 5 y Mockito
-- [ ] Frontend
-- [ ] Reportes de ventas
+- [x] Frontend integrado (filtros por fecha, estado y cliente)
+- [x] Tests unitarios — ClienteService, ProductoService y PedidoService
+- [ ] Métricas y reportes de ventas

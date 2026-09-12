@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Gestión Local</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f0f;--s1:#181818;--s2:#202020;--border:#2a2a2a;
+  --gold:#c8a84b;--gold2:#a8883a;--text:#ede9e0;--muted:#6b6b6b;
+  --ok:#4caf7d;--err:#d94f4f;--warn:#e09c3a;--r:10px;
+  --font:'Segoe UI',system-ui,sans-serif;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px}
+
+/* ── LOGIN ── */
+#login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+.login-wrap{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:52px 44px;width:380px;text-align:center}
+.login-wrap .logo{font-size:2.2rem;margin-bottom:8px}
+.login-wrap h1{font-size:1.5rem;font-weight:700;color:var(--gold);margin-bottom:4px}
+.login-wrap p{color:var(--muted);font-size:.85rem;margin-bottom:32px}
+.login-wrap label{text-align:left}
+
+/* ── FORMS ── */
+label{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;margin-top:2px}
+input,select,textarea{
+  width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);
+  color:var(--text);padding:11px 14px;font-size:.9rem;font-family:var(--font);
+  margin-bottom:14px;outline:none;transition:border-color .2s;-webkit-appearance:none
+}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+textarea{resize:vertical;min-height:72px}
+select option{background:var(--s1)}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:10px 18px;border-radius:var(--r);font-size:.875rem;font-weight:600;
+  cursor:pointer;border:none;transition:opacity .15s,transform .1s;font-family:var(--font);line-height:1}
+.btn:active{transform:scale(.97)}
+.btn:hover{opacity:.85}
+.btn-gold{background:var(--gold);color:#0f0f0f}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn-err{background:var(--err);color:#fff}
+.btn-ok{background:var(--ok);color:#0f0f0f}
+.btn-warn{background:var(--warn);color:#0f0f0f}
+.btn-sm{padding:7px 12px;font-size:.8rem}
+.btn-full{width:100%}
+.btn-icon{padding:7px 10px}
+
+/* ── SHELL ── */
+#app{display:none;min-height:100vh;flex-direction:column}
+
+nav{
+  background:var(--s1);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 20px;height:58px;position:sticky;top:0;z-index:50;gap:2px
+}
+.brand{font-weight:800;color:var(--gold);font-size:1.05rem;margin-right:24px;letter-spacing:-.01em}
+.tab{
+  height:58px;display:flex;align-items:center;padding:0 13px;font-size:.85rem;
+  color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;
+  transition:color .2s,border-color .2s;white-space:nowrap
+}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.nav-r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.rol-chip{font-size:.7rem;padding:3px 10px;border-radius:99px;background:var(--s2);
+  color:var(--muted);text-transform:uppercase;letter-spacing:.06em;border:1px solid var(--border)}
+
+main{padding:28px 20px;max-width:1120px;width:100%;margin:0 auto;flex:1}
+
+/* ── SECCIONES ── */
+.sec{display:none}.sec.on{display:block}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.sec-hdr h2{font-size:1.15rem;font-weight:700}
+.sec-hdr-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* ── CARDS ── */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.card-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.card-info h3{font-size:.95rem;font-weight:600;margin-bottom:4px}
+.card-info p{font-size:.82rem;color:var(--muted);line-height:1.55}
+.card-actions{display:flex;gap:6px;flex-shrink:0;flex-direction:column;align-items:flex-end}
+
+/* ── ESTADOS ── */
+.badge{display:inline-block;font-size:.7rem;padding:3px 10px;border-radius:99px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.b-PENDIENTE{background:#2e2000;color:#c8a84b}
+.b-LISTO{background:#0a2e18;color:#4caf7d}
+.b-ENTREGADO{background:#1a1a1a;color:#444}
+.b-CANCELADO{background:#2e0a0a;color:#d94f4f}
+.b-NO_RETIRO{background:#1e1200;color:#c87d2a}
+
+/* ── MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;
+  align-items:center;justify-content:center;padding:16px}
+.overlay.on{display:flex}
+.modal{background:var(--s1);border:1px solid var(--border);border-radius:14px;
+  padding:28px;width:500px;max-width:100%;max-height:92vh;overflow-y:auto}
+.modal h3{font-size:1rem;font-weight:700;margin-bottom:18px;color:var(--gold)}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:6px;padding-top:14px;border-top:1px solid var(--border)}
+
+/* ── COCINA ── */
+.cocina-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.ccard{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:20px}
+.ccard .hora{font-size:2.2rem;font-weight:800;color:var(--gold);line-height:1;margin-bottom:2px}
+.ccard .nombre{font-size:1rem;font-weight:600;margin-bottom:10px}
+.ccard .ditem{font-size:.82rem;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border)}
+.ccard .ditem:last-child{border:none}
+.ccard .obs{font-size:.8rem;color:var(--warn);margin-top:8px;font-style:italic}
+
+/* ── DETALLE PEDIDO ── */
+.det-row{display:grid;grid-template-columns:1fr 75px 75px auto;gap:6px;align-items:end;margin-bottom:6px}
+.det-row input,.det-row select{margin:0}
+.del{background:none;border:none;color:var(--err);cursor:pointer;font-size:1.3rem;
+  padding:9px 8px;line-height:1;transition:color .2s}
+.del:hover{color:#ff6b6b}
+
+/* ── SEARCH / FILTROS ── */
+.filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
+.filters input,.filters select{margin:0;flex:1;min-width:140px}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:22px;right:22px;padding:13px 20px;border-radius:var(--r);
+  font-size:.875rem;font-weight:600;z-index:999;opacity:0;transform:translateY(8px);
+  pointer-events:none;transition:opacity .25s,transform .25s;max-width:300px
+}
+#toast.show{opacity:1;transform:translateY(0)}
+#toast.ok{background:var(--ok);color:#0f0f0f}
+#toast.err{background:var(--err);color:#fff}
+#toast.warn{background:var(--warn);color:#0f0f0f}
+
+.empty{text-align:center;padding:52px 0;color:var(--muted);font-size:.9rem}
+.sep{height:1px;background:var(--border);margin:14px 0}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  nav{padding:0 12px;overflow-x:auto;gap:0}
+  main{padding:16px 12px}
+  .modal{padding:20px}
+  .det-row{grid-template-columns:1fr 60px 60px auto}
+  .card-actions{flex-direction:row;flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══════════════════════════════════════════════════════════════ -->
+<div id="login">
+  <div class="login-wrap">
+    <div class="logo">🍰</div>
+    <h1>Gestión Local</h1>
+    <p> Ingresa con tu cuenta para continuar</p>
+    <label>Usuario</label>
+    <input id="l-u" type="text" placeholder="admin" autocomplete="username"/>
+    <label>Contraseña</label>
+    <input id="l-p" type="password" placeholder="••••••••" autocomplete="current-password"/>
+    <button class="btn btn-gold btn-full" onclick="doLogin()">Ingresar</button>
+  </div>
+</div>
+
+<!-- ══ APP ════════════════════════════════════════════════════════════════ -->
+<div id="app">
+  <nav>
+    <span class="brand">🍰 Gestión Local</span>
+    <span class="tab on"  id="t-pedidos"   onclick="go('pedidos',this)">Pedidos</span>
+    <span class="tab"     id="t-cocina"    onclick="go('cocina',this)">Cocina</span>
+    <span class="tab"     id="t-clientes"  onclick="go('clientes',this)">Clientes</span>
+    <span class="tab"     id="t-productos" onclick="go('productos',this)">Productos</span>
+    <span class="tab"     id="t-usuarios"  onclick="go('usuarios',this)">Usuarios</span>
+    <div class="nav-r">
+      <span class="rol-chip" id="chip-rol">—</span>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Salir</button>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- PEDIDOS -->
+    <div class="sec on" id="sec-pedidos">
+      <div class="sec-hdr">
+        <h2>Pedidos</h2>
+        <button class="btn btn-gold btn-sm" id="btn-npedido" onclick="abrirPedido()">+ Nuevo pedido</button>
+      </div>
+      <div class="filters">
+        <input type="date" id="f-fecha" style="min-width:140px;margin:0" onchange="cambiarFecha()"/>
+        <input type="text" id="f-cliente" placeholder="Buscar cliente…" style="margin:0" oninput="aplicarFiltros()"/>
+        <select id="f-estado" style="margin:0" onchange="aplicarFiltros()">
+          <option value="">Todos los estados</option>
+          <option value="PENDIENTE">Pendiente</option>
+          <option value="LISTO">Listo</option>
+          <option value="ENTREGADO">Entregado</option>
+          <option value="CANCELADO">Cancelado</option>
+          <option value="NO_RETIRO">No retiró</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="limpiarFiltros()">✕ Limpiar</button>
+      </div>
+      <div id="lista-pedidos"></div>
+    </div>
+
+    <!-- COCINA -->
+    <div class="sec" id="sec-cocina">
+      <div class="sec-hdr">
+        <h2>Pedidos de hoy 📋</h2>
+        <button class="btn btn-ghost btn-sm" onclick="cargarCocina()">↻ Actualizar</button>
+      </div>
+      <div class="cocina-grid" id="lista-cocina"></div>
+    </div>
+
+    <!-- CLIENTES -->
+    <div class="sec" id="sec-clientes">
+      <div class="sec-hdr">
+        <h2>Clientes</h2>
+        <button class="btn btn-gold btn-sm" id="btn-ncli" onclick="abrirCliente()">+ Nuevo cliente</button>
+      </div>
+      <div class="filters">
+        <input id="s-cli" type="text" placeholder="Buscar por nombre o apellido…" oninput="buscarCli()"/>
+      </div>
+      <div id="lista-clientes"></div>
+    </div>
+
+    <!-- PRODUCTOS -->
+    <div class="sec" id="sec-productos">
+      <div class="sec-hdr">
+        <h2>Productos</h2>
+        <button class="btn btn-gold btn-sm" id="btn-nprod" onclick="abrirProducto()">+ Nuevo producto</button>
+      </div>
+      <div id="lista-productos"></div>
+    </div>
+
+    <!-- USUARIOS -->
+    <div class="sec" id="sec-usuarios">
+      <div class="sec-hdr">
+        <h2>Usuarios</h2>
+        <button class="btn btn-gold btn-sm" id="btn-nusr" onclick="abrirUsuario()">+ Nuevo usuario</button>
+      </div>
+      <div id="lista-usuarios"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══ MODAL CLIENTE ══════════════════════════════════════════════════════ -->
+<div class="overlay" id="m-cli">
+  <div class="modal">
+    <h3 id="m-cli-title">Nuevo cliente</h3>
+    <label>Nombre</label><input id="c-nom" type="text" placeholder="Juan"/>
+    <label>Apellido</label><input id="c-ape" type="text" placeholder="Pérez"/>
+    <label>Teléfono</label><input id="c-tel" type="text" placeholder="2235000000"/>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="cerrar('m-cli')">Cancelar</button>
+      <button class="btn btn-gold" onclick="guardarCliente()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL PRODUCTO ════════════════════════════════════════════════════ -->
+<div class="overlay" id="m-prod">
+  <div class="modal">
+    <h3 id="m-prod-title">Nuevo producto</h3>
+    <label>Nombre</label><input id="p-nom" type="text" placeholder="Torta de chocolate"/>
+    <label>Tipo</label>
+    <select id="p-tipo" onchange="togglePrecio()">
+      <option value="TORTA_COMUN">Torta común (precio fijo)</option>
+      <option value="TORTA_POR_KILO">Torta por kilo</option>
+      <option value="TORTA_POR_KILO_FRUTA">Torta por kilo con fruta</option>
+      <option value="INDIVIDUAL">Individual (por unidad)</option>
+      <option value="MINI">Mini (por unidad)</option>
+      <option value="POR_DOCENA">Por docena</option>
+    </select>
+    <div id="cp-fijo">
+      <label>Precio</label><input id="p-precio" type="number" min="0" placeholder="5000"/>
+    </div>
+    <div id="cp-kilo" style="display:none">
+      <label>Precio por kg</label><input id="p-kilo" type="number" min="0" placeholder="3000"/>
+    </div>
+    <div id="cp-docena" style="display:none">
+      <label>Precio por docena</label><input id="p-docena" type="number" min="0" placeholder="1500"/>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="cerrar('m-prod')">Cancelar</button>
+      <button class="btn btn-gold" id="p-btn" onclick="guardarProducto()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL PEDIDO ══════════════════════════════════════════════════════ -->
+<div class="overlay" id="m-ped">
+  <div class="modal">
+    <h3>Nuevo pedido</h3>
+    <label>Cliente</label>
+    <select id="pd-cli"></select>
+    <label>Fecha y hora de entrega</label>
+    <input id="pd-fecha" type="datetime-local"/>
+    <label>Observaciones del pedido</label>
+    <textarea id="pd-obs" placeholder="Sin azúcar, con dedicatoria…"></textarea>
+    <label>Productos del pedido</label>
+    <div id="det-wrap"></div>
+    <button class="btn btn-ghost btn-sm" onclick="addDet()" style="margin-bottom:14px">+ Agregar producto</button>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="cerrar('m-ped')">Cancelar</button>
+      <button class="btn btn-gold" onclick="guardarPedido()">Crear pedido</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL USUARIO ═════════════════════════════════════════════════════ -->
+<div class="overlay" id="m-usr">
+  <div class="modal">
+    <h3 id="m-usr-title">Nuevo usuario</h3>
+    <div id="u-wrap-user">
+      <label>Username</label><input id="u-user" type="text" placeholder="cocina"/>
+    </div>
+    <label id="u-pass-lbl">Contraseña</label>
+    <input id="u-pass" type="password" placeholder="••••••••"/>
+    <div id="u-wrap-rol">
+      <label>Rol</label>
+      <select id="u-rol">
+        <option value="ADMIN">ADMIN</option>
+        <option value="EMPLEADO">EMPLEADO</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="cerrar('m-usr')">Cancelar</button>
+      <button class="btn btn-gold" id="u-btn" onclick="guardarUsuario()">Crear usuario</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══ CONFIG ════════════════════════════════════════════════════════════════════
+const API = '';  // mismo origen que Spring Boot
+let token = null, rol = null;
+let clientes = [], productos = [];
+let editCliId = null, editProdId = null, resetUsrId = null;
+
+// ══ AUTH ══════════════════════════════════════════════════════════════════════
+async function doLogin(){
+  const u = g('l-u').value.trim(), p = g('l-p').value.trim();
+  if(!u||!p) return toast('Completá usuario y contraseña','err');
+  try{
+    const r = await fetch(`${API}/api/auth/login`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({username:u,password:p})
+    });
+    if(!r.ok) return toast('Usuario o contraseña incorrectos','err');
+    const d = await r.json();
+    token=d.token; rol=d.rol;
+    initApp();
+  }catch{ toast('No se pudo conectar al servidor','err'); }
+}
+
+function logout(){
+  token=null; rol=null;
+  g('app').style.display='none';
+  g('login').style.display='flex';
+  g('l-p').value='';
+}
+
+function initApp(){
+  g('login').style.display='none';
+  g('app').style.display='flex';
+  g('chip-rol').textContent=rol;
+
+  if(rol==='EMPLEADO'){
+    ['t-clientes','t-productos','t-usuarios'].forEach(t=>g(t).style.display='none');
+    g('btn-npedido')&&(g('btn-npedido').style.display='none');
+    cargarBase();
+    go('cocina', g('t-cocina'));
+  } else {
+    cargarBase();
+    go('pedidos', g('t-pedidos'));
+  }
+}
+
+// ══ NAV ═══════════════════════════════════════════════════════════════════════
+function go(name, tab){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  g('sec-'+name).classList.add('on');
+  if(tab) tab.classList.add('on');
+  ({
+    pedidos:  cargarPedidos,
+    cocina:   cargarCocina,
+    clientes: renderClientes,
+    productos:renderProductos,
+    usuarios: cargarUsuarios
+  })[name]?.();
+}
+
+// ══ API ═══════════════════════════════════════════════════════════════════════
+async function api(path, opts = {}) {
+  const jwt = token || localStorage.getItem('token');
+  const r = await fetch(API + path, {
+    ...opts,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(jwt ? { 'Authorization': `Bearer ${jwt}` } : {}),
+      ...(opts.headers || {})
+    }
+  });
+  if (!r.ok) {
+    const e = await r.json().catch(() => ({}));
+    throw new Error(e.mensaje || (e.errores ? Object.values(e.errores).join(', ') : `Error ${r.status}`));
+  }
+  if (r.status === 204) return null;
+  return r.json();
+}
+
+async function cargarBase(){
+  try{
+    [clientes, productos] = await Promise.all([
+      api('/api/clientes'),
+      api('/api/productos')
+    ]);
+  }catch(e){ toast(e.message,'err'); }
+}
+
+// ══ PEDIDOS ═══════════════════════════════════════════════════════════════════
+let todosPedidos = [];
+
+async function cargarPedidos(){
+  const hoy = new Date().toISOString().split('T')[0];
+  g('f-fecha').value = hoy;
+  try{
+    todosPedidos = await api(`/api/pedidos/fecha?fecha=${hoy}`);
+    aplicarFiltros();
+  }catch(e){ toast(e.message,'err'); }
+}
+
+async function cambiarFecha(){
+  const fecha = g('f-fecha').value;
+  if(!fecha) return;
+  try{
+    todosPedidos = await api(`/api/pedidos/fecha?fecha=${fecha}`);
+    aplicarFiltros();
+  }catch(e){ toast(e.message,'err'); }
+}
+
+function aplicarFiltros(){
+  const cliente = g('f-cliente').value.toLowerCase().trim();
+  const estado  = g('f-estado').value;
+
+  let lista = todosPedidos;
+
+  if(cliente){
+    lista = lista.filter(p =>
+            `${p.clienteNombre} ${p.clienteApellido}`.toLowerCase().includes(cliente)
+    );
+  }
+  if(estado){
+    lista = lista.filter(p => p.estado === estado);
+  }
+
+  renderPedidos(lista);
+}
+
+async function limpiarFiltros(){
+  g('f-cliente').value = '';
+  g('f-estado').value  = '';
+  const hoy = new Date().toISOString().split('T')[0];
+  g('f-fecha').value = hoy;
+  try{
+    todosPedidos = await api(`/api/pedidos/fecha?fecha=${hoy}`);
+    aplicarFiltros();
+  }catch(e){ toast(e.message,'err'); }
+}
+
+function renderPedidos(list){
+  const el = g('lista-pedidos');
+  if(!list.length){ el.innerHTML='<div class="empty">No hay pedidos</div>'; return; }
+  el.innerHTML = list.map(p=>`
+    <div class="card">
+      <div class="card-row">
+        <div class="card-info">
+          <h3>${p.clienteNombre} ${p.clienteApellido}</h3>
+          <p>
+            <span class="badge b-${p.estado}">${p.estado}</span>
+            &nbsp; Entrega: <strong>${p.fechaEntrega||'—'}</strong>
+            &nbsp; Total: <strong>$${p.total?.toFixed(0)??'—'}</strong>
+          </p>
+          ${p.observaciones?`<p style="color:var(--warn);margin-top:3px">📝 ${p.observaciones}</p>`:''}
+          <div style="margin-top:8px">
+            ${(p.detalles||[]).map(d=>`
+              <p style="font-size:.8rem;color:var(--muted)">
+                ${d.cantidad}× <strong style="color:var(--text)">${d.productoNombre}</strong>
+                ${d.pesoKg?` — ${d.pesoKg}kg`:''}
+                ${d.observaciones?` — ${d.observaciones}`:''}
+              </p>`).join('')}
+          </div>
+        </div>
+        <div class="card-actions">
+          ${p.estado==='PENDIENTE'||p.estado==='LISTO'
+            ?`<button class="btn btn-ok btn-sm" onclick="avanzar('${p.publicId}')">▶ Avanzar</button>`:''}
+          ${p.estado!=='ENTREGADO'&&p.estado!=='CANCELADO'&&p.estado!=='NO_RETIRO'
+            ?`<button class="btn btn-err btn-sm" onclick="cancelar('${p.publicId}')">✕ Cancelar</button>`:''}
+          ${p.estado==='LISTO'
+            ?`<button class="btn btn-warn btn-sm" onclick="noRetiro('${p.publicId}')">⚠ No retiró</button>`:''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+async function avanzar(id){
+  try{
+    await api(`/api/pedidos/${id}/avanzar`,{method:'PATCH'});
+    toast('Estado actualizado','ok'); cargarPedidos();
+    if(g('sec-cocina').classList.contains('on')) cargarCocina();
+  }catch(e){ toast(e.message,'err'); }
+}
+async function cancelar(id){
+  if(!confirm('¿Cancelar este pedido?')) return;
+  try{ await api(`/api/pedidos/${id}/cancelar`,{method:'PATCH'}); toast('Pedido cancelado','ok'); cargarPedidos(); }
+  catch(e){ toast(e.message,'err'); }
+}
+async function noRetiro(id){
+  try{ await api(`/api/pedidos/${id}/no-retiro`,{method:'PATCH'}); toast('Marcado como no retiró','warn'); cargarPedidos(); }
+  catch(e){ toast(e.message,'err'); }
+}
+
+// ══ COCINA ════════════════════════════════════════════════════════════════════
+async function cargarCocina(){
+  try{
+    const list = await api('/api/pedidos/cocina/hoy');
+    const el = g('lista-cocina');
+    if(!list.length){ el.innerHTML='<div class="empty">Sin pedidos para hoy 🎉</div>'; return; }
+    // ordenar por hora entrega
+    list.sort((a,b)=>(a.fechaEntrega||'').localeCompare(b.fechaEntrega||''));
+    el.innerHTML = list.map(p=>`
+      <div class="ccard">
+        <div class="hora">${soloHora(p.fechaEntrega)}</div>
+        <div class="nombre">${p.clienteNombre} ${p.clienteApellido}</div>
+        <div style="margin-bottom:10px"><span class="badge b-${p.estado}">${p.estado}</span></div>
+        <div>
+          ${(p.detalles||[]).map(d=>`
+            <div class="ditem">
+              <strong>${d.cantidad}×</strong> ${d.productoNombre}
+              ${d.pesoKg?` <span style="color:var(--gold)">${d.pesoKg}kg</span>`:''}
+              ${d.observaciones?`<br><span style="font-size:.78rem">${d.observaciones}</span>`:''}
+            </div>`).join('')}
+        </div>
+        ${p.observaciones?`<div class="obs">📝 ${p.observaciones}</div>`:''}
+        ${p.estado==='PENDIENTE'
+          ?`<button class="btn btn-ok btn-full" style="margin-top:14px" onclick="avanzarCocina('${p.publicId}')">✓ Marcar como LISTO</button>`:''}
+      </div>`).join('');
+  }catch(e){ toast(e.message,'err'); }
+}
+async function avanzarCocina(id){
+  try{ await api(`/api/pedidos/${id}/avanzar`,{method:'PATCH'}); toast('¡Pedido listo!','ok'); cargarCocina(); }
+  catch(e){ toast(e.message,'err'); }
+}
+
+// ══ NUEVO PEDIDO ══════════════════════════════════════════════════════════════
+function abrirPedido(){
+  const sel = g('pd-cli');
+  sel.innerHTML = clientes.filter(c=>c.activo).map(c=>
+    `<option value="${c.publicId}">${c.nombre} ${c.apellido}</option>`
+  ).join('');
+  if(!sel.options.length){ toast('No hay clientes activos','err'); return; }
+  g('pd-fecha').value='';
+  g('pd-obs').value='';
+  g('det-wrap').innerHTML='';
+  addDet();
+  abrir('m-ped');
+}
+
+function addDet(){
+  const w = g('det-wrap');
+  const i = w.children.length;
+  const d = document.createElement('div');
+  d.className='det-row';
+  d.innerHTML=`
+    <select id="ds${i}" onchange="toggleKg(${i})">
+      ${productos.filter(p=>p.activo).map(p=>
+        `<option value="${p.publicId}" data-tipo="${p.tipo}">${p.nombre}</option>`
+      ).join('')}
+    </select>
+    <input id="dc${i}" type="number" min="1" value="1" placeholder="Cant."/>
+    <input id="dk${i}" type="number" min="0.1" step="0.1" placeholder="Kg" style="display:none"/>
+    <button class="del" onclick="this.parentElement.remove()">×</button>
+  `;
+  w.appendChild(d);
+  toggleKg(i);
+}
+
+function toggleKg(i){
+  const sel = g('ds'+i);
+  if(!sel) return;
+  const tipo = sel.options[sel.selectedIndex]?.dataset.tipo||'';
+  const needKg = tipo==='TORTA_POR_KILO'||tipo==='TORTA_POR_KILO_FRUTA';
+  g('dk'+i).style.display = needKg?'block':'none';
+}
+
+async function guardarPedido(){
+  const clientePublicId = g('pd-cli').value;
+  const fechaEntrega    = g('pd-fecha').value;
+  if(!fechaEntrega) return toast('Seleccioná la fecha y hora de entrega','err');
+  const rows = g('det-wrap').children;
+  if(!rows.length) return toast('Agregá al menos un producto','err');
+  const detalles=[];
+  for(let i=0;i<rows.length;i++){
+    const sel=rows[i].querySelector('select');
+    const cnt=rows[i].querySelector(`#dc${i}`);
+    const kg=rows[i].querySelector(`#dk${i}`);
+    const tipo=sel?.options[sel.selectedIndex]?.dataset.tipo||'';
+    const needKg=tipo==='TORTA_POR_KILO'||tipo==='TORTA_POR_KILO_FRUTA';
+    if(needKg&&!kg?.value) return toast('Indicá el peso en kg para tortas por kilo','err');
+    detalles.push({
+      productoPublicId:sel.value,
+      cantidad:Number(cnt.value)||1,
+      pesoKg:kg?.value?Number(kg.value):null
+    });
+  }
+  const obs = g('pd-obs').value.trim();
+
+  const fechaISO = fechaEntrega.length === 16 ? `${fechaEntrega}:00` : fechaEntrega;
+  try{
+    await api('/api/pedidos',{method:'POST',body:JSON.stringify({
+      clientePublicId, fechaEntrega:fechaISO, observaciones:obs||null, detalles
+    })});
+    toast('Pedido creado','ok'); cerrar('m-ped'); cargarPedidos();
+  }catch(e){ toast(e.message,'err'); }
+}
+
+// ══ CLIENTES ══════════════════════════════════════════════════════════════════
+function renderClientes(lista){
+  const data=lista??clientes;
+  const el=g('lista-clientes');
+  if(!data.length){ el.innerHTML='<div class="empty">No hay clientes</div>'; return; }
+  el.innerHTML=data.map(c=>`
+    <div class="card">
+      <div class="card-row">
+        <div class="card-info">
+          <h3>${c.nombre} ${c.apellido}</h3>
+          <p>${c.numero||'Sin teléfono'} &nbsp;·&nbsp;
+            ${c.activo?'<span style="color:var(--ok)">Activo</span>':'<span style="color:var(--err)">Inactivo</span>'}
+          </p>
+        </div>
+        <div class="card-actions" style="flex-direction:row">
+          <button class="btn btn-ghost btn-sm" onclick="editarCliente('${c.publicId}')">Editar</button>
+          ${c.activo
+            ?`<button class="btn btn-err btn-sm" onclick="bajaCliente('${c.publicId}')">Baja</button>`
+            :`<button class="btn btn-ok btn-sm" onclick="reactivarCliente('${c.publicId}')">Reactivar</button>`}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function buscarCli(){
+  const q=g('s-cli').value.toLowerCase();
+  if(!q) return renderClientes();
+  renderClientes(clientes.filter(c=>
+    c.nombre.toLowerCase().includes(q)||c.apellido.toLowerCase().includes(q)
+  ));
+}
+
+function abrirCliente(){
+  editCliId=null;
+  g('m-cli-title').textContent='Nuevo cliente';
+  g('c-nom').value=''; g('c-ape').value=''; g('c-tel').value='';
+  abrir('m-cli');
+}
+
+function editarCliente(pid){
+  const c=clientes.find(x=>x.publicId===pid); if(!c) return;
+  editCliId=pid;
+  g('m-cli-title').textContent='Editar cliente';
+  g('c-nom').value=c.nombre; g('c-ape').value=c.apellido; g('c-tel').value=c.numero||'';
+  abrir('m-cli');
+}
+
+async function guardarCliente(){
+  const body={nombre:g('c-nom').value.trim(),apellido:g('c-ape').value.trim(),numero:g('c-tel').value.trim()};
+  if(!body.nombre||!body.apellido||!body.numero) return toast('Nombre, apellido y teléfono son obligatorios','err');
+  try{
+    if(editCliId) await api(`/api/clientes/${editCliId}`,{method:'PUT',body:JSON.stringify(body)});
+    else          await api('/api/clientes',{method:'POST',body:JSON.stringify(body)});
+    toast(editCliId?'Cliente actualizado':'Cliente creado','ok');
+    cerrar('m-cli'); await cargarBase(); renderClientes();
+  }catch(e){ toast(e.message,'err'); }
+}
+
+async function bajaCliente(pid){
+  if(!confirm('¿Dar de baja este cliente?')) return;
+  try{ await api(`/api/clientes/${pid}`,{method:'DELETE'}); toast('Cliente dado de baja','ok'); await cargarBase(); renderClientes(); }
+  catch(e){ toast(e.message,'err'); }
+}
+async function reactivarCliente(pid){
+  try{ await api(`/api/clientes/${pid}/reactivar`,{method:'PATCH'}); toast('Cliente reactivado','ok'); await cargarBase(); renderClientes(); }
+  catch(e){ toast(e.message,'err'); }
+}
+
+// ══ PRODUCTOS ═════════════════════════════════════════════════════════════════
+function renderProductos(){
+  const el=g('lista-productos');
+  if(!productos.length){ el.innerHTML='<div class="empty">No hay productos</div>'; return; }
+  el.innerHTML=productos.map(p=>`
+    <div class="card">
+      <div class="card-row">
+        <div class="card-info">
+          <h3>${p.nombre}</h3>
+          <p>${tipoLabel(p.tipo)} &nbsp;·&nbsp; ${precioLabel(p)}</p>
+          <p>${p.activo?'<span style="color:var(--ok)">Activo</span>':'<span style="color:var(--err)">Inactivo</span>'}</p>
+        </div>
+        <div class="card-actions" style="flex-direction:row">
+          <button class="btn btn-ghost btn-sm" onclick="editarProducto('${p.publicId}')">Editar</button>
+          ${p.activo
+            ?`<button class="btn btn-err btn-sm" onclick="bajaProducto('${p.publicId}')">Baja</button>`
+            :`<button class="btn btn-ok btn-sm" onclick="reactivarProducto('${p.publicId}')">Reactivar</button>`}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function abrirProducto(){
+  editProdId=null;
+  g('m-prod-title').textContent='Nuevo producto';
+  g('p-nom').value=''; g('p-precio').value=''; g('p-kilo').value=''; g('p-docena').value='';
+  g('p-tipo').value='TORTA_COMUN'; g('p-btn').textContent='Guardar';
+  togglePrecio(); abrir('m-prod');
+}
+
+function editarProducto(pid){
+  const p=productos.find(x=>x.publicId===pid); if(!p) return;
+  editProdId=pid;
+  g('m-prod-title').textContent='Editar producto';
+  g('p-nom').value=p.nombre;
+  g('p-tipo').value=p.tipo;
+  g('p-precio').value=p.precioFijo||'';
+  g('p-kilo').value=p.precioPorKilo||'';
+  g('p-docena').value=p.precioDocena||'';
+  g('p-btn').textContent='Actualizar';
+  togglePrecio(); abrir('m-prod');
+}
+
+function togglePrecio(){
+  const t=g('p-tipo').value;
+  g('cp-fijo').style.display   = (t==='TORTA_COMUN'||t==='INDIVIDUAL'||t==='MINI')?'block':'none';
+  g('cp-kilo').style.display   = (t==='TORTA_POR_KILO'||t==='TORTA_POR_KILO_FRUTA')?'block':'none';
+  g('cp-docena').style.display = t==='POR_DOCENA'?'block':'none';
+}
+
+async function guardarProducto(){
+  const tipo=g('p-tipo').value;
+  const body={
+    nombre:g('p-nom').value.trim(), tipo,
+    precioFijo:   ['TORTA_COMUN','INDIVIDUAL','MINI'].includes(tipo)?Number(g('p-precio').value)||null:null,
+    precioPorKilo:['TORTA_POR_KILO','TORTA_POR_KILO_FRUTA'].includes(tipo)?Number(g('p-kilo').value)||null:null,
+    precioDocena: tipo==='POR_DOCENA'?Number(g('p-docena').value)||null:null
+  };
+  if(!body.nombre) return toast('El nombre es obligatorio','err');
+  try{
+    if(editProdId) await api(`/api/productos/${editProdId}`,{method:'PUT',body:JSON.stringify(body)});
+    else           await api('/api/productos',{method:'POST',body:JSON.stringify(body)});
+    toast(editProdId?'Producto actualizado':'Producto creado','ok');
+    cerrar('m-prod'); await cargarBase(); renderProductos();
+  }catch(e){ toast(e.message,'err'); }
+}
+
+async function bajaProducto(pid){
+  if(!confirm('¿Dar de baja este producto?')) return;
+  try{ await api(`/api/productos/${pid}`,{method:'DELETE'}); toast('Producto dado de baja','ok'); await cargarBase(); renderProductos(); }
+  catch(e){ toast(e.message,'err'); }
+}
+async function reactivarProducto(pid){
+  try{ await api(`/api/productos/${pid}/reactivar`,{method:'PATCH'}); toast('Producto reactivado','ok'); await cargarBase(); renderProductos(); }
+  catch(e){ toast(e.message,'err'); }
+}
+
+// ══ USUARIOS ══════════════════════════════════════════════════════════════════
+async function cargarUsuarios(){
+  try{
+    const list=await api('/api/auth/usuarios');
+    const el=g('lista-usuarios');
+    if(!list.length){ el.innerHTML='<div class="empty">No hay usuarios</div>'; return; }
+    el.innerHTML=list.map(u=>`
+      <div class="card">
+        <div class="card-row">
+          <div class="card-info">
+            <h3>${u.username}</h3>
+            <p>${u.rol} &nbsp;·&nbsp; ${u.activo?'<span style="color:var(--ok)">Activo</span>':'<span style="color:var(--err)">Inactivo</span>'}</p>
+          </div>
+          <div class="card-actions" style="flex-direction:row">
+            <button class="btn btn-warn btn-sm" onclick="abrirReset('${u.publicId}')">🔑 Reset contraseña</button>
+          </div>
+        </div>
+      </div>`).join('');
+  }catch(e){ toast(e.message,'err'); }
+}
+
+function abrirUsuario(){
+  resetUsrId=null;
+  g('m-usr-title').textContent='Nuevo usuario';
+  g('u-user').value=''; g('u-pass').value=''; g('u-rol').value='EMPLEADO';
+  g('u-wrap-user').style.display='block';
+  g('u-wrap-rol').style.display='block';
+  g('u-pass-lbl').textContent='Contraseña';
+  g('u-btn').textContent='Crear usuario';
+  abrir('m-usr');
+}
+
+function abrirReset(pid){
+  resetUsrId=pid;
+  g('m-usr-title').textContent='Resetear contraseña';
+  g('u-pass').value='';
+  g('u-wrap-user').style.display='none';
+  g('u-wrap-rol').style.display='none';
+  g('u-pass-lbl').textContent='Nueva contraseña';
+  g('u-btn').textContent='Cambiar contraseña';
+  abrir('m-usr');
+}
+
+async function guardarUsuario(){
+  if(resetUsrId){
+    const np=g('u-pass').value.trim();
+    if(!np) return toast('Ingresá la nueva contraseña','err');
+    try{
+      await api(`/api/auth/usuarios/${resetUsrId}/reset-password`,{method:'PATCH',body:JSON.stringify({nuevaPassword:np})});
+      toast('Contraseña actualizada','ok'); cerrar('m-usr');
+    }catch(e){ toast(e.message,'err'); }
+  } else {
+    const body={username:g('u-user').value.trim(),password:g('u-pass').value.trim(),rol:g('u-rol').value};
+    if(!body.username||!body.password) return toast('Completá todos los campos','err');
+    try{
+      await api('/api/auth/register',{method:'POST',body:JSON.stringify(body)});
+      toast('Usuario creado','ok'); cerrar('m-usr'); cargarUsuarios();
+    }catch(e){ toast(e.message,'err'); }
+  }
+}
+
+// ══ MODALES ═══════════════════════════════════════════════════════════════════
+function abrir(id){ g(id).classList.add('on'); }
+function cerrar(id){ g(id).classList.remove('on'); }
+document.querySelectorAll('.overlay').forEach(o=>
+  o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('on'); })
+);
+
+// ══ TOAST ═════════════════════════════════════════════════════════════════════
+let _tt;
+function toast(msg,type='ok'){
+  const el=g('toast');
+  el.textContent=msg; el.className=`show ${type}`;
+  clearTimeout(_tt); _tt=setTimeout(()=>el.className='',3200);
+}
+
+// ══ HELPERS ═══════════════════════════════════════════════════════════════════
+const g = id => document.getElementById(id);
+
+function soloHora(dt){
+  if(!dt) return '—';
+  const p=dt.split(' ');
+  return p[1]?p[1].substring(0,5):dt;
+}
+
+function tipoLabel(t){
+  return{
+    TORTA_COMUN:'Torta común',TORTA_POR_KILO:'Por kilo',
+    TORTA_POR_KILO_FRUTA:'Por kilo c/fruta',INDIVIDUAL:'Individual',
+    MINI:'Mini',POR_DOCENA:'Por docena'
+  }[t]||t;
+}
+
+function precioLabel(p){
+  if(p.precioFijo)    return `$${p.precioFijo.toFixed(0)}`;
+  if(p.precioPorKilo) return `$${p.precioPorKilo.toFixed(0)}/kg`;
+  if(p.precioDocena)  return `$${p.precioDocena.toFixed(0)}/docena`;
+  return '—';
+}
+
+g('l-p').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+</script>
+</body>
+</html>
