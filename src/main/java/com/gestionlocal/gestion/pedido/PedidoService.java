@@ -1,4 +1,5 @@
 package com.gestionlocal.gestion.pedido;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gestionlocal.gestion.cliente.ClienteEntity;
 import com.gestionlocal.gestion.cliente.ClienteRepository;
@@ -17,7 +18,7 @@ import com.gestionlocal.gestion.producto.ProductoRepository;
 import com.gestionlocal.gestion.producto.TipoProducto;
 import com.gestionlocal.gestion.producto.exception.ProductoInactivoException;
 import com.gestionlocal.gestion.producto.exception.ProductoNotFoundException;
-import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -271,6 +272,40 @@ public class PedidoService
         LocalDateTime fin = fecha.atTime(23, 59, 59);
 
         return pedidoRepository.findByFechaEntregaBetweenOrderByFechaEntregaAsc(inicio, fin)
+                .stream()
+                .map(pedidoMapper::toDto)
+                .toList();
+    }
+
+    // 1. Devuelve pedidos activos (excluye los finalizados/archivados)
+    @Transactional(readOnly = true)
+    public List<PedidoDtoResponse> getPedidosActivos() {
+        List<EstadoPedido> estadosFinales = List.of(
+                EstadoPedido.ENTREGADO,
+                EstadoPedido.CANCELADO,
+                EstadoPedido.NO_RETIRO
+        );
+        return pedidoRepository.findByEstadoPedidoNotInOrderByFechaEntregaAsc(estadosFinales)
+                .stream()
+                .map(pedidoMapper::toDto)
+                .toList();
+    }
+
+    // 2. Devuelve histórico/archivados con rango opcional de fechas
+    @Transactional(readOnly = true)
+    public List<PedidoDtoResponse> getHistoricoPedidos(LocalDateTime desde, LocalDateTime hasta) {
+        List<EstadoPedido> estadosFinales = List.of(
+                EstadoPedido.ENTREGADO,
+                EstadoPedido.CANCELADO,
+                EstadoPedido.NO_RETIRO
+        );
+
+        // Si no mandan fechas, toma por defecto un rango amplio o todo el histórico
+        LocalDateTime inicio = (desde != null) ? desde : LocalDateTime.of(2000, 1, 1, 0, 0);
+        LocalDateTime fin = (hasta != null) ? hasta : LocalDateTime.of(2099, 12, 31, 23, 59);
+
+        return pedidoRepository.findByEstadoPedidoInAndFechaEntregaBetweenOrderByFechaEntregaDesc(
+                        estadosFinales, inicio, fin)
                 .stream()
                 .map(pedidoMapper::toDto)
                 .toList();
