@@ -1,22 +1,12 @@
-server:
-  port: 8080
-
 spring:
   datasource:
-    # Utiliza variable de entorno DB_URL o el fallback local por defecto
-    url: ${DB_URL:jdbc:mysql://localhost:3306/gestion?createDatabaseIfNotExist=true}
-    username: ${DB_USER:root}
-    password: ${DB_PASSWORD:1234}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/gestion}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
-    database-platform: org.hibernate.dialect.MySQLDialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
     open-in-view: false
-
-jwt:
-  # La clave secreta debe venir preferentemente de una variable de entorno
-  secret: ${JWT_SECRET:claveSecretaSuperSeguraParaFirmarTokensJWT12345}
-  # Tiempo de expiración en milisegundos (86400000 ms = 24 horas)
-  expiration: ${JWT_EXPIRATION:86400000}
