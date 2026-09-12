@@ -1,4 +1,6 @@
-package com.gestionlocal.gestion.security;
+package com.gestionlocal.gestion.security; // Mantené el nombre de paquete de tu proyecto
+
+import org.springframework.beans.factory.annotation.Value;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -18,11 +20,11 @@ import java.util.Map;
 @Service
 public class JwtService
 {
-    @Value("${jwt.secret}")
-    private String secretKey;
+    @Value("${jwt.secret:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}")
+    private String secret;
 
     @Value("${jwt.expiration:86400000}")
-    private long jwtExpiration;
+    private long expiration;
 
     public String generateToken(UserDetails userDetails)
     {
