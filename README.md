@@ -226,22 +226,23 @@ En `src/main/resources/application.yaml`:
 
 ```yaml
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/gestion?createDatabaseIfNotExist=true
-    username: tu_usuario
-    password: tu_contraseña
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
     open-in-view: false
 
 jwt:
-  secret: "claveSecretaSuperSeguraParaFirmarTokensJWT12345"
+  secret: ${JWT_SECRET:claveSecretaSuperSeguraParaFirmarTokensJWT12345}
   expiration: 86400000
 ```
 
@@ -277,6 +278,5 @@ A partir de ahí el ADMIN puede crear nuevos usuarios desde el frontend o desde 
 - [x] Gestión de usuarios (crear, listar, resetear contraseña)
 - [x] Manejo global de excepciones con respuestas JSON estructuradas
 - [x] Documentación con Swagger / OpenAPI
-- [x] Frontend integrado (filtros por fecha, estado y cliente)
 - [x] Tests unitarios — ClienteService, ProductoService y PedidoService
 - [ ] Métricas y reportes de ventas

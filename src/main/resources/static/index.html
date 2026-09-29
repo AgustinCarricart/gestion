@@ -873,3 +873,120 @@ g('l-p').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
 </script>
 </body>
 </html>
+<div class="card-actions" style="flex-direction:row">
+  <button class="btn btn-ghost btn-sm" onclick="abrirResetPassword('${u.id}', '${u.username}')">Cambiar clave</button>
+  ${u.activo
+  ?`<button class="btn btn-err btn-sm" onclick="bajaUsuario('${u.id}')">Baja</button>`
+  :`<button class="btn btn-ok btn-sm" onclick="reactivarUsuario('${u.id}')">Reactivar</button>`}
+</div>
+</div>
+</div>`).join('');
+}catch(e){ toast(e.message,'err'); }
+}
+
+function abrirUsuario(){
+resetUsrId = null;
+g('m-usr-title').textContent = 'Nuevo usuario';
+g('u-wrap-user').style.display = 'block';
+g('u-wrap-rol').style.display = 'block';
+g('u-pass-lbl').textContent = 'Contraseña';
+g('u-user').value = '';
+g('u-pass').value = '';
+g('u-rol').value = 'ADMIN';
+g('u-btn').textContent = 'Crear usuario';
+abrir('m-usr');
+}
+
+function abrirResetPassword(id, username){
+resetUsrId = id;
+g('m-usr-title').textContent = `Cambiar contraseña de ${username}`;
+g('u-wrap-user').style.display = 'none';
+g('u-wrap-rol').style.display = 'none';
+g('u-pass-lbl').textContent = 'Nueva contraseña';
+g('u-pass').value = '';
+g('u-btn').textContent = 'Actualizar contraseña';
+abrir('m-usr');
+}
+
+async function guardarUsuario(){
+const pass = g('u-pass').value.trim();
+if(!pass) return toast('La contraseña es obligatoria','err');
+
+try{
+if(resetUsrId){
+await api(`/api/auth/usuarios/${resetUsrId}/password`, {
+method: 'PATCH',
+body: JSON.stringify({ nuevaPassword: pass })
+});
+toast('Contraseña actualizada con éxito','ok');
+} else {
+const username = g('u-user').value.trim();
+const rol = g('u-rol').value;
+if(!username) return toast('El username es obligatorio','err');
+
+await api('/api/auth/usuarios', {
+method: 'POST',
+body: JSON.stringify({ username, password: pass, rol })
+});
+toast('Usuario creado con éxito','ok');
+}
+cerrar('m-usr');
+cargarUsuarios();
+}catch(e){ toast(e.message,'err'); }
+}
+
+async function bajaUsuario(id){
+if(!confirm('¿Dar de baja este usuario?')) return;
+try{
+await api(`/api/auth/usuarios/${id}`, { method: 'DELETE' });
+toast('Usuario dado de baja','ok');
+cargarUsuarios();
+}catch(e){ toast(e.message,'err'); }
+}
+
+async function reactivarUsuario(id){
+try{
+await api(`/api/auth/usuarios/${id}/reactivar`, { method: 'PATCH' });
+toast('Usuario reactivado','ok');
+cargarUsuarios();
+}catch(e){ toast(e.message,'err'); }
+}
+
+// ══ UTILS ═════════════════════════════════════════════════════════════════════
+function g(id){ return document.getElementById(id); }
+function abrir(id){ g(id).classList.add('on'); }
+function cerrar(id){ g(id).classList.remove('on'); }
+
+function toast(msg, type='ok'){
+const t = g('toast');
+t.textContent = msg;
+t.className = `show ${type}`;
+setTimeout(()=> t.className='', 3000);
+}
+
+function soloHora(iso){
+if(!iso) return '';
+const d = new Date(iso);
+return isNaN(d) ? iso.split('T')[1]?.substring(0,5) || '' : d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12:false});
+}
+
+function tipoLabel(t){
+return {
+'TORTA_COMUN': 'Torta común',
+'TORTA_POR_KILO': 'Torta por kilo',
+'TORTA_POR_KILO_FRUTA': 'Torta por kilo con fruta',
+'INDIVIDUAL': 'Individual',
+'MINI': 'Mini',
+'POR_DOCENA': 'Por docena'
+}[t] || t;
+}
+
+function precioLabel(p){
+if(p.precioFijo) return `$${p.precioFijo}`;
+if(p.precioPorKilo) return `$${p.precioPorKilo} / kg`;
+if(p.precioDocena) return `$${p.precioDocena} / doc`;
+return '—';
+}
+</script>
+</body>
+</html>
