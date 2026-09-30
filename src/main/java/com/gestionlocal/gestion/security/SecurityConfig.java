@@ -12,6 +12,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -41,35 +42,43 @@ public class SecurityConfig
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // OBLIGATORIO: Habilitar CORS en Spring Security
+                // Habilitar CORS con la configuración definida abajo
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
+                // Deshabilitar CSRF si estás usando Tokens JWT o APIs REST Stateless
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/index.html", "/static/**", "/css/**", "/js/**", "/favicon.ico").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
+                        // Permitir peticiones OPTIONS (Preflight de CORS) siempre
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // Permitir acceso libre a los endpoints de Login y Auth pública
+                        .requestMatchers("/api/auth/**", "/login").permitAll()
+                        // Cualquier otra petición requiere autenticación
                         .anyRequest().authenticated()
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                );
 
         return http.build();
     }
 
-    // Bean para definir los permisos permitidos para el CORS de la seguridad
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://frontend-gestion.vercel.app", "http://localhost:5500", "http://localhost:8080"));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("*"));
+
+        // Reemplaza con la URL de tu Frontend (ej: http://localhost:4200 si usas Angular)
+        configuration.setAllowedOrigins(List.of("http://localhost:4200", "https://tu-dominio-frontend.com"));
+
+        // Permitir los métodos HTTP estándar
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+
+        // Permitir encabezados comunes incluyendo Authorization y Content-Type
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
+
+        // Permitir el envío de credenciales/cookies si es necesario
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 
     @Bean
     public AuthenticationProvider authenticationProvider()
