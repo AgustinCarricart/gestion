@@ -42,16 +42,32 @@ public class SecurityConfig
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1. Integrar la configuración de CORS
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // 2. Permitir el preflight de CORS sin autenticación
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // 3. Permitir el endpoint de login
+
+                        // Endpoints públicos de autenticación
                         .requestMatchers("/api/auth/**").permitAll()
+
+                        // ── REGLAS DE PEDIDOS ────────────────────────────────────────
+
+                        // 1. Cargar (POST) y Cancelar (DELETE u otro método que uses para cancelar) -> Solo ADMIN
+                        .requestMatchers(HttpMethod.POST, "/api/pedidos/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/pedidos/**").hasAuthority("ADMIN")
+
+                        // 2. Visualizar pedidos (GET) y Avanzar/Actualizar estados (PUT/PATCH) -> Permitido para ADMIN y EMPLEADO
+                        .requestMatchers(HttpMethod.GET, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
+                        .requestMatchers(HttpMethod.PUT, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
+                        .requestMatchers(HttpMethod.PATCH, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
+
+                        // ─────────────────────────────────────────────────────────────
+
+                        // Cualquier otra petición requiere autenticación general
                         .anyRequest().authenticated()
-                );
+                )
+        // .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        ;
 
         return http.build();
     }
@@ -59,16 +75,10 @@ public class SecurityConfig
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
-        // Agrega las URLs permitidas (Vercel, localhost para desarrollo, etc.)
         configuration.setAllowedOrigins(List.of(
                 "https://frontend-gestion-dmlpw9rnn-torta-olivia.vercel.app",
                 "http://localhost:4200"
         ));
-
-        // O si quieres permitir cualquier subdominio/despliegue dinámico de Vercel:
-        // configuration.setAllowedOriginPatterns(List.of("https://*.vercel.app", "http://localhost:*"));
-
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin"));
         configuration.setExposedHeaders(List.of("Authorization"));
