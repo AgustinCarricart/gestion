@@ -1,7 +1,7 @@
 package com.gestionlocal.gestion.pedido;
 
 
-import com.gestionlocal.gestion.cliente.ClienteEntity;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,16 +20,19 @@ import java.util.UUID;
 @Table(name = "pedidos")
 public class PedidoEntity
 {
-   @Id
-   @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-   @Column(name = "public_id",nullable = false)
+    @Column(name = "public_id", nullable = false)
     private UUID publicId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cliente_id", nullable = false)
-    private ClienteEntity cliente;
+    // Nuevos campos de texto plano directos en el pedido (en lugar de la relación con ClienteEntity)
+    @Column(name = "nombre_cliente", nullable = false)
+    private String nombreCliente;
+
+    @Column(name = "telefono_cliente")
+    private String telefonoCliente;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetallePedidosEntity> detalles;
@@ -58,8 +61,9 @@ public class PedidoEntity
             this.publicId = UUID.randomUUID();
         }
         this.fechaCreacion = LocalDateTime.now();
-        this.estadoPedido = EstadoPedido.PENDIENTE;
+        if (this.estadoPedido == null)
+        {
+            this.estadoPedido = EstadoPedido.PENDIENTE;
+        }
     }
-
-
 }

@@ -17,16 +17,19 @@ import java.util.UUID;
 public class PedidoDtoResponse
 {
     private UUID publicId;
-    private UUID clientePublicId;
-    private String clienteNombre;
-    private String clienteApellido;
+
+    // Nuevos campos directos del cliente en el pedido
+    private String nombreCliente;
+    private String telefonoCliente;
+
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime fechaCreacion;
+
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime fechaEntrega;
+
     private EstadoPedido estado;
     private Double total;
     private String observaciones;
     private List<DetallePedidoResponseDto> detalles;
-
 }

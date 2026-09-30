@@ -1,13 +1,7 @@
 package com.gestionlocal.gestion.config;
 
-import com.gestionlocal.gestion.cliente.exception.ClienteAlreadyExists;
-import com.gestionlocal.gestion.cliente.exception.ClienteConPedidosActivosException;
-import com.gestionlocal.gestion.cliente.exception.ClienteInactivoException;
-import com.gestionlocal.gestion.cliente.exception.ClienteNotFoundException;
-import com.gestionlocal.gestion.pedido.exception.CantidadInvalidaException;
-import com.gestionlocal.gestion.pedido.exception.EstadoTransicionInvalidaException;
-import com.gestionlocal.gestion.pedido.exception.PedidoNotFoundException;
-import com.gestionlocal.gestion.pedido.exception.PesoInvalidoException;
+
+import com.gestionlocal.gestion.pedido.exception.*;
 import com.gestionlocal.gestion.producto.exception.ProductoAlreadyExists;
 import com.gestionlocal.gestion.producto.exception.ProductoConPedidosActivosException;
 import com.gestionlocal.gestion.producto.exception.ProductoInactivoException;
@@ -28,7 +22,7 @@ public class GlobalExceptionHandler
 {
     // --- 404 Not Found ---
 
-    @ExceptionHandler({ClienteNotFoundException.class, ProductoNotFoundException.class, PedidoNotFoundException.class})
+    @ExceptionHandler({ ProductoNotFoundException.class, PedidoNotFoundException.class})
     public ResponseEntity<ErrorResponse> handleNotFound(RuntimeException ex)
     {
         return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
@@ -37,7 +31,7 @@ public class GlobalExceptionHandler
     // --- 409 Conflict ---
 
 
-    @ExceptionHandler({ClienteAlreadyExists.class, ProductoAlreadyExists.class, UsernameAlreadyExistsException.class})
+    @ExceptionHandler({ProductoAlreadyExists.class, UsernameAlreadyExistsException.class})
     public ResponseEntity<ErrorResponse> handleAlreadyExists(RuntimeException ex)
     {
         return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
@@ -46,15 +40,16 @@ public class GlobalExceptionHandler
     // --- 400 Bad Request ---
 
     @ExceptionHandler({
-            ClienteInactivoException.class,
-            ClienteConPedidosActivosException.class,
+
             ProductoInactivoException.class,
             EstadoTransicionInvalidaException.class,
             CantidadInvalidaException.class,
             PesoInvalidoException.class,
             IllegalArgumentException.class,
-            ProductoConPedidosActivosException.class
+            ProductoConPedidosActivosException.class,
+            FechaInvalidaException.class,
     })
+
     public ResponseEntity<ErrorResponse> handleBadRequest(RuntimeException ex)
     {
         return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());

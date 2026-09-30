@@ -1,9 +1,7 @@
 package com.gestionlocal.gestion.pedido.dto;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,10 +15,13 @@ import java.util.UUID;
 @NoArgsConstructor
 public class PedidoDtoRequest
 {
-    @NotNull(message = "El cliente es obligatorio")
-    private UUID clientePublicId;
+    @NotBlank(message = "El nombre del cliente es obligatorio")
+    private String nombreCliente;
+
+    private String telefonoCliente; // Opcional o con @NotBlank si prefieres que sea obligatorio
 
     @NotNull(message = "La fecha de entrega es obligatoria")
+    @FutureOrPresent(message = "La fecha de entrega debe ser a partir del día de hoy")
     private LocalDateTime fechaEntrega;
 
     @NotEmpty(message = "El pedido debe tener al menos un ítem")
@@ -28,5 +29,4 @@ public class PedidoDtoRequest
     private List<DetallePedidoRequestDto> detalles;
 
     private String observaciones;
-    
 }

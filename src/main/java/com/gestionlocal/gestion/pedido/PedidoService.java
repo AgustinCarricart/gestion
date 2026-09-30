@@ -1,10 +1,7 @@
 package com.gestionlocal.gestion.pedido;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gestionlocal.gestion.cliente.ClienteEntity;
-import com.gestionlocal.gestion.cliente.ClienteRepository;
-import com.gestionlocal.gestion.cliente.exception.ClienteInactivoException;
-import com.gestionlocal.gestion.cliente.exception.ClienteNotFoundException;
+
 import com.gestionlocal.gestion.pedido.dto.DetallePedidoRequestDto;
 import com.gestionlocal.gestion.pedido.dto.PedidoDtoRequest;
 import com.gestionlocal.gestion.pedido.dto.PedidoDtoResponse;
@@ -30,13 +27,11 @@ import java.util.UUID;
 public class PedidoService
 {
     private final PedidoRepository pedidoRepository;
-    private final ClienteRepository clienteRepository;
     private final ProductoRepository productoRepository;
     private final PedidoMapper pedidoMapper;
 
-    public PedidoService(PedidoRepository pedidoRepository, ClienteRepository clienteRepository, ProductoRepository productoRepository, PedidoMapper pedidoMapper) {
+    public PedidoService(PedidoRepository pedidoRepository, ProductoRepository productoRepository, PedidoMapper pedidoMapper) {
         this.pedidoRepository = pedidoRepository;
-        this.clienteRepository = clienteRepository;
         this.productoRepository = productoRepository;
         this.pedidoMapper = pedidoMapper;
     }
@@ -52,24 +47,13 @@ public class PedidoService
         return pedidos;
     }
 
-    @Transactional
-    public List<PedidoDtoResponse> getPedidosByCliente(UUID clientePublicId)
-    {
-        List<PedidoDtoResponse> pedidos = pedidoRepository.getByCliente_PublicId(clientePublicId)
-                .stream()
-                .map(pedidoMapper :: toDto)
-                .toList();
-
-        return pedidos;
-    }
 
     @Transactional
-    public List<PedidoDtoResponse> getPedidosByNombreCliente(String nombre, String apellido)
+    public List<PedidoDtoResponse> getPedidosByNombreCliente(String nombre)
     {
         return pedidoRepository.findAll()
                 .stream()
-                .filter(p -> p.getCliente().getNombre().equalsIgnoreCase(nombre) &&
-                        (apellido == null || p.getCliente().getApellido().equalsIgnoreCase(apellido)))
+                .filter(p -> p.getNombreCliente() != null && p.getNombreCliente().equalsIgnoreCase(nombre))
                 .map(pedidoMapper::toDto)
                 .toList();
     }
@@ -83,7 +67,6 @@ public class PedidoService
                 .toList();
 
         return pedidoDtoResponses;
-
     }
 
     @Transactional
@@ -97,16 +80,13 @@ public class PedidoService
     @Transactional
     public PedidoDtoResponse createPedido(PedidoDtoRequest dto)
     {
-        ClienteEntity cliente = clienteRepository.findByPublicId(dto.getClientePublicId())
-                .orElseThrow(() -> new ClienteNotFoundException("No se encontró el cliente"));
-
-        if (!cliente.isActivo())
-        {
-            throw new ClienteInactivoException("El cliente está inactivo");
+        // Validación de fecha para que sea a partir de hoy (si no se validó ya en el DTO)
+        if (dto.getFechaEntrega() != null && dto.getFechaEntrega().toLocalDate().isBefore(LocalDate.now())) {
         }
 
         PedidoEntity pedido = new PedidoEntity();
-        pedido.setCliente(cliente);
+        pedido.setNombreCliente(dto.getNombreCliente());
+        pedido.setTelefonoCliente(dto.getTelefonoCliente());
         pedido.setFechaEntrega(dto.getFechaEntrega());
         pedido.setObservaciones(dto.getObservaciones());
 
@@ -133,7 +113,6 @@ public class PedidoService
 
         Double precioUnitario = calcularSubtotalDetalle(producto, dto);
 
-        // Override manual si se envió
         if (dto.getPrecioUnitarioOverride() != null)
         {
             precioUnitario = dto.getPrecioUnitarioOverride();
@@ -152,12 +131,10 @@ public class PedidoService
     }
 
     private Double calcularSubtotalDetalle(ProductoEntity producto, DetallePedidoRequestDto dto) {
-        // Validar primero que el tipo de producto no sea null para evitar NullPointerException
         if (producto.getTipoProducto() == null) {
             throw new IllegalArgumentException("El producto debe tener un tipo definido");
         }
 
-        // Usamos el switch como expresión que devuelve el valor directamente
         return switch (producto.getTipoProducto()) {
 
             case TORTA_COMUN, MINI, INDIVIDUAL ->
@@ -179,7 +156,7 @@ public class PedidoService
         };
     }
 
-    @Transactional ///Borrado logico
+    @Transactional
     public PedidoDtoResponse cancelarPedido(UUID publicId)
     {
         PedidoEntity pedido = pedidoRepository.findByPublicId(publicId)
@@ -250,7 +227,6 @@ public class PedidoService
         return pedidoMapper.toDto(pedido);
     }
 
-    // Para el empleado - solo ve PENDIENTE y LISTO del día
     @Transactional
     public List<PedidoDtoResponse> getPedidosCocinaHoy()
     {
@@ -264,7 +240,6 @@ public class PedidoService
                 .toList();
     }
 
-    // Para el admin - busca pedidos de cualquier estado por día
     @Transactional
     public List<PedidoDtoResponse> getPedidosByFecha(LocalDate fecha)
     {
@@ -277,7 +252,6 @@ public class PedidoService
                 .toList();
     }
 
-    // 1. Devuelve pedidos activos (excluye los finalizados/archivados)
     @Transactional(readOnly = true)
     public List<PedidoDtoResponse> getPedidosActivos() {
         List<EstadoPedido> estadosFinales = List.of(
@@ -291,7 +265,6 @@ public class PedidoService
                 .toList();
     }
 
-    // 2. Devuelve histórico/archivados con rango opcional de fechas
     @Transactional(readOnly = true)
     public List<PedidoDtoResponse> getHistoricoPedidos(LocalDateTime desde, LocalDateTime hasta) {
         List<EstadoPedido> estadosFinales = List.of(
@@ -300,7 +273,6 @@ public class PedidoService
                 EstadoPedido.NO_RETIRO
         );
 
-        // Si no mandan fechas, toma por defecto un rango amplio o todo el histórico
         LocalDateTime inicio = (desde != null) ? desde : LocalDateTime.of(2000, 1, 1, 0, 0);
         LocalDateTime fin = (hasta != null) ? hasta : LocalDateTime.of(2099, 12, 31, 23, 59);
 
@@ -310,5 +282,4 @@ public class PedidoService
                 .map(pedidoMapper::toDto)
                 .toList();
     }
-
 }

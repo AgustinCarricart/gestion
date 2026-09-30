@@ -2,6 +2,7 @@ package com.gestionlocal.gestion.pedido;
 
 import com.gestionlocal.gestion.pedido.dto.PedidoDtoRequest;
 import com.gestionlocal.gestion.pedido.dto.PedidoDtoResponse;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -41,10 +42,6 @@ public class PedidoController
         return ResponseEntity.ok(pedidoService.getPedidoByPublicId(publicId));
     }
 
-    @GetMapping("/cliente/{clientePublicId}")
-    public ResponseEntity<List<PedidoDtoResponse>> getPedidosByCliente(@PathVariable UUID clientePublicId) {
-        return ResponseEntity.ok(pedidoService.getPedidosByCliente(clientePublicId));
-    }
 
     @GetMapping("/estado/{estado}")
     public ResponseEntity<List<PedidoDtoResponse>> getPedidosByEstado(@PathVariable EstadoPedido estado) {
@@ -77,11 +74,10 @@ public class PedidoController
         return ResponseEntity.ok(pedidoService.marcarNoRetiro(publicId));
     }
 
-    @GetMapping("/buscar")
-    public ResponseEntity<List<PedidoDtoResponse>> getPedidosByNombreCliente(
-            @RequestParam String nombre,
-            @RequestParam(required = false) String apellido) {
-        return ResponseEntity.ok(pedidoService.getPedidosByNombreCliente(nombre, apellido));
+    @GetMapping("/buscar-por-nombre")
+    public ResponseEntity<List<PedidoDtoResponse>> getPedidosByNombre(@RequestParam String nombre) {
+        List<PedidoDtoResponse> pedidos = pedidoService.getPedidosByNombreCliente(nombre);
+        return ResponseEntity.ok(pedidos);
     }
 
     @GetMapping("/cocina/hoy")
