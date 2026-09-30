@@ -11,6 +11,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "https://frontend-gestion-dmlpw9rnn-torta-olivia.vercel.app")
 public class AuthController
 {
     private final AuthService authService;

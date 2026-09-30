@@ -42,16 +42,14 @@ public class SecurityConfig
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Habilitar CORS con la configuración definida abajo
+                // 1. Integrar la configuración de CORS
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                // Deshabilitar CSRF si estás usando Tokens JWT o APIs REST Stateless
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // Permitir peticiones OPTIONS (Preflight de CORS) siempre
+                        // 2. Permitir el preflight de CORS sin autenticación
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        // Permitir acceso libre a los endpoints de Login y Auth pública
-                        .requestMatchers("/api/auth/**", "/login").permitAll()
-                        // Cualquier otra petición requiere autenticación
+                        // 3. Permitir el endpoint de login
+                        .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 );
 
@@ -62,23 +60,24 @@ public class SecurityConfig
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Reemplaza con la URL de tu Frontend (ej: http://localhost:4200 si usas Angular)
-        configuration.setAllowedOrigins(List.of("http://localhost:4200", "https://tu-dominio-frontend.com"));
+        // Agrega las URLs permitidas (Vercel, localhost para desarrollo, etc.)
+        configuration.setAllowedOrigins(List.of(
+                "https://frontend-gestion-dmlpw9rnn-torta-olivia.vercel.app",
+                "http://localhost:4200"
+        ));
 
-        // Permitir los métodos HTTP estándar
+        // O si quieres permitir cualquier subdominio/despliegue dinámico de Vercel:
+        // configuration.setAllowedOriginPatterns(List.of("https://*.vercel.app", "http://localhost:*"));
+
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-
-        // Permitir encabezados comunes incluyendo Authorization y Content-Type
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
-
-        // Permitir el envío de credenciales/cookies si es necesario
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin"));
+        configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-
 
     @Bean
     public AuthenticationProvider authenticationProvider()
