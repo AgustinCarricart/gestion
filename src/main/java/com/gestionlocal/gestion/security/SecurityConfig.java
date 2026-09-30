@@ -46,28 +46,23 @@ public class SecurityConfig
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-
-                        // Endpoints públicos de autenticación
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // ── REGLAS DE PEDIDOS ────────────────────────────────────────
+                        // Permitir consultas (GET) a clientes, productos y pedidos para ADMIN y EMPLEADO
+                        .requestMatchers(HttpMethod.GET, "/api/clientes/**").hasAnyAuthority("ADMIN", "EMPLEADO")
+                        .requestMatchers(HttpMethod.GET, "/api/productos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
+                        .requestMatchers(HttpMethod.GET, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
 
-                        // 1. Cargar (POST) y Cancelar (DELETE u otro método que uses para cancelar) -> Solo ADMIN
+                        // Cargar o cancelar pedidos solo ADMIN
                         .requestMatchers(HttpMethod.POST, "/api/pedidos/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/pedidos/**").hasAuthority("ADMIN")
 
-                        // 2. Visualizar pedidos (GET) y Avanzar/Actualizar estados (PUT/PATCH) -> Permitido para ADMIN y EMPLEADO
-                        .requestMatchers(HttpMethod.GET, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
+                        // Avanzar estados (PUT/PATCH) ADMIN y EMPLEADO
                         .requestMatchers(HttpMethod.PUT, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
                         .requestMatchers(HttpMethod.PATCH, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
 
-                        // ─────────────────────────────────────────────────────────────
-
-                        // Cualquier otra petición requiere autenticación general
                         .anyRequest().authenticated()
-                )
-        // .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-        ;
+                );
 
         return http.build();
     }
