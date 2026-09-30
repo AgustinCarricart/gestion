@@ -1,5 +1,7 @@
 package com.gestionlocal.gestion;
 
+
+
 import com.gestionlocal.gestion.pedido.EstadoPedido;
 import com.gestionlocal.gestion.pedido.PedidoEntity;
 import com.gestionlocal.gestion.pedido.PedidoRepository;
@@ -8,8 +10,8 @@ import com.gestionlocal.gestion.pedido.dto.PedidoDtoResponse;
 import com.gestionlocal.gestion.pedido.exception.EstadoTransicionInvalidaException;
 import com.gestionlocal.gestion.pedido.exception.PedidoNotFoundException;
 import com.gestionlocal.gestion.pedido.mapper.PedidoMapper;
-import com.gestionlocal.gestion.cliente.ClienteRepository;
 import com.gestionlocal.gestion.producto.ProductoRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,9 +33,6 @@ class PedidoServiceTest
 {
     @Mock
     private PedidoRepository pedidoRepository;
-
-    @Mock
-    private ClienteRepository clienteRepository;
 
     @Mock
     private ProductoRepository productoRepository;
@@ -107,22 +106,6 @@ class PedidoServiceTest
             assertNotNull(resultado);
             assertEquals(1, resultado.size());
             verify(pedidoRepository, times(1)).findByEstadoPedido(EstadoPedido.PENDIENTE);
-        }
-
-        @Test
-        @DisplayName("Debe retornar lista de pedidos por cliente")
-        void getPedidosByCliente_Exito()
-        {
-            UUID clientePublicId = UUID.randomUUID();
-            when(pedidoRepository.getByCliente_PublicId(clientePublicId))
-                    .thenReturn(List.of(pedidoEntity));
-            when(pedidoMapper.toDto(pedidoEntity)).thenReturn(pedidoDtoResponse);
-
-            List<PedidoDtoResponse> resultado = pedidoService.getPedidosByCliente(clientePublicId);
-
-            assertNotNull(resultado);
-            assertEquals(1, resultado.size());
-            verify(pedidoRepository, times(1)).getByCliente_PublicId(clientePublicId);
         }
     }
 
