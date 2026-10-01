@@ -51,15 +51,15 @@ public class SecurityConfig
 
                         // Consultas (GET): ADMIN y EMPLEADO
                         .requestMatchers(HttpMethod.GET, "/api/clientes/**", "/api/productos/**", "/api/pedidos/**")
-                        .hasAnyRole("ADMIN", "EMPLEADO")
+                        .hasAnyAuthority("ADMIN", "EMPLEADO")
 
                         // Cargar o cancelar pedidos: solo ADMIN
-                        .requestMatchers(HttpMethod.POST, "/api/pedidos/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/pedidos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/pedidos/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/pedidos/**").hasAuthority("ADMIN")
 
                         // Avanzar estados: ADMIN y EMPLEADO
-                        .requestMatchers(HttpMethod.PUT, "/api/pedidos/**").hasAnyRole("ADMIN", "EMPLEADO")
-                        .requestMatchers(HttpMethod.PATCH, "/api/pedidos/**").hasAnyRole("ADMIN", "EMPLEADO")
+                        .requestMatchers(HttpMethod.PUT, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
+                        .requestMatchers(HttpMethod.PATCH, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
 
                         .anyRequest().authenticated()
                 )
@@ -68,7 +68,6 @@ public class SecurityConfig
 
         return http.build();
     }
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
