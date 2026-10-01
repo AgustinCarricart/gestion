@@ -88,6 +88,7 @@ public class SecurityConfig
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(
+                "https://frontend-gestion.vercel.app",
                 "https://frontend-gestion-dmlpw9rnn-torta-olivia.vercel.app",
                 "http://localhost:4200"
         ));
@@ -95,6 +96,7 @@ public class SecurityConfig
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin"));
         configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);
+
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
