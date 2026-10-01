@@ -61,6 +61,10 @@ public class SecurityConfig
                         .requestMatchers(HttpMethod.PUT, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
                         .requestMatchers(HttpMethod.PATCH, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
 
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
