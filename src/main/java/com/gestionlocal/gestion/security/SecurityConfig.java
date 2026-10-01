@@ -44,25 +44,27 @@ public class SecurityConfig
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // Permitir consultas (GET) a clientes, productos y pedidos para ADMIN y EMPLEADO
-                        .requestMatchers(HttpMethod.GET, "/api/clientes/**").hasAnyAuthority("ADMIN", "EMPLEADO")
-                        .requestMatchers(HttpMethod.GET, "/api/productos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
-                        .requestMatchers(HttpMethod.GET, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
+                        // Consultas (GET): ADMIN y EMPLEADO
+                        .requestMatchers(HttpMethod.GET, "/api/clientes/**", "/api/productos/**", "/api/pedidos/**")
+                        .hasAnyRole("ADMIN", "EMPLEADO")
 
-                        // Cargar o cancelar pedidos solo ADMIN
-                        .requestMatchers(HttpMethod.POST, "/api/pedidos/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/pedidos/**").hasAuthority("ADMIN")
+                        // Cargar o cancelar pedidos: solo ADMIN
+                        .requestMatchers(HttpMethod.POST, "/api/pedidos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/pedidos/**").hasRole("ADMIN")
 
-                        // Avanzar estados (PUT/PATCH) ADMIN y EMPLEADO
-                        .requestMatchers(HttpMethod.PUT, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
-                        .requestMatchers(HttpMethod.PATCH, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
+                        // Avanzar estados: ADMIN y EMPLEADO
+                        .requestMatchers(HttpMethod.PUT, "/api/pedidos/**").hasAnyRole("ADMIN", "EMPLEADO")
+                        .requestMatchers(HttpMethod.PATCH, "/api/pedidos/**").hasAnyRole("ADMIN", "EMPLEADO")
 
                         .anyRequest().authenticated()
-                );
+                )
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
