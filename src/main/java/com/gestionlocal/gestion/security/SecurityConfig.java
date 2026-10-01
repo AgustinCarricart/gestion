@@ -47,11 +47,20 @@ public class SecurityConfig
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/error").permitAll()
 
-                        // Consultas (GET): ADMIN y EMPLEADO
-                        .requestMatchers(HttpMethod.GET, "/api/clientes/**", "/api/productos/**", "/api/pedidos/**")
-                        .hasAnyAuthority("ADMIN", "EMPLEADO")
+                        // Público: solo el login
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+
+                        // Gestión de usuarios: solo ADMIN
+                        .requestMatchers("/api/auth/**").hasAuthority("ADMIN")
+
+                        // Productos: lectura ADMIN y EMPLEADO, escritura solo ADMIN
+                        .requestMatchers(HttpMethod.GET, "/api/productos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
+                        .requestMatchers("/api/productos/**").hasAuthority("ADMIN")
+
+                        // Pedidos: consultar ADMIN y EMPLEADO
+                        .requestMatchers(HttpMethod.GET, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
 
                         // Cargar o cancelar pedidos: solo ADMIN
                         .requestMatchers(HttpMethod.POST, "/api/pedidos/**").hasAuthority("ADMIN")
@@ -60,10 +69,6 @@ public class SecurityConfig
                         // Avanzar estados: ADMIN y EMPLEADO
                         .requestMatchers(HttpMethod.PUT, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
                         .requestMatchers(HttpMethod.PATCH, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
-
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/error").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
 
                         .anyRequest().authenticated()
                 )
