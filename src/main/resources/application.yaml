@@ -17,3 +17,6 @@ spring:
 jwt:
   secret: ${JWT_SECRET:claveSecretaSuperSeguraParaFirmarTokensJWT12345}
   expiration: 86400000
+logging:
+  level:
+    org.springframework.security: DEBUG
