@@ -21,6 +21,12 @@ public class AuthController
         this.authService = authService;
     }
 
+    @GetMapping("/health")
+    public ResponseEntity<String> health()
+    {
+        return ResponseEntity.ok("OK");
+    }
+
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest request)
     {

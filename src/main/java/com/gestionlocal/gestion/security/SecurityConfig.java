@@ -49,8 +49,10 @@ public class SecurityConfig
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/error").permitAll()
 
-                        // Público: solo el login
+                        // Público: login y health check para keep-alive
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/auth/health").permitAll()
+                        .requestMatchers("/api/health").permitAll()
 
                         // Gestión de usuarios: solo ADMIN
                         .requestMatchers("/api/auth/**").hasAuthority("ADMIN")
