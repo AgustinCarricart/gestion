@@ -49,16 +49,17 @@ public class SecurityConfig
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/error").permitAll()
 
-                        // Público: login y health check para keep-alive
+                        // Público: login, health check y seed de catálogo
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/health").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/auth/seed-catalogo").permitAll()
                         .requestMatchers("/api/health").permitAll()
 
                         // Gestión de usuarios: solo ADMIN
                         .requestMatchers("/api/auth/**").hasAuthority("ADMIN")
 
-                        // Productos: lectura ADMIN y EMPLEADO, escritura solo ADMIN
-                        .requestMatchers(HttpMethod.GET, "/api/productos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
+                        // Productos: lectura pública (catálogo visible), escritura solo ADMIN
+                        .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
                         .requestMatchers("/api/productos/**").hasAuthority("ADMIN")
 
                         // Pedidos: consultar ADMIN y EMPLEADO
