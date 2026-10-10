@@ -62,12 +62,18 @@ public class SecurityConfig
                         .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
                         .requestMatchers("/api/productos/**").hasAuthority("ADMIN")
 
+                        // Reportes de ingresos y ventas: SOLO ADMIN
+                        .requestMatchers(HttpMethod.GET, "/api/pedidos/reportes/**").hasAuthority("ADMIN")
+
                         // Pedidos: consultar ADMIN y EMPLEADO
                         .requestMatchers(HttpMethod.GET, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
 
                         // Cargar o cancelar pedidos: solo ADMIN
                         .requestMatchers(HttpMethod.POST, "/api/pedidos/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/pedidos/**").hasAuthority("ADMIN")
+
+                        // Modificar seña de pedido: solo ADMIN
+                        .requestMatchers(HttpMethod.PATCH, "/api/pedidos/*/sena").hasAuthority("ADMIN")
 
                         // Avanzar estados: ADMIN y EMPLEADO
                         .requestMatchers(HttpMethod.PUT, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")

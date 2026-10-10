@@ -30,6 +30,8 @@ public class PedidoDtoResponse
 
     private EstadoPedido estado;
     private Double total;
+    private Double sena;
+    private Double saldoPendiente;
     private String observaciones;
     private List<DetallePedidoResponseDto> detalles;
 }

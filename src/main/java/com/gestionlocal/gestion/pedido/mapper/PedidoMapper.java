@@ -26,6 +26,7 @@ public interface PedidoMapper
     @Mapping(target = "nombreCliente",   source = "nombreCliente")
     @Mapping(target = "telefonoCliente", source = "telefonoCliente")
     @Mapping(target = "detalles",        source = "detalles")
+    @Mapping(target = "saldoPendiente",  expression = "java((pedidoEntity.getTotal() != null ? pedidoEntity.getTotal() : 0.0) - (pedidoEntity.getSena() != null ? pedidoEntity.getSena() : 0.0))")
     PedidoDtoResponse toDto(PedidoEntity pedidoEntity);
 
     @Mapping(target = "productoPublicId", source = "producto.publicId")

@@ -28,5 +28,7 @@ public class PedidoDtoRequest
     @Valid
     private List<DetallePedidoRequestDto> detalles;
 
+    private Double sena;
+
     private String observaciones;
 }

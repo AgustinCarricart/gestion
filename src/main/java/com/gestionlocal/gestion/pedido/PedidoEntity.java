@@ -50,6 +50,9 @@ public class PedidoEntity
     @Column(name = "total", nullable = false)
     private Double total;
 
+    @Column(name = "sena")
+    private Double sena;
+
     @Column(name = "observaciones")
     private String observaciones;
 
@@ -64,6 +67,10 @@ public class PedidoEntity
         if (this.estadoPedido == null)
         {
             this.estadoPedido = EstadoPedido.PENDIENTE;
+        }
+        if (this.sena == null)
+        {
+            this.sena = 0.0;
         }
     }
 }

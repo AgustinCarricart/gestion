@@ -90,4 +90,22 @@ public class PedidoController
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
         return ResponseEntity.ok(pedidoService.getPedidosByFecha(fecha));
     }
+
+    @GetMapping("/reportes/mensual")
+    public ResponseEntity<com.gestionlocal.gestion.pedido.dto.ReporteMensualResponseDto> getReporteMensual(
+            @RequestParam(required = false) Integer anio,
+            @RequestParam(required = false) Integer mes) {
+        LocalDate hoy = LocalDate.now();
+        int a = (anio != null) ? anio : hoy.getYear();
+        int m = (mes != null) ? mes : hoy.getMonthValue();
+        return ResponseEntity.ok(pedidoService.getReporteMensual(a, m));
+    }
+
+    @PatchMapping("/{publicId}/sena")
+    public ResponseEntity<PedidoDtoResponse> actualizarSena(
+            @PathVariable UUID publicId,
+            @RequestBody java.util.Map<String, Double> body) {
+        Double sena = body != null ? body.get("sena") : 0.0;
+        return ResponseEntity.ok(pedidoService.actualizarSena(publicId, sena));
+    }
 }

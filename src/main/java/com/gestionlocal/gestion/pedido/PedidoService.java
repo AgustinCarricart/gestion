@@ -16,11 +16,17 @@ import com.gestionlocal.gestion.producto.TipoProducto;
 import com.gestionlocal.gestion.producto.exception.ProductoInactivoException;
 import com.gestionlocal.gestion.producto.exception.ProductoNotFoundException;
 
+import com.gestionlocal.gestion.pedido.dto.ReporteMensualResponseDto;
+import com.gestionlocal.gestion.pedido.dto.ReporteProductoItemDto;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -89,6 +95,7 @@ public class PedidoService
         pedido.setTelefonoCliente(dto.getTelefonoCliente());
         pedido.setFechaEntrega(dto.getFechaEntrega());
         pedido.setObservaciones(dto.getObservaciones());
+        pedido.setSena(dto.getSena() != null ? Math.max(0.0, dto.getSena()) : 0.0);
 
         List<DetallePedidosEntity> detalles = dto.getDetalles().stream()
                 .map(d -> buildDetalle(d, pedido))
@@ -281,5 +288,90 @@ public class PedidoService
                 .stream()
                 .map(pedidoMapper::toDto)
                 .toList();
+    }
+
+    @Transactional
+    public PedidoDtoResponse actualizarSena(UUID publicId, Double nuevaSena) {
+        PedidoEntity pedido = pedidoRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new PedidoNotFoundException("No se encontró pedido con ese id"));
+        pedido.setSena(nuevaSena != null ? Math.max(0.0, nuevaSena) : 0.0);
+        return pedidoMapper.toDto(pedido);
+    }
+
+    @Transactional(readOnly = true)
+    public ReporteMensualResponseDto getReporteMensual(int anio, int mes) {
+        YearMonth ym = YearMonth.of(anio, mes);
+        LocalDateTime inicio = ym.atDay(1).atStartOfDay();
+        LocalDateTime fin = ym.atEndOfMonth().atTime(23, 59, 59);
+
+        List<PedidoEntity> pedidos = pedidoRepository.findByFechaEntregaBetweenOrderByFechaEntregaAsc(inicio, fin)
+                .stream()
+                .filter(p -> p.getEstadoPedido() != EstadoPedido.CANCELADO)
+                .toList();
+
+        double totalFacturado = 0.0;
+        double totalSenas = 0.0;
+        int entregados = 0;
+        int pendientesOListos = 0;
+
+        Map<String, ReporteProductoItemDto> prodMap = new HashMap<>();
+
+        for (PedidoEntity p : pedidos) {
+            double tot = p.getTotal() != null ? p.getTotal() : 0.0;
+            double sen = p.getSena() != null ? p.getSena() : 0.0;
+            totalFacturado += tot;
+            totalSenas += sen;
+
+            if (p.getEstadoPedido() == EstadoPedido.ENTREGADO) {
+                entregados++;
+            } else if (p.getEstadoPedido() == EstadoPedido.PENDIENTE || p.getEstadoPedido() == EstadoPedido.LISTO) {
+                pendientesOListos++;
+            }
+
+            if (p.getDetalles() != null) {
+                for (DetallePedidosEntity d : p.getDetalles()) {
+                    String nombre = (d.getProducto() != null && d.getProducto().getNombreProducto() != null)
+                            ? d.getProducto().getNombreProducto() : "Otro";
+                    int cant = d.getCantidad() != null ? d.getCantidad() : 1;
+                    double sub = d.getSubtotal() != null ? d.getSubtotal() : 0.0;
+                    double kg = d.getPesoKg() != null ? d.getPesoKg() : 0.0;
+
+                    ReporteProductoItemDto item = prodMap.computeIfAbsent(nombre, k ->
+                            ReporteProductoItemDto.builder()
+                                    .nombre(k)
+                                    .unidades(0)
+                                    .pesoKgTotal(0.0)
+                                    .totalVenta(0.0)
+                                    .porcentajeVentas(0.0)
+                                    .build()
+                    );
+                    item.setUnidades(item.getUnidades() + cant);
+                    item.setPesoKgTotal(item.getPesoKgTotal() + kg);
+                    item.setTotalVenta(item.getTotalVenta() + sub);
+                }
+            }
+        }
+
+        final double finalTotal = totalFacturado;
+        List<ReporteProductoItemDto> productos = prodMap.values().stream()
+                .peek(item -> {
+                    if (finalTotal > 0) {
+                        item.setPorcentajeVentas(Math.round((item.getTotalVenta() / finalTotal * 100.0) * 10.0) / 10.0);
+                    }
+                })
+                .sorted((a, b) -> Double.compare(b.getTotalVenta(), a.getTotalVenta()))
+                .toList();
+
+        return ReporteMensualResponseDto.builder()
+                .anio(anio)
+                .mes(mes)
+                .totalFacturado(totalFacturado)
+                .totalSenas(totalSenas)
+                .totalSaldoPendiente(Math.max(0.0, totalFacturado - totalSenas))
+                .totalPedidos(pedidos.size())
+                .pedidosEntregados(entregados)
+                .pedidosPendientesOListos(pendientesOListos)
+                .productos(productos)
+                .build();
     }
 }
