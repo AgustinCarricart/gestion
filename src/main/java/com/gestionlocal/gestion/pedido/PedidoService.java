@@ -19,6 +19,7 @@ import com.gestionlocal.gestion.producto.exception.ProductoNotFoundException;
 import com.gestionlocal.gestion.pedido.dto.ReporteMensualResponseDto;
 import com.gestionlocal.gestion.pedido.dto.ReporteProductoItemDto;
 
+import com.gestionlocal.gestion.notificacion.NotificacionService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -35,11 +36,16 @@ public class PedidoService
     private final PedidoRepository pedidoRepository;
     private final ProductoRepository productoRepository;
     private final PedidoMapper pedidoMapper;
+    private final NotificacionService notificacionService;
 
-    public PedidoService(PedidoRepository pedidoRepository, ProductoRepository productoRepository, PedidoMapper pedidoMapper) {
+    public PedidoService(PedidoRepository pedidoRepository,
+                         ProductoRepository productoRepository,
+                         PedidoMapper pedidoMapper,
+                         NotificacionService notificacionService) {
         this.pedidoRepository = pedidoRepository;
         this.productoRepository = productoRepository;
         this.pedidoMapper = pedidoMapper;
+        this.notificacionService = notificacionService;
     }
 
     @Transactional
@@ -104,8 +110,15 @@ public class PedidoService
         pedido.setDetalles(detalles);
         pedido.setTotal(detalles.stream().mapToDouble(DetallePedidosEntity::getSubtotal).sum());
 
-        pedidoRepository.save(pedido);
-        return pedidoMapper.toDto(pedido);
+        PedidoEntity pedidoGuardado = pedidoRepository.save(pedido);
+
+        try {
+            notificacionService.notificarNuevoPedido(pedidoGuardado);
+        } catch (Exception e) {
+            // No interrumpir la creación del pedido si la notificación falla
+        }
+
+        return pedidoMapper.toDto(pedidoGuardado);
     }
 
     private DetallePedidosEntity buildDetalle(DetallePedidoRequestDto dto, PedidoEntity pedido)

@@ -65,6 +65,9 @@ public class SecurityConfig
                         // Reportes de ingresos y ventas: SOLO ADMIN
                         .requestMatchers(HttpMethod.GET, "/api/pedidos/reportes/**").hasAuthority("ADMIN")
 
+                        // Notificaciones y alertas en tiempo real: SOLO ADMIN
+                        .requestMatchers("/api/notificaciones/**").hasAuthority("ADMIN")
+
                         // Pedidos: consultar ADMIN y EMPLEADO
                         .requestMatchers(HttpMethod.GET, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
 
