@@ -131,6 +131,11 @@ public class PedidoService
             throw new ProductoInactivoException("El producto no está activo");
         }
 
+        if (esProductoMini(producto) && (dto.getCantidad() == null || dto.getCantidad() < 12))
+        {
+            throw new CantidadInvalidaException("Los pedidos de " + producto.getNombreProducto() + " deben ser a partir de 12 unidades (mínimo 12 u.).");
+        }
+
         Double precioUnitario = calcularSubtotalDetalle(producto, dto);
 
         if (dto.getPrecioUnitarioOverride() != null)
@@ -148,6 +153,13 @@ public class PedidoService
         detalle.setObservaciones(dto.getObservaciones());
 
         return detalle;
+    }
+
+    private boolean esProductoMini(ProductoEntity producto) {
+        if (producto == null) return false;
+        String nombre = producto.getNombreProducto() != null ? producto.getNombreProducto().toLowerCase() : "";
+        if (nombre.contains("mini torta")) return false;
+        return producto.getTipoProducto() == TipoProducto.MINI || (nombre.startsWith("mini ") && !nombre.contains("torta"));
     }
 
     private Double calcularSubtotalDetalle(ProductoEntity producto, DetallePedidoRequestDto dto) {

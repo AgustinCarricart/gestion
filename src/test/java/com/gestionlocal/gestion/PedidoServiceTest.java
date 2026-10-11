@@ -6,11 +6,16 @@ import com.gestionlocal.gestion.pedido.EstadoPedido;
 import com.gestionlocal.gestion.pedido.PedidoEntity;
 import com.gestionlocal.gestion.pedido.PedidoRepository;
 import com.gestionlocal.gestion.pedido.PedidoService;
+import com.gestionlocal.gestion.pedido.dto.DetallePedidoRequestDto;
+import com.gestionlocal.gestion.pedido.dto.PedidoDtoRequest;
 import com.gestionlocal.gestion.pedido.dto.PedidoDtoResponse;
+import com.gestionlocal.gestion.pedido.exception.CantidadInvalidaException;
 import com.gestionlocal.gestion.pedido.exception.EstadoTransicionInvalidaException;
 import com.gestionlocal.gestion.pedido.exception.PedidoNotFoundException;
 import com.gestionlocal.gestion.pedido.mapper.PedidoMapper;
+import com.gestionlocal.gestion.producto.ProductoEntity;
 import com.gestionlocal.gestion.producto.ProductoRepository;
+import com.gestionlocal.gestion.producto.TipoProducto;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -209,6 +214,42 @@ class PedidoServiceTest
 
             assertThrows(EstadoTransicionInvalidaException.class, () ->
                     pedidoService.cambiarEstado(publicId, EstadoPedido.PENDIENTE));
+        }
+    }
+
+    // ── CREACIÓN DE PEDIDOS Y VALIDACIÓN DE MINIS ────────────────────────────
+
+    @Nested
+    @DisplayName("Validación de Pedidos")
+    class CreacionPedidos
+    {
+        @Test
+        @DisplayName("Debe lanzar CantidadInvalidaException si producto MINI tiene menos de 12 unidades")
+        void crearPedido_ProductoMiniMenosDe12_LanzaExcepcion()
+        {
+            UUID prodId = UUID.randomUUID();
+            ProductoEntity prodMini = new ProductoEntity();
+            prodMini.setPublicId(prodId);
+            prodMini.setNombreProducto("Mini pavlova");
+            prodMini.setTipoProducto(TipoProducto.MINI);
+            prodMini.setPrecio(3000.0);
+            prodMini.setActivo(true);
+
+            when(productoRepository.findByPublicId(prodId)).thenReturn(Optional.of(prodMini));
+
+            DetallePedidoRequestDto detalle = new DetallePedidoRequestDto();
+            detalle.setProductoPublicId(prodId);
+            detalle.setCantidad(5);
+
+            PedidoDtoRequest request = new PedidoDtoRequest();
+            request.setNombreCliente("Juan Pérez");
+            request.setTelefonoCliente("2231234567");
+            request.setDetalles(List.of(detalle));
+
+            CantidadInvalidaException ex = assertThrows(CantidadInvalidaException.class, () ->
+                    pedidoService.createPedido(request));
+
+            assertTrue(ex.getMessage().contains("12 unidades"));
         }
     }
 }
