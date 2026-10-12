@@ -26,6 +26,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -111,6 +112,35 @@ class PedidoServiceTest
             assertNotNull(resultado);
             assertEquals(1, resultado.size());
             verify(pedidoRepository, times(1)).findByEstadoPedido(EstadoPedido.PENDIENTE);
+        }
+
+        @Test
+        @DisplayName("Debe retornar lista de pedidos de cocina para una fecha específica")
+        void getPedidosCocinaPorFecha_Exito()
+        {
+            LocalDate fecha = LocalDate.now();
+            when(pedidoRepository.findByEstadoPedidoInAndFechaEntregaBetweenOrderByFechaEntregaAsc(
+                    any(), any(), any())).thenReturn(List.of(pedidoEntity));
+            when(pedidoMapper.toDto(pedidoEntity)).thenReturn(pedidoDtoResponse);
+
+            List<PedidoDtoResponse> resultado = pedidoService.getPedidosCocinaPorFecha(fecha);
+
+            assertNotNull(resultado);
+            assertEquals(1, resultado.size());
+        }
+
+        @Test
+        @DisplayName("Debe retornar lista de todos los pedidos de cocina activos")
+        void getPedidosCocinaActivos_Exito()
+        {
+            when(pedidoRepository.findByEstadoPedidoNotInOrderByFechaEntregaAsc(any()))
+                    .thenReturn(List.of(pedidoEntity));
+            when(pedidoMapper.toDto(pedidoEntity)).thenReturn(pedidoDtoResponse);
+
+            List<PedidoDtoResponse> resultado = pedidoService.getPedidosCocinaActivos();
+
+            assertNotNull(resultado);
+            assertEquals(1, resultado.size());
         }
     }
 

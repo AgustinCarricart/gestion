@@ -259,14 +259,30 @@ public class PedidoService
         return pedidoMapper.toDto(pedido);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<PedidoDtoResponse> getPedidosCocinaHoy()
     {
-        LocalDateTime inicio = LocalDate.now().atStartOfDay();
-        LocalDateTime fin = LocalDate.now().atTime(23, 59, 59);
+        return getPedidosCocinaPorFecha(LocalDate.now());
+    }
+
+    @Transactional(readOnly = true)
+    public List<PedidoDtoResponse> getPedidosCocinaPorFecha(LocalDate fecha)
+    {
+        LocalDateTime inicio = fecha.atStartOfDay();
+        LocalDateTime fin = fecha.atTime(23, 59, 59);
 
         return pedidoRepository.findByEstadoPedidoInAndFechaEntregaBetweenOrderByFechaEntregaAsc(
                         List.of(EstadoPedido.PENDIENTE, EstadoPedido.LISTO), inicio, fin)
+                .stream()
+                .map(pedidoMapper::toDto)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PedidoDtoResponse> getPedidosCocinaActivos()
+    {
+        return pedidoRepository.findByEstadoPedidoNotInOrderByFechaEntregaAsc(
+                        List.of(EstadoPedido.ENTREGADO, EstadoPedido.CANCELADO, EstadoPedido.NO_RETIRO))
                 .stream()
                 .map(pedidoMapper::toDto)
                 .toList();

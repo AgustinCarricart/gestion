@@ -85,6 +85,15 @@ public class PedidoController
         return ResponseEntity.ok(pedidoService.getPedidosCocinaHoy());
     }
 
+    @GetMapping("/cocina")
+    public ResponseEntity<List<PedidoDtoResponse>> getPedidosCocina(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+        if (fecha != null) {
+            return ResponseEntity.ok(pedidoService.getPedidosCocinaPorFecha(fecha));
+        }
+        return ResponseEntity.ok(pedidoService.getPedidosCocinaActivos());
+    }
+
     @GetMapping("/fecha")
     public ResponseEntity<List<PedidoDtoResponse>> getPedidosByFecha(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
