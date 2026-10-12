@@ -175,14 +175,41 @@ public class NotificacionService {
         return ejecutarEnvioTelegram(token, chatId, mensaje);
     }
 
+    /**
+     * Envía un mensaje arbitrario al chat de Telegram configurado.
+     * @return true si se envió; false si Telegram no está configurado o falló.
+     */
+    public boolean enviarMensajeTelegram(String textoMarkdown) {
+        String token = obtenerTokenTelegram();
+        String chatId = obtenerChatIdTelegram();
+        if (token == null || token.isBlank() || chatId == null || chatId.isBlank()) {
+            log.warn("Telegram no configurado. No se puede enviar el mensaje.");
+            return false;
+        }
+        return ejecutarEnvioTelegram(token, chatId, textoMarkdown);
+    }
+
+    public boolean telegramConfigurado() {
+        String token = obtenerTokenTelegram();
+        String chatId = obtenerChatIdTelegram();
+        return token != null && !token.isBlank() && chatId != null && !chatId.isBlank();
+    }
+
     private boolean ejecutarEnvioTelegram(String token, String chatId, String textoMarkdown) {
+        if (enviarATelegram(token, chatId, textoMarkdown, true)) return true;
+        // Si el Markdown tiene caracteres especiales que Telegram no puede parsear, reintentar como texto plano
+        log.warn("Reintentando envío a Telegram como texto plano.");
+        return enviarATelegram(token, chatId, textoMarkdown.replace("*", ""), false);
+    }
+
+    private boolean enviarATelegram(String token, String chatId, String texto, boolean markdown) {
         try {
             String url = "https://api.telegram.org/bot" + token + "/sendMessage";
-            Map<String, Object> body = Map.of(
-                    "chat_id", chatId,
-                    "text", textoMarkdown,
-                    "parse_mode", "Markdown"
-            );
+            Map<String, Object> body = new HashMap<>();
+            body.put("chat_id", chatId);
+            body.put("text", texto);
+            body.put("disable_web_page_preview", true);
+            if (markdown) body.put("parse_mode", "Markdown");
 
             String json = objectMapper.writeValueAsString(body);
 

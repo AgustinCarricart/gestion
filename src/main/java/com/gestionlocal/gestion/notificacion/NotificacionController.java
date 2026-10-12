@@ -12,9 +12,12 @@ import java.util.Map;
 public class NotificacionController {
 
     private final NotificacionService notificacionService;
+    private final ResumenMatutinoService resumenMatutinoService;
 
-    public NotificacionController(NotificacionService notificacionService) {
+    public NotificacionController(NotificacionService notificacionService,
+                                  ResumenMatutinoService resumenMatutinoService) {
         this.notificacionService = notificacionService;
+        this.resumenMatutinoService = resumenMatutinoService;
     }
 
     @GetMapping(value = "/stream", produces = "text/event-stream")
@@ -42,5 +45,38 @@ public class NotificacionController {
         } else {
             return ResponseEntity.badRequest().body(Map.of("mensaje", "No se pudo enviar el mensaje a Telegram. Verifica el Token y el Chat ID."));
         }
+    }
+
+    // ── Resumen matutino diario (9:00 AM) ──
+
+    @GetMapping("/resumen-matutino")
+    public ResponseEntity<Map<String, Object>> getResumenMatutino() {
+        return ResponseEntity.ok(Map.of(
+                "pendientes", resumenMatutinoService.obtenerPendientes(),
+                "vistaPrevia", resumenMatutinoService.construirMensaje(java.time.LocalDate.now()),
+                "telegramConfigurado", notificacionService.telegramConfigurado(),
+                "horario", "Todos los días 09:00 (hora Argentina)"
+        ));
+    }
+
+    @PutMapping("/resumen-matutino")
+    public ResponseEntity<Map<String, Object>> guardarResumenMatutino(@RequestBody Map<String, String> body) {
+        try {
+            resumenMatutinoService.guardarPendientes(body != null ? body.get("pendientes") : "");
+            return ResponseEntity.ok(Map.of("mensaje", "Pendientes del resumen matutino guardados"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("mensaje", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/resumen-matutino/enviar")
+    public ResponseEntity<Map<String, Object>> enviarResumenMatutino() {
+        if (!notificacionService.telegramConfigurado()) {
+            return ResponseEntity.badRequest().body(Map.of("mensaje", "Primero configurá el Token y el Chat ID de Telegram."));
+        }
+        boolean ok = resumenMatutinoService.enviarAhora();
+        return ok
+                ? ResponseEntity.ok(Map.of("mensaje", "Resumen matutino enviado a Telegram ✅"))
+                : ResponseEntity.badRequest().body(Map.of("mensaje", "No se pudo enviar el resumen. Verificá el Token y el Chat ID."));
     }
 }
