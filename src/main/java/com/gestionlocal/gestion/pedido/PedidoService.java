@@ -415,4 +415,26 @@ public class PedidoService
                 .productos(productos)
                 .build();
     }
+
+    @Transactional
+    public void deletePedido(UUID publicId) {
+        PedidoEntity pedido = pedidoRepository.findByPublicId(publicId)
+                .orElseThrow(() -> new com.gestionlocal.gestion.pedido.exception.PedidoNotFoundException("Pedido no encontrado con ID: " + publicId));
+        pedidoRepository.delete(pedido);
+    }
+
+    @Transactional
+    public java.util.Map<String, Object> purgarPedidosPrueba() {
+        long total = pedidoRepository.count();
+        try {
+            pedidoRepository.truncatePedidosAndDetalles();
+        } catch (Exception e) {
+            pedidoRepository.deleteAll();
+        }
+        return java.util.Map.of(
+                "status", "success",
+                "message", "Todos los pedidos y registros de ventas de prueba fueron eliminados exitosamente.",
+                "totalEliminados", total
+        );
+    }
 }

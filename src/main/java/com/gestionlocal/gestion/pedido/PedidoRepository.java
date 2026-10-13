@@ -39,6 +39,10 @@ public interface PedidoRepository extends JpaRepository<PedidoEntity, Long>
             LocalDateTime desde,
             LocalDateTime hasta
     );
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.data.jpa.repository.Query(value = "TRUNCATE TABLE detalle_pedido, pedidos RESTART IDENTITY CASCADE", nativeQuery = true)
+    void truncatePedidosAndDetalles();
 }
    
 

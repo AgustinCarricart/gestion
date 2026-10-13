@@ -117,4 +117,15 @@ public class PedidoController
         Double sena = body != null ? body.get("sena") : 0.0;
         return ResponseEntity.ok(pedidoService.actualizarSena(publicId, sena));
     }
+
+    @DeleteMapping("/{publicId}")
+    public ResponseEntity<Void> deletePedido(@PathVariable UUID publicId) {
+        pedidoService.deletePedido(publicId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/admin/purgar-pruebas")
+    public ResponseEntity<java.util.Map<String, Object>> purgarPedidosPrueba() {
+        return ResponseEntity.ok(pedidoService.purgarPedidosPrueba());
+    }
 }
