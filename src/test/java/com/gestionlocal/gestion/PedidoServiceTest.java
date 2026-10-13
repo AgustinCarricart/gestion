@@ -281,5 +281,98 @@ class PedidoServiceTest
 
             assertTrue(ex.getMessage().contains("12 unidades"));
         }
+
+        @Test
+        @DisplayName("Debe calcular precio por kilo a $45.000 para torta grande de más de 1.5 kg")
+        void crearPedido_TortaGrandePorKilo_CalculaCorrectamente()
+        {
+            UUID prodId = UUID.randomUUID();
+            ProductoEntity torta = new ProductoEntity();
+            torta.setPublicId(prodId);
+            torta.setNombreProducto("Torta olivia");
+            torta.setTipoProducto(TipoProducto.TORTA_COMUN);
+            torta.setPrecio(58000.0);
+            torta.setActivo(true);
+
+            when(productoRepository.findByPublicId(prodId)).thenReturn(Optional.of(torta));
+            when(pedidoRepository.save(any(PedidoEntity.class))).thenAnswer(i -> i.getArgument(0));
+            when(pedidoMapper.toDto(any(PedidoEntity.class))).thenReturn(new PedidoDtoResponse());
+
+            DetallePedidoRequestDto detalle = new DetallePedidoRequestDto();
+            detalle.setProductoPublicId(prodId);
+            detalle.setCantidad(1);
+            detalle.setPesoKg(2.0); // 2 kg x $45.000 = $90.000
+
+            PedidoDtoRequest request = new PedidoDtoRequest();
+            request.setNombreCliente("Ana Gómez");
+            request.setTelefonoCliente("2239876543");
+            request.setDetalles(List.of(detalle));
+
+            pedidoService.createPedido(request);
+
+            verify(pedidoRepository).save(argThat(p -> {
+                assertEquals(90000.0, p.getTotal());
+                assertEquals(1, p.getDetalles().size());
+                assertEquals(2.0, p.getDetalles().get(0).getPesoKg());
+                assertEquals(90000.0, p.getDetalles().get(0).getSubtotal());
+                return true;
+            }));
+        }
+
+        @Test
+        @DisplayName("Debe lanzar PesoInvalidoException si la torta grande no supera 1.5 kg")
+        void crearPedido_TortaGrandeMenorOIgualA1KiloYMedio_LanzaExcepcion()
+        {
+            UUID prodId = UUID.randomUUID();
+            ProductoEntity torta = new ProductoEntity();
+            torta.setPublicId(prodId);
+            torta.setNombreProducto("Torta olivia");
+            torta.setTipoProducto(TipoProducto.TORTA_COMUN);
+            torta.setPrecio(58000.0);
+            torta.setActivo(true);
+
+            when(productoRepository.findByPublicId(prodId)).thenReturn(Optional.of(torta));
+
+            DetallePedidoRequestDto detalle = new DetallePedidoRequestDto();
+            detalle.setProductoPublicId(prodId);
+            detalle.setCantidad(1);
+            detalle.setPesoKg(1.5); // 1.5 kg exacto (no supera el kilo y medio)
+
+            PedidoDtoRequest request = new PedidoDtoRequest();
+            request.setNombreCliente("Ana Gómez");
+            request.setTelefonoCliente("2239876543");
+            request.setDetalles(List.of(detalle));
+
+            assertThrows(com.gestionlocal.gestion.pedido.exception.PesoInvalidoException.class, () ->
+                    pedidoService.createPedido(request));
+        }
+
+        @Test
+        @DisplayName("Debe lanzar PesoInvalidoException si la torta grande supera los 5 kg")
+        void crearPedido_TortaGrandeMayorA5Kilos_LanzaExcepcion()
+        {
+            UUID prodId = UUID.randomUUID();
+            ProductoEntity torta = new ProductoEntity();
+            torta.setPublicId(prodId);
+            torta.setNombreProducto("Torta olivia");
+            torta.setTipoProducto(TipoProducto.TORTA_COMUN);
+            torta.setPrecio(58000.0);
+            torta.setActivo(true);
+
+            when(productoRepository.findByPublicId(prodId)).thenReturn(Optional.of(torta));
+
+            DetallePedidoRequestDto detalle = new DetallePedidoRequestDto();
+            detalle.setProductoPublicId(prodId);
+            detalle.setCantidad(1);
+            detalle.setPesoKg(5.5); // Mayor a 5 kg
+
+            PedidoDtoRequest request = new PedidoDtoRequest();
+            request.setNombreCliente("Ana Gómez");
+            request.setTelefonoCliente("2239876543");
+            request.setDetalles(List.of(detalle));
+
+            assertThrows(com.gestionlocal.gestion.pedido.exception.PesoInvalidoException.class, () ->
+                    pedidoService.createPedido(request));
+        }
     }
 }

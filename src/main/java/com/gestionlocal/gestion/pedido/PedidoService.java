@@ -162,9 +162,28 @@ public class PedidoService
         return producto.getTipoProducto() == TipoProducto.MINI || (nombre.startsWith("mini ") && !nombre.contains("torta"));
     }
 
+    public static final double PRECIO_KILO_TORTA_GRANDE = 45000.0;
+    public static final double PESO_MINIMO_TORTA_GRANDE = 1.5;
+    public static final double PESO_MAXIMO_TORTA_GRANDE = 5.0;
+
+    private void validarPesoTortaGrande(Double pesoKg) {
+        if (pesoKg == null || pesoKg <= PESO_MINIMO_TORTA_GRANDE) {
+            throw new com.gestionlocal.gestion.pedido.exception.PesoInvalidoException("Para tortas de tamaño grande por kilo, el peso debe superar el kilo y medio (mayor a 1.5 kg).");
+        }
+        if (pesoKg > PESO_MAXIMO_TORTA_GRANDE) {
+            throw new com.gestionlocal.gestion.pedido.exception.PesoInvalidoException("El tamaño máximo permitido para tortas por kilo es de 5 kg.");
+        }
+    }
+
     private Double calcularSubtotalDetalle(ProductoEntity producto, DetallePedidoRequestDto dto) {
         if (producto.getTipoProducto() == null) {
             throw new IllegalArgumentException("El producto debe tener un tipo definido");
+        }
+
+        // Si se especificó peso en kilos: aplica la regla de tamaño grande por kilo ($45.000 / kg)
+        if (dto.getPesoKg() != null && dto.getPesoKg() > 0) {
+            validarPesoTortaGrande(dto.getPesoKg());
+            return PRECIO_KILO_TORTA_GRANDE * dto.getPesoKg();
         }
 
         return switch (producto.getTipoProducto()) {
@@ -174,9 +193,10 @@ public class PedidoService
 
             case TORTA_POR_KILO, TORTA_POR_KILO_FRUTA -> {
                 if (dto.getPesoKg() == null || dto.getPesoKg() <= 0) {
-                    throw new PesoInvalidoException("El pedido por kilo debe especificar un peso válido.");
+                    throw new com.gestionlocal.gestion.pedido.exception.PesoInvalidoException("El pedido por kilo debe especificar un peso válido.");
                 }
-                yield producto.getPrecio() * dto.getPesoKg();
+                validarPesoTortaGrande(dto.getPesoKg());
+                yield PRECIO_KILO_TORTA_GRANDE * dto.getPesoKg();
             }
 
             case POR_DOCENA -> {
