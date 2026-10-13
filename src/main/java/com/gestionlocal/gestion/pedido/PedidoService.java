@@ -457,4 +457,16 @@ public class PedidoService
                 "totalEliminados", total
         );
     }
+
+    @Transactional
+    public java.util.Map<String, Object> eliminarPedidosPorEstado(EstadoPedido estado) {
+        List<PedidoEntity> pedidos = pedidoRepository.findByEstadoPedido(estado);
+        long count = pedidos.size();
+        pedidoRepository.deleteAll(pedidos);
+        return java.util.Map.of(
+                "status", "success",
+                "message", "Se eliminaron " + count + " pedidos con estado " + estado + " exitosamente.",
+                "totalEliminados", count
+        );
+    }
 }
