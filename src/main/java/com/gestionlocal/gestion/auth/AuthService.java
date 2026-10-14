@@ -37,12 +37,12 @@ public class AuthService
 
     public AuthResponse login(AuthRequest request)
     {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-        );
-
-        UsuarioEntity usuario = usuarioRepository.findByUsername(request.getUsername())
+        UsuarioEntity usuario = usuarioRepository.findByUsernameIgnoreCase(request.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(usuario.getUsername(), request.getPassword())
+        );
 
         String token = jwtService.generateToken(usuario);
         return new AuthResponse(token, usuario.getRol().name(), usuario.getUsername());
