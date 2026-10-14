@@ -134,11 +134,6 @@ public class PedidoController
         return ResponseEntity.ok(pedidoService.eliminarPedidosPorEstado(EstadoPedido.ENTREGADO));
     }
 
-    @GetMapping("/admin/purgar-entregados-directo")
-    public ResponseEntity<java.util.Map<String, Object>> purgarPedidosEntregadosDirecto() {
-        return ResponseEntity.ok(pedidoService.eliminarPedidosPorEstado(EstadoPedido.ENTREGADO));
-    }
-
     @DeleteMapping("/admin/estado/{estado}")
     public ResponseEntity<java.util.Map<String, Object>> eliminarPedidosPorEstado(@PathVariable EstadoPedido estado) {
         return ResponseEntity.ok(pedidoService.eliminarPedidosPorEstado(estado));

@@ -49,11 +49,10 @@ public class SecurityConfig
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/error").permitAll()
 
-                        // Público: login, health check, seed de catálogo y purga directa de pruebas
+                        // Público: login, health check y seed de catálogo
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/health").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/seed-catalogo").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/pedidos/admin/purgar-entregados-directo").permitAll()
                         .requestMatchers("/api/health").permitAll()
 
                         // Gestión de usuarios: solo ADMIN
