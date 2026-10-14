@@ -109,6 +109,33 @@ public class NotificacionService {
         CompletableFuture.runAsync(() -> enviarTelegramNuevoPedido(pedido, resumenProductos, total, sena, saldo));
     }
 
+    public void notificarPedidoActualizado(PedidoEntity pedido, String nuevoEstado) {
+        if (pedido == null) return;
+        AlertaPedidoActualizadoDto alerta = AlertaPedidoActualizadoDto.builder()
+                .tipo("PEDIDO_ACTUALIZADO")
+                .pedidoPublicId(pedido.getPublicId())
+                .pedidoId(pedido.getId())
+                .nombreCliente(pedido.getNombreCliente())
+                .nuevoEstado(nuevoEstado != null ? nuevoEstado : (pedido.getEstadoPedido() != null ? pedido.getEstadoPedido().name() : ""))
+                .fechaEntrega(pedido.getFechaEntrega())
+                .timestamp(java.time.LocalDateTime.now().toString())
+                .build();
+
+        emitirEventoAClientes("pedido_actualizado", alerta);
+    }
+
+    public void notificarPedidoEliminado(UUID publicId) {
+        if (publicId == null) return;
+        AlertaPedidoActualizadoDto alerta = AlertaPedidoActualizadoDto.builder()
+                .tipo("PEDIDO_ELIMINADO")
+                .pedidoPublicId(publicId)
+                .nuevoEstado("ELIMINADO")
+                .timestamp(java.time.LocalDateTime.now().toString())
+                .build();
+
+        emitirEventoAClientes("pedido_actualizado", alerta);
+    }
+
     private void emitirEventoAClientes(String evento, Object data) {
         List<SseEmitter> muertos = new ArrayList<>();
         for (SseEmitter emitter : emitters) {

@@ -15,6 +15,7 @@ import com.gestionlocal.gestion.pedido.exception.PedidoNotFoundException;
 import com.gestionlocal.gestion.pedido.mapper.PedidoMapper;
 import com.gestionlocal.gestion.producto.ProductoEntity;
 import com.gestionlocal.gestion.producto.ProductoRepository;
+import com.gestionlocal.gestion.notificacion.NotificacionService;
 import com.gestionlocal.gestion.producto.TipoProducto;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +46,9 @@ class PedidoServiceTest
 
     @Mock
     private PedidoMapper pedidoMapper;
+
+    @Mock
+    private NotificacionService notificacionService;
 
     @InjectMocks
     private PedidoService pedidoService;

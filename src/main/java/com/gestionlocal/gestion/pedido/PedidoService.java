@@ -224,6 +224,9 @@ public class PedidoService
         }
 
         pedido.setEstadoPedido(EstadoPedido.CANCELADO);
+        if (notificacionService != null) {
+            notificacionService.notificarPedidoActualizado(pedido, EstadoPedido.CANCELADO.name());
+        }
         return pedidoMapper.toDto(pedido);
     }
 
@@ -242,6 +245,9 @@ public class PedidoService
         };
 
         pedido.setEstadoPedido(siguiente);
+        if (notificacionService != null) {
+            notificacionService.notificarPedidoActualizado(pedido, siguiente.name());
+        }
 
         return pedidoMapper.toDto(pedido);
     }
@@ -260,6 +266,9 @@ public class PedidoService
         }
 
         pedido.setEstadoPedido(nuevoEstado);
+        if (notificacionService != null) {
+            notificacionService.notificarPedidoActualizado(pedido, nuevoEstado.name());
+        }
 
         return pedidoMapper.toDto(pedido);
     }
@@ -276,6 +285,9 @@ public class PedidoService
         }
 
         pedido.setEstadoPedido(EstadoPedido.NO_RETIRO);
+        if (notificacionService != null) {
+            notificacionService.notificarPedidoActualizado(pedido, EstadoPedido.NO_RETIRO.name());
+        }
         return pedidoMapper.toDto(pedido);
     }
 
@@ -441,6 +453,9 @@ public class PedidoService
         PedidoEntity pedido = pedidoRepository.findByPublicId(publicId)
                 .orElseThrow(() -> new com.gestionlocal.gestion.pedido.exception.PedidoNotFoundException("Pedido no encontrado con ID: " + publicId));
         pedidoRepository.delete(pedido);
+        if (notificacionService != null) {
+            notificacionService.notificarPedidoEliminado(publicId);
+        }
     }
 
     @Transactional
@@ -450,6 +465,9 @@ public class PedidoService
             pedidoRepository.truncatePedidosAndDetalles();
         } catch (Exception e) {
             pedidoRepository.deleteAll();
+        }
+        if (notificacionService != null) {
+            notificacionService.notificarPedidoEliminado(null);
         }
         return java.util.Map.of(
                 "status", "success",
@@ -463,6 +481,9 @@ public class PedidoService
         List<PedidoEntity> pedidos = pedidoRepository.findByEstadoPedido(estado);
         long count = pedidos.size();
         pedidoRepository.deleteAll(pedidos);
+        if (notificacionService != null) {
+            notificacionService.notificarPedidoEliminado(null);
+        }
         return java.util.Map.of(
                 "status", "success",
                 "message", "Se eliminaron " + count + " pedidos con estado " + estado + " exitosamente.",
