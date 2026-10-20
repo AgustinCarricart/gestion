@@ -56,6 +56,16 @@ public class AuthService
             throw new UsernameAlreadyExistsException("Ya se encontro ese nombre");
         }
 
+        if (request.getRol() == RolEnum.SUPERADMIN) {
+            org.springframework.security.core.Authentication auth =
+                    org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+            boolean esSuperAdmin = auth != null && auth.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("SUPERADMIN") || a.getAuthority().equals("ROLE_SUPERADMIN"));
+            if (!esSuperAdmin) {
+                throw new org.springframework.security.access.AccessDeniedException("Solo un SuperAdmin puede crear otros usuarios con rol SuperAdmin");
+            }
+        }
+
         UsuarioEntity usuario = new UsuarioEntity();
         usuario.setUsername(request.getUsername());
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));

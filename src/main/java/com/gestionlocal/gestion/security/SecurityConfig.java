@@ -49,39 +49,43 @@ public class SecurityConfig
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/error").permitAll()
 
-                        // Público: login, health check y seed de catálogo
+                        // Público: login, health check, seed de catálogo y configuración pública de licencia
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/health").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/auth/seed-catalogo").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/licencia/public").permitAll()
                         .requestMatchers("/api/health").permitAll()
 
-                        // Gestión de usuarios: solo ADMIN
-                        .requestMatchers("/api/auth/**").hasAuthority("ADMIN")
+                        // Licencia y Planes: SOLO SUPERADMIN
+                        .requestMatchers("/api/licencia/**").hasAuthority("SUPERADMIN")
 
-                        // Productos: lectura pública (catálogo visible), escritura solo ADMIN
+                        // Gestión de usuarios: SUPERADMIN y ADMIN
+                        .requestMatchers("/api/auth/**").hasAnyAuthority("SUPERADMIN", "ADMIN")
+
+                        // Productos: lectura pública (catálogo visible), escritura SUPERADMIN y ADMIN
                         .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
-                        .requestMatchers("/api/productos/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/productos/**").hasAnyAuthority("SUPERADMIN", "ADMIN")
 
-                        // Reportes de ingresos y ventas: SOLO ADMIN
-                        .requestMatchers(HttpMethod.GET, "/api/pedidos/reportes/**").hasAuthority("ADMIN")
+                        // Reportes de ingresos y ventas: SUPERADMIN y ADMIN
+                        .requestMatchers(HttpMethod.GET, "/api/pedidos/reportes/**").hasAnyAuthority("SUPERADMIN", "ADMIN")
 
-                        // Notificaciones y stream en tiempo real: ADMIN y EMPLEADO (Cocina y Admin sincronizados en vivo)
-                        .requestMatchers(HttpMethod.GET, "/api/notificaciones/stream").hasAnyAuthority("ADMIN", "EMPLEADO")
-                        .requestMatchers("/api/notificaciones/**").hasAuthority("ADMIN")
+                        // Notificaciones y stream en tiempo real: SUPERADMIN, ADMIN, COCINA y EMPLEADO
+                        .requestMatchers(HttpMethod.GET, "/api/notificaciones/stream").hasAnyAuthority("SUPERADMIN", "ADMIN", "COCINA", "EMPLEADO")
+                        .requestMatchers("/api/notificaciones/**").hasAnyAuthority("SUPERADMIN", "ADMIN")
 
-                        // Pedidos: consultar ADMIN y EMPLEADO
-                        .requestMatchers(HttpMethod.GET, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
+                        // Pedidos: consultar todos los roles autenticados
+                        .requestMatchers(HttpMethod.GET, "/api/pedidos/**").hasAnyAuthority("SUPERADMIN", "ADMIN", "COCINA", "EMPLEADO")
 
-                        // Cargar o cancelar pedidos: solo ADMIN
-                        .requestMatchers(HttpMethod.POST, "/api/pedidos/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/pedidos/**").hasAuthority("ADMIN")
+                        // Cargar o cancelar pedidos: SUPERADMIN y ADMIN
+                        .requestMatchers(HttpMethod.POST, "/api/pedidos/**").hasAnyAuthority("SUPERADMIN", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/pedidos/**").hasAnyAuthority("SUPERADMIN", "ADMIN")
 
-                        // Modificar seña de pedido: solo ADMIN
-                        .requestMatchers(HttpMethod.PATCH, "/api/pedidos/*/sena").hasAuthority("ADMIN")
+                        // Modificar seña de pedido: SUPERADMIN y ADMIN
+                        .requestMatchers(HttpMethod.PATCH, "/api/pedidos/*/sena").hasAnyAuthority("SUPERADMIN", "ADMIN")
 
-                        // Avanzar estados: ADMIN y EMPLEADO
-                        .requestMatchers(HttpMethod.PUT, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
-                        .requestMatchers(HttpMethod.PATCH, "/api/pedidos/**").hasAnyAuthority("ADMIN", "EMPLEADO")
+                        // Avanzar estados en Cocina: SUPERADMIN, ADMIN, COCINA y EMPLEADO
+                        .requestMatchers(HttpMethod.PUT, "/api/pedidos/**").hasAnyAuthority("SUPERADMIN", "ADMIN", "COCINA", "EMPLEADO")
+                        .requestMatchers(HttpMethod.PATCH, "/api/pedidos/**").hasAnyAuthority("SUPERADMIN", "ADMIN", "COCINA", "EMPLEADO")
 
                         .anyRequest().authenticated()
                 )

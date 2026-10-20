@@ -19,6 +19,12 @@ public interface PedidoRepository extends JpaRepository<PedidoEntity, Long>
     @EntityGraph(attributePaths = {"detalles"})
     List<PedidoEntity> findByEstadoPedido(EstadoPedido estadoPedido);
 
+    @EntityGraph(attributePaths = {"detalles"})
+    List<PedidoEntity> findByNombreClienteIgnoreCase(String nombreCliente);
+
+    @EntityGraph(attributePaths = {"detalles"})
+    List<PedidoEntity> findByNombreClienteContainingIgnoreCase(String nombreCliente);
+
     // Validación de productos activos en pedidos (se mantiene por los productos, ya no por cliente)
     boolean existsByDetalles_Producto_PublicIdAndEstadoPedidoIn(UUID productoPublicId, List<EstadoPedido> estados);
 

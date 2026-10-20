@@ -48,44 +48,41 @@ public class PedidoService
         this.notificacionService = notificacionService;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<PedidoDtoResponse> getAllPedidos()
-    {
-        List<PedidoDtoResponse> pedidos = pedidoRepository.findAll()
-                .stream()
-                .map(pedidoMapper :: toDto)
-                .toList();
-
-        return pedidos;
-    }
-
-
-    @Transactional
-    public List<PedidoDtoResponse> getPedidosByNombreCliente(String nombre)
     {
         return pedidoRepository.findAll()
                 .stream()
-                .filter(p -> p.getNombreCliente() != null && p.getNombreCliente().equalsIgnoreCase(nombre))
                 .map(pedidoMapper::toDto)
                 .toList();
     }
 
-    @Transactional
-    public List<PedidoDtoResponse> getPedidosByEstado(EstadoPedido estado)
+    @Transactional(readOnly = true)
+    public List<PedidoDtoResponse> getPedidosByNombreCliente(String nombre)
     {
-        List<PedidoDtoResponse> pedidoDtoResponses = pedidoRepository.findByEstadoPedido(estado)
+        if (nombre == null || nombre.isBlank()) {
+            return getAllPedidos();
+        }
+        return pedidoRepository.findByNombreClienteContainingIgnoreCase(nombre.trim())
                 .stream()
-                .map(pedidoMapper :: toDto)
+                .map(pedidoMapper::toDto)
                 .toList();
-
-        return pedidoDtoResponses;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
+    public List<PedidoDtoResponse> getPedidosByEstado(EstadoPedido estado)
+    {
+        return pedidoRepository.findByEstadoPedido(estado)
+                .stream()
+                .map(pedidoMapper::toDto)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public PedidoDtoResponse getPedidoByPublicId(UUID publicId)
     {
         PedidoEntity pedido = pedidoRepository.findByPublicId(publicId)
-                .orElseThrow(()-> new PedidoNotFoundException("No se encontro el pedido con ese id"));
+                .orElseThrow(() -> new PedidoNotFoundException("No se encontró el pedido con ese id"));
         return pedidoMapper.toDto(pedido);
     }
 

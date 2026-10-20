@@ -17,14 +17,18 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "pedidos")
+@Table(name = "pedidos", indexes = {
+    @Index(name = "idx_pedidos_public_id", columnList = "public_id", unique = true),
+    @Index(name = "idx_pedidos_entrega_estado", columnList = "fecha_entrega, estado_pedido"),
+    @Index(name = "idx_pedidos_nombre_cliente", columnList = "nombre_cliente")
+})
 public class PedidoEntity
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "public_id", nullable = false)
+    @Column(name = "public_id", nullable = false, unique = true)
     private UUID publicId;
 
     // Nuevos campos de texto plano directos en el pedido (en lugar de la relación con ClienteEntity)

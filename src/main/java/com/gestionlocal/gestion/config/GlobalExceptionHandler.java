@@ -73,6 +73,16 @@ public class GlobalExceptionHandler
         return ResponseEntity.badRequest().body(error);
     }
 
+    // --- 500 Internal Server Error (Fallback seguro) ---
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex)
+    {
+        org.slf4j.LoggerFactory.getLogger(GlobalExceptionHandler.class)
+                .error("Error no controlado en el servidor: ", ex);
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Ha ocurrido un error inesperado en el servidor.");
+    }
+
     // --- Helper ---
 
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, String mensaje)
