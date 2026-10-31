@@ -1799,7 +1799,7 @@ function addDet(){
   d.innerHTML=`
     <select id="ds${i}" onchange="toggleKg(${i}); actualizarTotalesNuevoPedido()">
       ${prods.map(p=>
-        `<option value="${p.publicId}" data-tipo="${p.tipo}" data-precio="${p.precio||0}" data-nombre="${(p.nombre||'').replace(/"/g, '&quot;')}">${p.nombre} (${tipoLabel(p.tipo)} · ${precioLabel(p)})</option>`
+        `<option value="${p.publicId}" data-tipo="${p.tipo}" data-precio="${p.precioFijo||p.precio||p.precioDocena||p.precioPorKilo||0}" data-nombre="${(p.nombre||'').replace(/"/g, '&quot;')}">${p.nombre} (${tipoLabel(p.tipo)} · ${precioLabel(p)})</option>`
       ).join('')}
     </select>
     <div id="dtz-wrap${i}" class="dtz-wrap" style="margin:0">
