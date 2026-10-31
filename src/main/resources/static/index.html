@@ -1809,7 +1809,7 @@ function addDet(){
       </select>
     </div>
     <input id="dc${i}" type="number" min="1" value="1" placeholder="Cant." oninput="validarCantMin(${i}); actualizarTotalesNuevoPedido()" onchange="validarCantMin(${i}); actualizarTotalesNuevoPedido()"/>
-    <input id="dk${i}" type="number" min="1.6" max="5.0" step="0.1" value="2.0" placeholder="Kilos (1.6 a 5)" style="display:none" oninput="validarPesoKg(${i}); actualizarTotalesNuevoPedido()" onchange="validarPesoKg(${i}); actualizarTotalesNuevoPedido()"/>
+    <input id="dk${i}" type="number" min="1.5" max="5.0" step="0.5" value="1.5" placeholder="Kilos (1.5 a 5)" style="display:none" oninput="validarPesoKg(${i}); actualizarTotalesNuevoPedido()" onchange="validarPesoKg(${i}); actualizarTotalesNuevoPedido()"/>
     <button type="button" class="del" onclick="this.parentElement.remove(); actualizarTotalesNuevoPedido()">×</button>
     <div id="dsub${i}" style="grid-column:1/-1;font-size:0.75rem;color:var(--muted);display:flex;justify-content:space-between;align-items:center;padding:2px 4px;margin-top:-2px"></div>
   `;
@@ -1838,7 +1838,7 @@ function toggleKg(i){
     if (selTam) selTam.value = 'GRANDE';
     if (inpKg) {
       inpKg.style.display = 'block';
-      if (!inpKg.value || Number(inpKg.value) <= 1.5) inpKg.value = "2.0";
+      if (!inpKg.value || Number(inpKg.value) < 1.5) inpKg.value = "1.5";
     }
   } else if (!esTorta) {
     if (selTam) selTam.value = 'ESTANDAR';
@@ -1872,8 +1872,8 @@ function cambiarTamano(i){
   if(!selTam || !inpKg) return;
   const esGrande = selTam.value === 'GRANDE';
   inpKg.style.display = esGrande ? 'block' : 'none';
-  if(esGrande && (!inpKg.value || Number(inpKg.value) <= 1.5)){
-    inpKg.value = "2.0";
+  if(esGrande && (!inpKg.value || Number(inpKg.value) < 1.5)){
+    inpKg.value = "1.5";
   }
   actualizarTotalesNuevoPedido();
 }
@@ -1882,8 +1882,8 @@ function validarPesoKg(i){
   const inpKg = g('dk'+i);
   if(!inpKg || inpKg.style.display === 'none') return;
   const val = Number(inpKg.value);
-  if(val > 0 && val <= 1.5){
-    toast('⚠️ Las tortas grandes deben superar el kilo y medio (mayor a 1.5 kg).', 'warn');
+  if(val > 0 && val < 1.5){
+    toast('⚠️ Las tortas grandes deben ser a partir de un kilo y medio (mínimo 1.5 kg).', 'warn');
   } else if(val > 5.0){
     toast('⚠️ El tamaño máximo permitido para tortas por kilo es de 5 kg.', 'warn');
   }
@@ -1931,8 +1931,8 @@ function actualizarTotalesNuevoPedido(){
       const kg = Number(inpKg?.value) || 2.0;
       const PRECIO_KG = 45000;
       subfila = PRECIO_KG * kg * cant;
-      if(kg <= 1.5){
-        textoSub = `<span style="color:var(--err)">⚠️ Debe ser > 1.5 kg (hasta 5 kg)</span> · <strong style="color:var(--primary)">$${subfila.toLocaleString('es-AR')}</strong>`;
+      if(kg < 1.5){
+        textoSub = `<span style="color:var(--err)">⚠️ Mínimo 1.5 kg (hasta 5 kg)</span> · <strong style="color:var(--primary)">$${subfila.toLocaleString('es-AR')}</strong>`;
       } else if(kg > 5.0){
         textoSub = `<span style="color:var(--err)">⚠️ Máx. 5 kg</span> · <strong style="color:var(--primary)">$${subfila.toLocaleString('es-AR')}</strong>`;
       } else {
@@ -1986,9 +1986,9 @@ async function guardarPedido(){
     let pesoVal = null;
     if(esGrande){
       pesoVal = Number(kg?.value);
-      if(!pesoVal || pesoVal <= 1.5){
+      if(!pesoVal || pesoval < 1.5){
         if(kg) kg.focus();
-        return toast(`⚠️ Para torta grande de "${prodNombre}", el peso debe superar el kilo y medio (mayor a 1.5 kg).`, 'warn');
+        return toast(`⚠️ Para torta grande de "${prodNombre}", el peso debe ser a partir de un kilo y medio (mínimo 1.5 kg).`, 'warn');
       }
       if(pesoVal > 5.0){
         if(kg) kg.focus();

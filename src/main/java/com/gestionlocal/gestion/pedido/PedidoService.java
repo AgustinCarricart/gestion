@@ -161,8 +161,8 @@ public class PedidoService
     public static final double PESO_MAXIMO_TORTA_GRANDE = 5.0;
 
     private void validarPesoTortaGrande(Double pesoKg) {
-        if (pesoKg == null || pesoKg <= PESO_MINIMO_TORTA_GRANDE) {
-            throw new com.gestionlocal.gestion.pedido.exception.PesoInvalidoException("Para tortas de tamaño grande por kilo, el peso debe superar el kilo y medio (mayor a 1.5 kg).");
+        if (pesoKg == null || pesoKg < PESO_MINIMO_TORTA_GRANDE) {
+            throw new com.gestionlocal.gestion.pedido.exception.PesoInvalidoException("Para tortas de tamaño grande por kilo, el peso debe ser a partir de un kilo y medio (mínimo 1.5 kg).");
         }
         if (pesoKg > PESO_MAXIMO_TORTA_GRANDE) {
             throw new com.gestionlocal.gestion.pedido.exception.PesoInvalidoException("El tamaño máximo permitido para tortas por kilo es de 5 kg.");

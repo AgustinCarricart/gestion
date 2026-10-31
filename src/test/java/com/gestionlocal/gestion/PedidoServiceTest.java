@@ -340,7 +340,7 @@ class PedidoServiceTest
             DetallePedidoRequestDto detalle = new DetallePedidoRequestDto();
             detalle.setProductoPublicId(prodId);
             detalle.setCantidad(1);
-            detalle.setPesoKg(1.5); // 1.5 kg exacto (no supera el kilo y medio)
+            detalle.setPesoKg(1.4); // Menor a 1.5 kg
 
             PedidoDtoRequest request = new PedidoDtoRequest();
             request.setNombreCliente("Ana Gómez");
