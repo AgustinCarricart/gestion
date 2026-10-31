@@ -1986,7 +1986,7 @@ async function guardarPedido(){
     let pesoVal = null;
     if(esGrande){
       pesoVal = Number(kg?.value);
-      if(!pesoVal || pesoval < 1.5){
+      if(!pesoVal || pesoVal < 1.5){
         if(kg) kg.focus();
         return toast(`⚠️ Para torta grande de "${prodNombre}", el peso debe ser a partir de un kilo y medio (mínimo 1.5 kg).`, 'warn');
       }
