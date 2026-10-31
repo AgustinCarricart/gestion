@@ -1,210 +1,137 @@
-# Gestión Local 🍰
+# Gestión Local — Sistema de Pedidos y Cocina (Tortas Olivia) 🍰
 
-Sistema de gestión de pedidos para locales de repostería. Permite administrar clientes, productos y pedidos con control de estados, roles de usuario y autenticación JWT. Incluye frontend integrado accesible desde el navegador.
+Sistema backend en producción diseñado para la gestión de pedidos, catálogo de productos, control de señas y saldos pendientes, reportes mensuales de ventas y vista de cocina para el comercio gastronómico **Tortas Olivia**.
 
-💻 **Código en GitHub:** [github.com/AgustinCarricart/gestion](https://github.com/AgustinCarricart)
-
----
-
-## Tecnologías
-
-- Java 17
-- Spring Boot 3.4.5
-- Spring Security + JWT (jjwt 0.11.5)
-- Spring Data JPA / Hibernate
-- MySQL
-- MapStruct 1.5.5
-- Lombok
-- Springdoc OpenAPI (Swagger) 2.8.6
-- JUnit 5 + Mockito (tests)
-- Maven
+💻 **Repositorio:** [github.com/AgustinCarricart/gestion](https://github.com/AgustinCarricart/gestion)
 
 ---
 
-## Arquitectura
+## 🛠️ Tecnologías
 
-El proyecto sigue una arquitectura en capas estricta con separación por módulo:
+- **Java 17**
+- **Spring Boot 3.4.5** (Spring Web, Spring Data JPA, Spring Security, Bean Validation)
+- **Spring Security + JWT** (`jjwt` 0.11.5) + encriptación `BCrypt`
+- **PostgreSQL** (Supabase en producción / Docker en entorno local)
+- **Hibernate / JPA** (con `@EntityGraph` e índices `@Index`)
+- **MapStruct 1.5.5** + **Lombok**
+- **Springdoc OpenAPI / Swagger UI** (`2.8.6`)
+- **JUnit 5 + Mockito** (Tests unitarios)
+- **Docker & Docker Compose**
 
-```
-Controller → Service → Repository → Base de datos
+---
+
+## 🏗️ Arquitectura
+
+El proyecto sigue una **arquitectura en capas estricta** organizada por módulos de dominio:
+
+```text
+Controller (DTOs) → Service (Lógica de Negocio + @Transactional) → Repository (JPA) → PostgreSQL
 ```
 
-```
+### Decisiones técnicas principales:
+1. **Patrón de Clave Dual (`Long id` + `UUID publicId`):** Las entidades utilizan `Long` autoincremental como clave primaria interna para las relaciones en la base de datos, y exponen únicamente un `UUID publicId` en los DTOs y endpoints REST.
+2. **Optimización de Consultas JPA:** Configuración de `spring.jpa.open-in-view: false` junto con `@EntityGraph(attributePaths = {"detalles", "detalles.producto"})` en `PedidoRepository` para evitar el problema de consultas $N+1$ al listar pedidos con sus ítems y productos.
+3. **Modelo de Pedidos Ágil con Índices:** Los datos de contacto del cliente (`nombreCliente`, `telefonoCliente`) están integrados e indexados (`@Index`) directamente en la entidad `PedidoEntity` para agilizar la toma de pedidos en mostrador.
+4. **Inicialización Automática (`CommandLineRunner`):** Al iniciar la aplicación, se verifica e inicializa automáticamente el catálogo base de 43 productos (`CatalogoDataInitializer`) y los usuarios por defecto (`AdminUserInitializer`).
+
+### Estructura de paquetes:
+```text
 com.gestionlocal.gestion
-├── auth
-│   ├── AuthController
-│   ├── AuthService
-│   ├── AuthRequest
-│   ├── AuthResponse
-│   ├── RegisterRequest
-│   └── ResetPasswordRequest
-├── cliente
-│   ├── dto
-│   ├── exception
-│   ├── mapper
-│   ├── ClienteController
-│   ├── ClienteEntity
-│   ├── ClienteRepository
-│   └── ClienteService
-├── producto
-│   ├── dto
-│   ├── exception
-│   ├── mapper
-│   ├── ProductoController
-│   ├── ProductoEntity
-│   ├── ProductoRepository
-│   ├── ProductoService
-│   └── TipoProducto (enum)
-├── pedido
-│   ├── dto
-│   ├── exception
-│   ├── mapper
-│   ├── DetallePedidosEntity
-│   ├── EstadoPedido (enum)
-│   ├── PedidoController
-│   ├── PedidoEntity
-│   ├── PedidoRepository
-│   └── PedidoService
-├── usuario
-│   ├── RolEnum
-│   ├── UsuarioDetailsServiceImpl
-│   ├── UsuarioEntity
-│   ├── UsuarioRepository
-│   ├── UsuarioResponseDto
-│   └── UsernameAlreadyExistsException
-├── security
-│   ├── JwtAuthFilter
-│   ├── JwtService
-│   └── SecurityConfig
-└── config
-    ├── CorsConfig
-    ├── GlobalExceptionHandler
-    ├── ErrorResponse
-    ├── ValidationErrorResponse
-    └── SwaggerConfig
+├── auth           # Login, registro de usuarios y reseteo de contraseñas
+├── producto       # CRUD de catálogo, baja lógica, reactivación y filtro por categoría
+├── pedido         # Flujo de estados, cálculo de precios por tipo/peso, señas y reportes mensuales
+├── usuario        # Entidad de usuario, roles e integración con UserDetails de Spring Security
+├── security       # Filtro JWT (OncePerRequestFilter), generación de tokens y SecurityConfig
+├── config         # Manejo global de excepciones (@RestControllerAdvice), Swagger e inicializadores
+├── licencia       # Configuración del plan activo del comercio
+└── notificacion   # Avisos internos de actualización de pedidos para la vista de cocina
 ```
 
 ---
 
-## Seguridad
+## 🔐 Seguridad y Roles
 
-El sistema usa autenticación **JWT** con dos roles:
+El sistema utiliza autenticación **JWT Stateless** (`SessionCreationPolicy.STATELESS`):
 
 | Rol | Permisos |
-|-----|----------|
-| `ADMIN` | Acceso total — crear/editar/eliminar clientes, productos, pedidos y usuarios |
-| `EMPLEADO` | Ver pedidos del día y avanzar estado |
+| :--- | :--- |
+| `ADMIN` / `SUPERADMIN` | Acceso total: crear, editar, cancelar y eliminar pedidos, registrar señas, consultar reportes mensuales de ventas, administrar el catálogo de productos y gestionar usuarios. |
+| `COCINA` / `EMPLEADO` | Consultar pedidos activos y pedidos del día en la vista de cocina, y avanzar el estado de elaboración (`PENDIENTE` → `LISTO` → `ENTREGADO`). |
 
 ---
 
-## Tipos de producto y cálculo de precio
+## 🧮 Tipos de Producto, Precios y Estados
 
-| Tipo | Descripción | Cálculo |
-|------|-------------|---------|
-| `TORTA_COMUN` | Torta estándar precio fijo | `precioFijo` |
-| `TORTA_POR_KILO` | Torta grande vendida por peso | `precio × pesoKg` |
-| `TORTA_POR_KILO_FRUTA` | Igual que anterior con fruta | `precio × pesoKg` |
-| `INDIVIDUAL` | Porción individual precio fijo | `precio × cantidad` |
-| `MINI` | Porción pequeña precio fijo | `precio × cantidad` |
-| `POR_DOCENA` | Alfajores, medialunas, etc. Mínimo 12 unidades | `precioDocena × docenas` |
+### Cálculo automático de precios según tipo de producto
+| Tipo | Descripción | Regla y Cálculo |
+| :--- | :--- | :--- |
+| `TORTA_COMUN` | Torta estándar de catálogo | `precioFijo × cantidad` (o cotización por kilo si se especifica un peso entre `1.5 kg` y `5.0 kg`) |
+| `TORTA_POR_KILO` / `TORTA_POR_KILO_FRUTA` | Torta grande vendida por peso | Rango permitido de `> 1.5 kg` a `5.0 kg` (`precioPorKilo × pesoKg`) |
+| `INDIVIDUAL` | Porción o producto individual | `precio × cantidad` |
+| `MINI` / `POR_DOCENA` | Alfajores, shots, mini pastelería | Compra mínima de **12 unidades** (`precio × cantidad`) |
 
----
+### Flujo de estados de un pedido
+```text
+PENDIENTE ──► LISTO ──► ENTREGADO
+                └──► NO_RETIRO
 
-## Estados de pedido
-
-```
-PENDIENTE → LISTO → ENTREGADO
-                 ↘ NO_RETIRO
-
-CANCELADO (desde cualquier estado activo)
+CANCELADO (desde cualquier estado activo previo a ENTREGADO)
 ```
 
 ---
 
-## Frontend
+## 📡 Endpoints Principales
 
-El proyecto incluye un frontend integrado en `src/main/resources/static/index.html` que se sirve automáticamente con Spring Boot.
+### Auth (`/api/auth`)
+| Método | Endpoint | Descripción | Rol |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/login` | Iniciar sesión y obtener token JWT | Público |
+| `GET` | `/api/auth/health` | Estado del servidor | Público |
+| `POST` | `/api/auth/register` | Crear nuevo usuario | `ADMIN` |
+| `GET` | `/api/auth/usuarios` | Listar todos los usuarios | `ADMIN` |
+| `PATCH` | `/api/auth/usuarios/{publicId}/reset-password` | Resetear contraseña de un usuario | `ADMIN` |
 
-Al levantar el proyecto, accedés desde el navegador en `http://localhost:8080`.
+### Productos (`/api/productos`)
+| Método | Endpoint | Descripción | Rol |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/productos` | Listar productos activos | Público |
+| `GET` | `/api/productos/{publicId}` | Buscar producto por ID público | Público |
+| `GET` | `/api/productos/tipo/{tipo}` | Filtrar productos activos por tipo | Público |
+| `POST` | `/api/productos` | Crear nuevo producto | `ADMIN` |
+| `PUT` | `/api/productos/{publicId}` | Modificar producto existente | `ADMIN` |
+| `DELETE` | `/api/productos/{publicId}` | Baja lógica (valida que no tenga pedidos pendientes/listos) | `ADMIN` |
+| `PATCH` | `/api/productos/{publicId}/reactivar` | Reactivar un producto inactivo | `ADMIN` |
 
-**Panel ADMIN:**
-- Gestión de pedidos con filtros combinados por fecha, estado y nombre de cliente
-- Crear pedidos con múltiples productos
-- Gestión de clientes y productos (CRUD completo)
-- Gestión de usuarios (crear, resetear contraseña)
-
-**Panel EMPLEADO (Cocina):**
-- Vista de pedidos del día ordenados por hora de entrega
-- Marcar pedidos como LISTO
-
-**Uso en red local:** si el servidor corre en una PC de la red, las demás pueden acceder reemplazando `localhost` por la IP local del servidor (ej: `http://192.168.1.100:8080`).
+### Pedidos y Reportes (`/api/pedidos`)
+| Método | Endpoint | Descripción | Rol |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/pedidos` | Listar pedidos activos (o historial con `?historico=true`) | `ADMIN` + `COCINA` |
+| `GET` | `/api/pedidos/{publicId}` | Buscar pedido por ID público | `ADMIN` + `COCINA` |
+| `GET` | `/api/pedidos/estado/{estado}` | Filtrar pedidos por estado | `ADMIN` + `COCINA` |
+| `GET` | `/api/pedidos/fecha?fecha=YYYY-MM-DD` | Filtrar pedidos por fecha de entrega | `ADMIN` + `COCINA` |
+| `GET` | `/api/pedidos/buscar-por-nombre?nombre=` | Buscar pedidos por nombre de cliente | `ADMIN` + `COCINA` |
+| `GET` | `/api/pedidos/cocina` | Vista de cocina (activos o filtrados por `?fecha=YYYY-MM-DD`) | `ADMIN` + `COCINA` |
+| `GET` | `/api/pedidos/cocina/hoy` | Pedidos del día para cocina ordenados por horario | `ADMIN` + `COCINA` |
+| `GET` | `/api/pedidos/reportes/mensual?anio=&mes=` | Reporte mensual de facturación, señas, saldos y productos más vendidos | `ADMIN` |
+| `POST` | `/api/pedidos` | Crear pedido con múltiples ítems y seña opcional | `ADMIN` |
+| `PATCH` | `/api/pedidos/{publicId}/sena` | Actualizar monto de seña abonada | `ADMIN` |
+| `PATCH` | `/api/pedidos/{publicId}/avanzar` | Avanzar al siguiente estado (`PENDIENTE` → `LISTO` → `ENTREGADO`) | `ADMIN` + `COCINA` |
+| `PATCH` | `/api/pedidos/{publicId}/estado?nuevoEstado=` | Cambiar estado manualmente | `ADMIN` + `COCINA` |
+| `PATCH` | `/api/pedidos/{publicId}/cancelar` | Cancelar pedido | `ADMIN` |
+| `PATCH` | `/api/pedidos/{publicId}/no-retiro` | Marcar como no retirado (desde `LISTO`) | `ADMIN` |
+| `DELETE` | `/api/pedidos/{publicId}` | Eliminar pedido | `ADMIN` |
 
 ---
 
-## Endpoints
+## 🧪 Tests Unitarios
 
-### Auth
+Tests unitarios implementados con **JUnit 5** y **Mockito** siguiendo el patrón **AAA (Arrange, Act, Assert)**:
 
-| Método | Endpoint | Descripción | Rol |
-|--------|----------|-------------|-----|
-| POST | `/api/auth/login` | Login | Público |
-| POST | `/api/auth/register` | Crear usuario | ADMIN |
-| GET | `/api/auth/usuarios` | Listar usuarios | ADMIN |
-| PATCH | `/api/auth/usuarios/{publicId}/reset-password` | Resetear contraseña | ADMIN |
-
-### Clientes
-
-| Método | Endpoint | Descripción | Rol |
-|--------|----------|-------------|-----|
-| GET | `/api/clientes` | Listar todos | ADMIN |
-| GET | `/api/clientes/activos` | Listar activos | ADMIN |
-| GET | `/api/clientes/{publicId}` | Buscar por ID | ADMIN |
-| GET | `/api/clientes/buscar?nombre=&apellido=` | Buscar por nombre | ADMIN |
-| POST | `/api/clientes` | Crear cliente | ADMIN |
-| PUT | `/api/clientes/{publicId}` | Modificar cliente | ADMIN |
-| DELETE | `/api/clientes/{publicId}` | Baja lógica | ADMIN |
-| PATCH | `/api/clientes/{publicId}/reactivar` | Reactivar cliente | ADMIN |
-
-### Productos
-
-| Método | Endpoint | Descripción | Rol |
-|--------|----------|-------------|-----|
-| GET | `/api/productos` | Listar todos | ADMIN |
-| GET | `/api/productos/{publicId}` | Buscar por ID | ADMIN |
-| GET | `/api/productos/tipo/{tipo}` | Filtrar por tipo | ADMIN |
-| POST | `/api/productos` | Crear producto | ADMIN |
-| PUT | `/api/productos/{publicId}` | Modificar producto | ADMIN |
-| DELETE | `/api/productos/{publicId}` | Baja lógica | ADMIN |
-| PATCH | `/api/productos/{publicId}/reactivar` | Reactivar producto | ADMIN |
-
-### Pedidos
-
-| Método | Endpoint | Descripción | Rol |
-|--------|----------|-------------|-----|
-| GET | `/api/pedidos` | Listar todos | ADMIN + EMPLEADO |
-| GET | `/api/pedidos/{publicId}` | Ver pedido | ADMIN + EMPLEADO |
-| GET | `/api/pedidos/cliente/{clientePublicId}` | Pedidos por cliente | ADMIN + EMPLEADO |
-| GET | `/api/pedidos/estado/{estado}` | Pedidos por estado | ADMIN + EMPLEADO |
-| GET | `/api/pedidos/fecha?fecha=YYYY-MM-DD` | Pedidos por fecha | ADMIN + EMPLEADO |
-| GET | `/api/pedidos/buscar?nombre=&apellido=` | Buscar por cliente | ADMIN + EMPLEADO |
-| GET | `/api/pedidos/cocina/hoy` | Pedidos del día (cocina) | ADMIN + EMPLEADO |
-| POST | `/api/pedidos` | Crear pedido | ADMIN |
-| PATCH | `/api/pedidos/{publicId}/avanzar` | Avanzar estado | ADMIN + EMPLEADO |
-| PATCH | `/api/pedidos/{publicId}/estado?nuevoEstado=` | Cambiar estado | ADMIN + EMPLEADO |
-| PATCH | `/api/pedidos/{publicId}/cancelar` | Cancelar pedido | ADMIN |
-| PATCH | `/api/pedidos/{publicId}/no-retiro` | Marcar no retiro | ADMIN |
-
----
-
-## Tests
-
-Tests unitarios con **JUnit 5** y **Mockito**, patrón AAA (Arrange, Act, Assert).
-
-| Módulo | Cobertura |
-|--------|-----------|
-| `ClienteService` | Listar todos, listar activos, buscar por ID, buscar por nombre, crear, actualizar, baja lógica, reactivar |
-| `ProductoService` | Listar todos, listar por tipo, buscar por ID, crear, actualizar, baja lógica, reactivar |
-| `PedidoService` | Buscar por ID, por estado, por cliente — transiciones de estado (avanzar, cancelar, marcarNoRetiro, cambiarEstado) |
+| Clase de Test | Cobertura de Escenarios |
+| :--- | :--- |
+| `ProductoServiceTest` | Listar activos, filtrar por tipo, buscar por ID, crear, validar duplicados, actualizar, baja lógica validando pedidos activos y reactivación. |
+| `PedidoServiceTest` | Búsqueda por ID/estado/fecha/cocina, transiciones válidas e inválidas de estado (`avanzar`, `cancelar`, `marcarNoRetiro`, `cambiarEstado`), validación de mínimo 12 unidades en productos `MINI` y cálculo de tortas grandes por kilo (`1.5 kg` a `5.0 kg`). |
+| `GestionApplicationTests` | Levantamiento integral del contexto de Spring Boot con base de datos en memoria H2. |
 
 ```bash
 ./mvnw test
@@ -212,71 +139,23 @@ Tests unitarios con **JUnit 5** y **Mockito**, patrón AAA (Arrange, Act, Assert
 
 ---
 
-## Cómo correr el proyecto localmente
+## 🚀 Cómo correr el proyecto localmente
 
-### Requisitos
+### Opción 1: Con Docker Compose (Recomendado)
+Levanta automáticamente la base de datos **PostgreSQL 16** y el **Backend Spring Boot**:
 
-- Java 17
-- MySQL corriendo localmente
-- Maven
-
-### Configuración
-
-En `src/main/resources/application.yaml`:
-
-```yaml
-server:
-  port: ${PORT:8080}
-
-spring:
-  datasource:
-    url: ${DB_URL}
-    username: ${DB_USER}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: false
-    open-in-view: false
-
-jwt:
-  secret: ${JWT_SECRET:claveSecretaSuperSeguraParaFirmarTokensJWT12345}
-  expiration: 86400000
+```bash
+docker compose up --build
 ```
 
-### Correr
-
+### Opción 2: Con Maven y PostgreSQL local
+1. Asegurate de tener PostgreSQL corriendo con una base de datos llamada `gestion_pedidos` (o configurá las variables de entorno `DB_URL`, `DB_USER`, `DB_PASSWORD`, `JWT_SECRET`).
+2. Ejecutá el proyecto:
 ```bash
 ./mvnw spring-boot:run
 ```
 
-### Primer usuario
+### Usuarios iniciales y Documentación Swagger
+Al iniciar la aplicación se crean automáticamente el catálogo de productos y los usuarios iniciales (`admin` / `admin123` y `cocina` / `cocina123`).
 
-Al levantar el proyecto las tablas se crean automáticamente. Insertá el primer usuario ADMIN en la BD:
-
-```sql
-INSERT INTO usuario (public_id, username, password, rol, activo)
-VALUES (UUID_TO_BIN(UUID()), 'admin', '$2a$12$TU_HASH_BCRYPT', 'ADMIN', 1);
-```
-
-Generá el hash en [bcrypt-generator.com](https://bcrypt-generator.com).  
-A partir de ahí el ADMIN puede crear nuevos usuarios desde el frontend o desde el endpoint `/api/auth/register`.
-
----
-
-## Estado del proyecto
-
-- [x] Gestión completa de Clientes (CRUD + baja lógica + reactivar + buscar)
-- [x] Gestión completa de Productos (CRUD + baja lógica + reactivar + filtrar por tipo)
-- [x] Gestión completa de Pedidos con múltiples ítems
-- [x] Cálculo automático de precios según tipo de producto
-- [x] Flujo de estados de pedido
-- [x] Vista de cocina (pedidos del día)
-- [x] Autenticación JWT con roles ADMIN y EMPLEADO
-- [x] Gestión de usuarios (crear, listar, resetear contraseña)
-- [x] Manejo global de excepciones con respuestas JSON estructuradas
-- [x] Documentación con Swagger / OpenAPI
-- [x] Tests unitarios — ClienteService, ProductoService y PedidoService
-- [ ] Métricas y reportes de ventas
+- **Swagger UI:** `http://localhost:8080/swagger-ui/index.html` (Podés autenticarte pegando el token devuelto por `/api/auth/login` en el botón **Authorize**).

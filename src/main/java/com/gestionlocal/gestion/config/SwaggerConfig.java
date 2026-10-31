@@ -1,11 +1,12 @@
 package com.gestionlocal.gestion.config;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.servers.Server;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.List;
 
 @Configuration
 public class SwaggerConfig
@@ -13,10 +14,18 @@ public class SwaggerConfig
     @Bean
     public OpenAPI customOpenAPI()
     {
+        final String securitySchemeName = "bearerAuth";
         return new OpenAPI()
-                .servers(List.of(
-                        new Server().url("https://gestion-production-989a.up.railway.app").description("Producción"),
-                        new Server().url("http://localhost:8080").description("Local")
-                ));
+                .info(new Info()
+                        .title("API Gestión Local — Tortas Olivia")
+                        .version("1.0.0")
+                        .description("Sistema backend para gestión de pedidos, cocina (KDS), reportes y notificaciones en tiempo real."))
+                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
+                .components(new Components()
+                        .addSecuritySchemes(securitySchemeName, new SecurityScheme()
+                                .name(securitySchemeName)
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")));
     }
 }

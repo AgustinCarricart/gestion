@@ -13,42 +13,40 @@ import java.util.UUID;
 @Repository
 public interface PedidoRepository extends JpaRepository<PedidoEntity, Long>
 {
-    @EntityGraph(attributePaths = {"detalles"})
+    @Override
+    @EntityGraph(attributePaths = {"detalles", "detalles.producto"})
+    List<PedidoEntity> findAll();
+
+    @EntityGraph(attributePaths = {"detalles", "detalles.producto"})
     Optional<PedidoEntity> findByPublicId(UUID publicId);
 
-    @EntityGraph(attributePaths = {"detalles"})
+    @EntityGraph(attributePaths = {"detalles", "detalles.producto"})
     List<PedidoEntity> findByEstadoPedido(EstadoPedido estadoPedido);
 
-    @EntityGraph(attributePaths = {"detalles"})
+    @EntityGraph(attributePaths = {"detalles", "detalles.producto"})
     List<PedidoEntity> findByNombreClienteIgnoreCase(String nombreCliente);
 
-    @EntityGraph(attributePaths = {"detalles"})
+    @EntityGraph(attributePaths = {"detalles", "detalles.producto"})
     List<PedidoEntity> findByNombreClienteContainingIgnoreCase(String nombreCliente);
 
     // Validación de productos activos en pedidos (se mantiene por los productos, ya no por cliente)
     boolean existsByDetalles_Producto_PublicIdAndEstadoPedidoIn(UUID productoPublicId, List<EstadoPedido> estados);
 
-    @EntityGraph(attributePaths = {"detalles"})
+    @EntityGraph(attributePaths = {"detalles", "detalles.producto"})
     List<PedidoEntity> findByEstadoPedidoInAndFechaEntregaBetweenOrderByFechaEntregaAsc(
             List<EstadoPedido> estados, LocalDateTime inicio, LocalDateTime fin);
 
-    @EntityGraph(attributePaths = {"detalles"})
+    @EntityGraph(attributePaths = {"detalles", "detalles.producto"})
     List<PedidoEntity> findByFechaEntregaBetweenOrderByFechaEntregaAsc(
             LocalDateTime inicio, LocalDateTime fin);
 
-    @EntityGraph(attributePaths = {"detalles"})
+    @EntityGraph(attributePaths = {"detalles", "detalles.producto"})
     List<PedidoEntity> findByEstadoPedidoNotInOrderByFechaEntregaAsc(List<EstadoPedido> estados);
 
-    @EntityGraph(attributePaths = {"detalles"})
+    @EntityGraph(attributePaths = {"detalles", "detalles.producto"})
     List<PedidoEntity> findByEstadoPedidoInAndFechaEntregaBetweenOrderByFechaEntregaDesc(
             List<EstadoPedido> estados,
             LocalDateTime desde,
             LocalDateTime hasta
     );
-
-    @org.springframework.data.jpa.repository.Modifying
-    @org.springframework.data.jpa.repository.Query(value = "TRUNCATE TABLE detalle_pedido, pedidos RESTART IDENTITY CASCADE", nativeQuery = true)
-    void truncatePedidosAndDetalles();
 }
-   
-

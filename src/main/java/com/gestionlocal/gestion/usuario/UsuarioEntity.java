@@ -53,9 +53,7 @@ public class UsuarioEntity implements UserDetails
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Si tu rol guardado es "ADMIN", debe retornar "ROLE_ADMIN"
-        return List.of(new SimpleGrantedAuthority("ROLE_" + this.rol.name()));
-        // O si rol es un String: new SimpleGrantedAuthority("ROLE_" + this.rol)
+        return List.of(new SimpleGrantedAuthority(this.rol.name()));
     }
 
     @Override

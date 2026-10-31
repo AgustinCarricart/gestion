@@ -89,9 +89,6 @@ public class PedidoService
     @Transactional
     public PedidoDtoResponse createPedido(PedidoDtoRequest dto)
     {
-        // Validación de fecha para que sea a partir de hoy (si no se validó ya en el DTO)
-        if (dto.getFechaEntrega() != null && dto.getFechaEntrega().toLocalDate().isBefore(LocalDate.now())) {
-        }
 
         PedidoEntity pedido = new PedidoEntity();
         pedido.setNombreCliente(dto.getNombreCliente());
@@ -317,7 +314,7 @@ public class PedidoService
                 .toList();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<PedidoDtoResponse> getPedidosByFecha(LocalDate fecha)
     {
         LocalDateTime inicio = fecha.atStartOfDay();
@@ -453,38 +450,5 @@ public class PedidoService
         if (notificacionService != null) {
             notificacionService.notificarPedidoEliminado(publicId);
         }
-    }
-
-    @Transactional
-    public java.util.Map<String, Object> purgarPedidosPrueba() {
-        long total = pedidoRepository.count();
-        try {
-            pedidoRepository.truncatePedidosAndDetalles();
-        } catch (Exception e) {
-            pedidoRepository.deleteAll();
-        }
-        if (notificacionService != null) {
-            notificacionService.notificarPedidoEliminado(null);
-        }
-        return java.util.Map.of(
-                "status", "success",
-                "message", "Todos los pedidos y registros de ventas de prueba fueron eliminados exitosamente.",
-                "totalEliminados", total
-        );
-    }
-
-    @Transactional
-    public java.util.Map<String, Object> eliminarPedidosPorEstado(EstadoPedido estado) {
-        List<PedidoEntity> pedidos = pedidoRepository.findByEstadoPedido(estado);
-        long count = pedidos.size();
-        pedidoRepository.deleteAll(pedidos);
-        if (notificacionService != null) {
-            notificacionService.notificarPedidoEliminado(null);
-        }
-        return java.util.Map.of(
-                "status", "success",
-                "message", "Se eliminaron " + count + " pedidos con estado " + estado + " exitosamente.",
-                "totalEliminados", count
-        );
     }
 }

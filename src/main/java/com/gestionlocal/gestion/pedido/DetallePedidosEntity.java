@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 
 @Entity
 @Getter
@@ -32,16 +30,6 @@ public class DetallePedidosEntity
 
     @Column(name = "cantidad", nullable = false)
     private Integer cantidad;
-
-    @Column(name = "nombre_cliente")
-    private String nombreCliente;
-
-    @Column(name = "telefono_cliente")
-    private String telefonoCliente;
-
-    @Column(name = "fecha_pedido")
-    private LocalDate fechaPedido;
-
 
     // Para TORTA_POR_KILO y TORTA_POR_KILO_FRUTA: peso en kg
     @Column(name = "peso_kg")

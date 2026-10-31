@@ -11,29 +11,19 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "https://frontend-gestion-dmlpw9rnn-torta-olivia.vercel.app")
 public class AuthController
 {
     private final AuthService authService;
-    private final com.gestionlocal.gestion.config.CatalogoDataInitializer catalogoDataInitializer;
 
-    public AuthController(AuthService authService, com.gestionlocal.gestion.config.CatalogoDataInitializer catalogoDataInitializer)
+    public AuthController(AuthService authService)
     {
         this.authService = authService;
-        this.catalogoDataInitializer = catalogoDataInitializer;
     }
 
     @GetMapping("/health")
     public ResponseEntity<String> health()
     {
         return ResponseEntity.ok("OK");
-    }
-
-    @GetMapping("/seed-catalogo")
-    public ResponseEntity<String> seedCatalogo()
-    {
-        catalogoDataInitializer.run();
-        return ResponseEntity.ok("Catálogo inicializado con éxito");
     }
 
     @PostMapping("/login")

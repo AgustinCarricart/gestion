@@ -2,7 +2,6 @@ package com.gestionlocal.gestion.pedido;
 
 import com.gestionlocal.gestion.pedido.dto.PedidoDtoRequest;
 import com.gestionlocal.gestion.pedido.dto.PedidoDtoResponse;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -122,20 +121,5 @@ public class PedidoController
     public ResponseEntity<Void> deletePedido(@PathVariable UUID publicId) {
         pedidoService.deletePedido(publicId);
         return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping("/admin/purgar-pruebas")
-    public ResponseEntity<java.util.Map<String, Object>> purgarPedidosPrueba() {
-        return ResponseEntity.ok(pedidoService.purgarPedidosPrueba());
-    }
-
-    @DeleteMapping("/admin/purgar-entregados")
-    public ResponseEntity<java.util.Map<String, Object>> purgarPedidosEntregados() {
-        return ResponseEntity.ok(pedidoService.eliminarPedidosPorEstado(EstadoPedido.ENTREGADO));
-    }
-
-    @DeleteMapping("/admin/estado/{estado}")
-    public ResponseEntity<java.util.Map<String, Object>> eliminarPedidosPorEstado(@PathVariable EstadoPedido estado) {
-        return ResponseEntity.ok(pedidoService.eliminarPedidosPorEstado(estado));
     }
 }

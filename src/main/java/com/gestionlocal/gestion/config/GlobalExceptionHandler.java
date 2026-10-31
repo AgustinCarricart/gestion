@@ -9,6 +9,10 @@ import com.gestionlocal.gestion.producto.exception.ProductoNotFoundException;
 import com.gestionlocal.gestion.usuario.exceptions.UsernameAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -20,6 +24,22 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler
 {
+    // --- 401 Unauthorized (Credenciales inválidas en Login) ---
+
+    @ExceptionHandler({BadCredentialsException.class, UsernameNotFoundException.class})
+    public ResponseEntity<ErrorResponse> handleAuthException(RuntimeException ex)
+    {
+        return buildResponse(HttpStatus.UNAUTHORIZED, "Credenciales inválidas");
+    }
+
+    // --- 403 Forbidden (Usuario desactivado o sin permisos suficientes) ---
+
+    @ExceptionHandler({DisabledException.class, AccessDeniedException.class})
+    public ResponseEntity<ErrorResponse> handleForbiddenException(RuntimeException ex)
+    {
+        return buildResponse(HttpStatus.FORBIDDEN, ex.getMessage());
+    }
+
     // --- 404 Not Found ---
 
     @ExceptionHandler({ ProductoNotFoundException.class, PedidoNotFoundException.class})

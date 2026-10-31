@@ -9,14 +9,16 @@ import org.mapstruct.*;
 public interface ProductoMapper
 {
 
-        @Mapping(target = "nombre",     source = "nombreProducto")
-        @Mapping(target = "tipo",       source = "tipoProducto")
-        @Mapping(target = "precioFijo", source = "precio")
+        @Mapping(target = "nombre",        source = "nombreProducto")
+        @Mapping(target = "tipo",          source = "tipoProducto")
+        @Mapping(target = "precioFijo",    source = "precio")
+        @Mapping(target = "precioPorKilo", ignore = true)
         ProductoResponseDto toDto(ProductoEntity entity);
 
         @Mapping(target = "id",             ignore = true)
         @Mapping(target = "publicId",       ignore = true)
         @Mapping(target = "activo",         ignore = true)
+        @Mapping(target = "peso",           ignore = true)
         @Mapping(target = "nombreProducto", source = "nombre")
         @Mapping(target = "tipoProducto",   source = "tipo")
         @Mapping(target = "precio",         source = "precioFijo")
@@ -27,12 +29,11 @@ public interface ProductoMapper
         @Mapping(target = "id",             ignore = true)
         @Mapping(target = "publicId",       ignore = true)
         @Mapping(target = "activo",         ignore = true)
+        @Mapping(target = "peso",           ignore = true)
         @Mapping(target = "nombreProducto", source = "nombre")
         @Mapping(target = "tipoProducto",   source = "tipo")
         @Mapping(target = "precio",         source = "precioFijo")
         @Mapping(target = "precioDocena",   source = "precioDocena")
         void updateEntity(ProductoRequestDto dto, @MappingTarget ProductoEntity entity);
-
-
 
 }
