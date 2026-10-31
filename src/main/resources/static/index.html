@@ -3,47 +3,96 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Gestión Local</title>
+<meta name="theme-color" content="#802334"/>
+<title>Gestión de Pedidos — Sistema Gastronómico</title>
+<link rel="manifest" href="./manifest.json"/>
+<link rel="icon" type="image/png" href="./icons/icon-192.png"/>
+<link rel="apple-touch-icon" href="./icons/icon-192.png"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="Gestión de Pedidos"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0f0f0f;--s1:#181818;--s2:#202020;--border:#2a2a2a;
-  --gold:#c8a84b;--gold2:#a8883a;--text:#ede9e0;--muted:#6b6b6b;
-  --ok:#4caf7d;--err:#d94f4f;--warn:#e09c3a;--r:10px;
-  --font:'Segoe UI',system-ui,sans-serif;
+  --bg:#FAF6F0;--s1:#FFFFFF;--s2:#F5EFE6;--border:#E8DCCF;
+  --primary:#802334;--primary-hover:#9B2B40;--primary-light:#FBECEF;
+  --gold:#C6A15B;--gold-hover:#B58F47;--gold-light:#FBF4E6;--gold-text:#8C6208;
+  --text:#2C221E;--muted:#756357;
+  --ok:#2E7D32;--ok-bg:#EAF5EB;--err:#A3283A;--err-bg:#FBECEF;--warn:#C67D1E;--warn-bg:#FFF4E5;
+  --r:12px;
+  --shadow:0 4px 18px rgba(44,34,30,0.06),0 1px 3px rgba(44,34,30,0.04);
+  --shadow-lg:0 14px 36px rgba(44,34,30,0.10),0 3px 8px rgba(44,34,30,0.05);
+  --font:'Montserrat',system-ui,-apple-system,sans-serif;
+  --font-serif:'Playfair Display',Georgia,serif;
 }
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px}
 
 /* ── LOGIN ── */
-#login{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
-.login-wrap{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:52px 44px;width:380px;text-align:center}
-.login-wrap .logo{font-size:2.2rem;margin-bottom:8px}
-.login-wrap h1{font-size:1.5rem;font-weight:700;color:var(--gold);margin-bottom:4px}
-.login-wrap p{color:var(--muted);font-size:.85rem;margin-bottom:32px}
+#login{
+  display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;
+  background:radial-gradient(ellipse at top, #FFFDF9 0%, var(--bg) 60%, #F3E8DA 100%);
+}
+.login-wrap{
+  background:var(--s1);border:1px solid var(--border);border-radius:20px;
+  padding:44px 36px;width:390px;max-width:100%;text-align:center;
+  box-shadow:var(--shadow-lg);position:relative;
+}
+.login-logo-wrap{
+  width:130px;height:130px;margin:0 auto 12px;position:relative;display:flex;align-items:center;justify-content:center;
+}
+.login-logo-img{
+  max-width:100%;max-height:100%;object-fit:contain;
+  filter:drop-shadow(0 4px 12px rgba(128,35,52,0.12));
+}
+.login-wrap h1{
+  font-family:var(--font-serif);font-size:1.75rem;font-weight:700;color:var(--primary);margin-bottom:2px;letter-spacing:-.01em;
+}
+.login-wrap .tagline{
+  font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:6px;
+}
+.login-wrap p{
+  color:var(--muted);font-size:.85rem;margin-bottom:28px;
+}
 .login-wrap label{text-align:left}
 
 /* ── FORMS ── */
-label{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;margin-top:2px}
+label{display:block;font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;margin-top:2px;font-weight:600}
 input,select,textarea{
-  width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);
+  width:100%;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);
   color:var(--text);padding:11px 14px;font-size:.9rem;font-family:var(--font);
-  margin-bottom:14px;outline:none;transition:border-color .2s;-webkit-appearance:none
+  margin-bottom:14px;outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;
 }
-input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+input[type="date"],input[type="time"],input[type="datetime-local"],input[type="month"]{
+  -webkit-appearance:auto !important;
+  appearance:auto !important;
+  color-scheme:light !important;
+  font-family:inherit;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(198,161,91,0.16);
+}
 textarea{resize:vertical;min-height:72px}
-select option{background:var(--s1)}
+select option{background:var(--s1);color:var(--text)}
 
 /* ── BUTTONS ── */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
   padding:10px 18px;border-radius:var(--r);font-size:.875rem;font-weight:600;
-  cursor:pointer;border:none;transition:opacity .15s,transform .1s;font-family:var(--font);line-height:1}
+  cursor:pointer;border:none;transition:all .15s;font-family:var(--font);line-height:1}
 .btn:active{transform:scale(.97)}
-.btn:hover{opacity:.85}
-.btn-gold{background:var(--gold);color:#0f0f0f}
-.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+.btn:hover{opacity:.9}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(128,35,52,0.22)}
+.btn-primary:hover{background:var(--primary-hover)}
+.btn-gold{background:var(--gold);color:#fff;box-shadow:0 2px 8px rgba(198,161,91,0.25)}
+.btn-gold:hover{background:var(--gold-hover)}
+.btn-ghost{background:var(--s1);border:1px solid var(--border);color:var(--text)}
+.btn-ghost:hover{background:var(--s2);border-color:#D6C4B0}
 .btn-err{background:var(--err);color:#fff}
-.btn-ok{background:var(--ok);color:#0f0f0f}
-.btn-warn{background:var(--warn);color:#0f0f0f}
+.btn-ok{background:var(--ok);color:#fff}
+.btn-warn{background:var(--warn);color:#fff}
 .btn-sm{padding:7px 12px;font-size:.8rem}
 .btn-full{width:100%}
 .btn-icon{padding:7px 10px}
@@ -52,70 +101,90 @@ select option{background:var(--s1)}
 #app{display:none;min-height:100vh;flex-direction:column}
 
 nav{
-  background:var(--s1);border-bottom:1px solid var(--border);
-  display:flex;align-items:center;padding:0 20px;height:58px;position:sticky;top:0;z-index:50;gap:2px
+  background:var(--s1);border-bottom:1px solid var(--border);box-shadow:0 2px 10px rgba(44,34,30,0.03);
+  display:flex;align-items:center;padding:0 20px;height:62px;position:sticky;top:0;z-index:50;gap:2px
 }
-.brand{font-weight:800;color:var(--gold);font-size:1.05rem;margin-right:24px;letter-spacing:-.01em}
+.brand{display:flex;align-items:center;gap:10px;margin-right:20px;flex-shrink:0;text-decoration:none}
+.nav-logo{height:42px;width:auto;object-fit:contain}
+.brand-info{display:flex;flex-direction:column;line-height:1.1}
+.brand-name{font-family:var(--font-serif);font-size:1.15rem;font-weight:700;color:var(--primary);letter-spacing:-.01em}
+.brand-sub{font-size:.6rem;letter-spacing:.18em;color:var(--gold);font-weight:700;text-transform:uppercase}
 .tab{
-  height:58px;display:flex;align-items:center;padding:0 13px;font-size:.85rem;
-  color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;
-  transition:color .2s,border-color .2s;white-space:nowrap
+  height:62px;display:flex;align-items:center;padding:0 14px;font-size:.875rem;
+  color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;font-weight:500;
+  transition:color .2s,border-color .2s;white-space:nowrap;gap:5px
 }
 .tab:hover{color:var(--text)}
-.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.tab.on{color:var(--primary);border-bottom-color:var(--primary);font-weight:700}
 .nav-r{margin-left:auto;display:flex;align-items:center;gap:10px}
-.rol-chip{font-size:.7rem;padding:3px 10px;border-radius:99px;background:var(--s2);
-  color:var(--muted);text-transform:uppercase;letter-spacing:.06em;border:1px solid var(--border)}
+.rol-chip{font-size:.7rem;padding:4px 10px;border-radius:99px;background:var(--primary-light);
+  color:var(--primary);text-transform:uppercase;letter-spacing:.06em;font-weight:700;border:1px solid rgba(128,35,52,0.18)}
+.rol-chip.superadmin{background:linear-gradient(135deg, #4c1d95, #7c3aed);color:#fff;border:1px solid #c084fc;box-shadow:0 0 10px rgba(124,58,237,0.35)}
+.rol-chip.admin{background:var(--primary-light);color:var(--primary);border:1px solid rgba(128,35,52,0.2)}
+.rol-chip.cocina{background:rgba(198,161,91,0.18);color:#926f28;border:1px solid rgba(198,161,91,0.4)}
+
+/* Switches y cards de Licencia */
+.lic-switch-card{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;transition:border-color .2s}
+.lic-switch-card:hover{border-color:var(--gold)}
+.lic-switch-card input[type="checkbox"]{margin-top:3px;width:18px;height:18px;cursor:pointer;accent-color:var(--gold)}
+.lic-switch-card strong{display:block;font-size:0.88rem;margin-bottom:2px}
+.lic-switch-card p{margin:0;font-size:0.77rem;color:var(--muted);line-height:1.35}
+
+/* Banner de suspensión */
+#banner-suspension{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:99999;align-items:center;justify-content:center;padding:20px}
+#banner-suspension .box{background:var(--s1);border:2px solid var(--err);border-radius:12px;padding:32px 28px;max-width:480px;text-align:center;box-shadow:0 12px 35px rgba(0,0,0,0.5)}
 
 main{padding:28px 20px;max-width:1120px;width:100%;margin:0 auto;flex:1}
 
 /* ── SECCIONES ── */
 .sec{display:none}.sec.on{display:block}
 .sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
-.sec-hdr h2{font-size:1.15rem;font-weight:700}
-.sec-hdr-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sec-hdr h2{font-family:var(--font-serif);font-size:1.25rem;font-weight:700;color:var(--primary)}
 
 /* ── CARDS ── */
-.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow)}
 .card-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .card-info h3{font-size:.95rem;font-weight:600;margin-bottom:4px}
 .card-info p{font-size:.82rem;color:var(--muted);line-height:1.55}
 .card-actions{display:flex;gap:6px;flex-shrink:0;flex-direction:column;align-items:flex-end}
 
 /* ── ESTADOS ── */
-.badge{display:inline-block;font-size:.7rem;padding:3px 10px;border-radius:99px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-.b-PENDIENTE{background:#2e2000;color:#c8a84b}
-.b-LISTO{background:#0a2e18;color:#4caf7d}
-.b-ENTREGADO{background:#1a1a1a;color:#444}
-.b-CANCELADO{background:#2e0a0a;color:#d94f4f}
-.b-NO_RETIRO{background:#1e1200;color:#c87d2a}
+.badge{display:inline-block;font-size:.72rem;padding:4px 11px;border-radius:99px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;border:1px solid transparent}
+.b-PENDIENTE{background:var(--gold-light);color:var(--gold-text);border-color:#ECD6A4}
+.b-LISTO{background:var(--ok-bg);color:var(--ok);border-color:#BCE5C3}
+.b-ENTREGADO{background:var(--s2);color:var(--muted);border-color:var(--border)}
+.b-CANCELADO{background:var(--err-bg);color:var(--err);border-color:#F5BDC5}
+.b-NO_RETIRO{background:var(--warn-bg);color:var(--warn);border-color:#FCD8A8}
 
 /* ── MODAL ── */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;
+.overlay{display:none;position:fixed;inset:0;background:rgba(44,34,30,.45);backdrop-filter:blur(3px);z-index:200;
   align-items:center;justify-content:center;padding:16px}
 .overlay.on{display:flex}
-.modal{background:var(--s1);border:1px solid var(--border);border-radius:14px;
+.modal{background:var(--s1);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow-lg);
   padding:28px;width:500px;max-width:100%;max-height:92vh;overflow-y:auto}
-.modal h3{font-size:1rem;font-weight:700;margin-bottom:18px;color:var(--gold)}
+.modal h3{font-family:var(--font-serif);font-size:1.15rem;font-weight:700;margin-bottom:18px;color:var(--primary)}
 .modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:6px;padding-top:14px;border-top:1px solid var(--border)}
 
 /* ── COCINA ── */
-.cocina-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
-.ccard{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:20px}
-.ccard .hora{font-size:2.2rem;font-weight:800;color:var(--gold);line-height:1;margin-bottom:2px}
+.cocina-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.ccard{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);border-top:4px solid var(--primary);display:flex;flex-direction:column}
+.ccard .hora{font-size:2.2rem;font-weight:800;color:var(--primary);line-height:1;margin-bottom:2px}
 .ccard .nombre{font-size:1rem;font-weight:600;margin-bottom:10px}
 .ccard .ditem{font-size:.82rem;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border)}
 .ccard .ditem:last-child{border:none}
 .ccard .obs{font-size:.8rem;color:var(--warn);margin-top:8px;font-style:italic}
+.ccard-actions{margin-top:auto;padding-top:14px;display:flex;flex-direction:column;gap:6px}
+.ccard-actions .btn{min-height:42px;font-size:0.88rem}
 
 /* ── DETALLE PEDIDO ── */
-.det-row{display:grid;grid-template-columns:1fr 75px 75px auto;gap:6px;align-items:end;margin-bottom:6px}
+.det-row{display:grid;grid-template-columns:1fr 150px 65px 75px auto;gap:6px;align-items:center;margin-bottom:8px;padding:8px 10px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r)}
 .det-row input,.det-row select{margin:0}
+.dtz-wrap select{background:var(--s1);font-weight:600;font-size:0.82rem}
 .del{background:none;border:none;color:var(--err);cursor:pointer;font-size:1.3rem;
-  padding:9px 8px;line-height:1;transition:color .2s}
-.del:hover{color:#ff6b6b}
+  padding:6px 8px;line-height:1;transition:color .2s}
+.del:hover{color:#c73d50}
 
-/* ── SEARCH / FILTROS ── */
+/* ── FILTROS ── */
 .filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
 .filters input,.filters select{margin:0;flex:1;min-width:140px}
 
@@ -123,52 +192,176 @@ main{padding:28px 20px;max-width:1120px;width:100%;margin:0 auto;flex:1}
 #toast{
   position:fixed;bottom:22px;right:22px;padding:13px 20px;border-radius:var(--r);
   font-size:.875rem;font-weight:600;z-index:999;opacity:0;transform:translateY(8px);
-  pointer-events:none;transition:opacity .25s,transform .25s;max-width:300px
+  pointer-events:none;transition:opacity .25s,transform .25s;max-width:320px;box-shadow:var(--shadow-lg);
 }
 #toast.show{opacity:1;transform:translateY(0)}
-#toast.ok{background:var(--ok);color:#0f0f0f}
+#toast.ok{background:var(--ok);color:#fff}
 #toast.err{background:var(--err);color:#fff}
-#toast.warn{background:var(--warn);color:#0f0f0f}
+#toast.warn{background:var(--warn);color:#fff}
 
 .empty{text-align:center;padding:52px 0;color:var(--muted);font-size:.9rem}
-.sep{height:1px;background:var(--border);margin:14px 0}
 
 /* ── RESPONSIVE ── */
 @media(max-width:600px){
-  nav{padding:0 12px;overflow-x:auto;gap:0}
+  nav{padding:0 12px;height:56px;overflow-x:auto;gap:0}
+  .brand{display:flex;margin-right:10px}
+  .nav-logo{height:34px}
+  .brand-info{display:none}
+  .tab{height:56px;padding:0 10px;font-size:.82rem}
+  .tab,.nav-r{flex-shrink:0}
   main{padding:16px 12px}
-  .modal{padding:20px}
-  .det-row{grid-template-columns:1fr 60px 60px auto}
-  .card-actions{flex-direction:row;flex-wrap:wrap}
+
+  /* evita el zoom automático de iPhone al tocar un campo */
+  input,select,textarea{font-size:16px}
+
+  /* botones más cómodos para el dedo */
+  .btn{min-height:42px}
+  .btn-sm{min-height:38px}
+
+  /* formulario de pedido como panel desde abajo */
+  .overlay{align-items:flex-end;padding:0}
+  .modal{padding:20px;border-radius:16px 16px 0 0;max-height:94vh;width:100%}
+
+  /* filtros apilados */
+  .filters input,.filters select{min-width:100%}
+
+  /* tarjetas: botones debajo del texto */
+  .card-row{flex-direction:column}
+  .card-actions{flex-direction:row;flex-wrap:wrap;width:100%;align-items:stretch}
+  .card-actions .btn{flex:1}
+
+  /* producto en una fila, tamaño y cantidad abajo */
+  .det-row{grid-template-columns:1fr 1fr auto}
+  .det-row > select{grid-column:1/-1}
+  .det-row > .dtz-wrap{grid-column:1/-1}
+
+  .cocina-grid{grid-template-columns:1fr}
+  #toast{left:12px;right:12px;bottom:14px;max-width:none}
+}
+
+/* ── RESPONSIVE TABLETS & ORIENTACIÓN HORIZONTAL (LANDSCAPE) ── */
+@media(min-width: 601px) and (max-width: 960px){
+  /* Tablet en posición vertical (Portrait) */
+  main{padding:20px 16px;max-width:100%}
+  .cocina-grid{grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:14px}
+  .filters input, .filters select{min-width:130px}
+}
+
+@media(min-width: 961px){
+  /* Tablet en posición horizontal (Landscape) y monitores amplios */
+  main{max-width:1440px;padding:22px 24px}
+  .cocina-grid{grid-template-columns:repeat(auto-fill, minmax(290px, 1fr));gap:16px}
+}
+
+@media(orientation: landscape) and (max-height: 850px){
+  /* Optimización vertical cuando la tablet se da vuelta horizontalmente */
+  nav{height:52px;padding:0 16px}
+  .nav-logo{height:34px}
+  .tab{height:52px;font-size:.82rem;padding:0 12px}
+  main{padding:14px 18px;max-width:100%}
+  .sec-hdr{margin-bottom:10px}
+  .filters{margin-bottom:10px;gap:6px}
+  .filters input, .filters select{min-width:110px;padding:8px 10px;font-size:.84rem}
+  .cocina-resumen{padding:10px 14px;margin-bottom:12px}
+  .ccard{padding:14px}
+  .ccard .hora{font-size:1.9rem}
+}
+
+/* ── FORMATOS Y BADGES PROFESIONALES ── */
+.fecha-pill{display:inline-block;font-size:.68rem;padding:2px 7px;border-radius:99px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;vertical-align:middle;margin-right:4px}
+.fecha-pill-hoy{background:var(--primary);color:#fff}
+.fecha-pill-manana{background:var(--gold);color:#fff}
+.order-id{font-family:monospace;font-size:.78rem;font-weight:700;color:var(--muted);background:var(--s2);padding:2px 7px;border-radius:6px;border:1px solid var(--border)}
+
+/* ── RESUMEN DE PRODUCCIÓN EN COCINA ── */
+.cocina-resumen{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.cocina-resumen-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:0.85rem;color:var(--muted);flex-wrap:wrap;gap:6px}
+.cocina-chips{display:flex;gap:8px;flex-wrap:wrap}
+.cocina-chip{display:inline-flex;align-items:center;gap:6px;background:var(--s2);border:1px solid var(--border);padding:6px 12px;border-radius:99px;font-size:.82rem;font-weight:600;color:var(--text);cursor:pointer;transition:all .15s}
+.cocina-chip:hover{border-color:var(--gold);background:var(--gold-light)}
+.cocina-chip.on{background:var(--primary-light);border-color:var(--primary);color:var(--primary)}
+
+/* ── FORMATO DE TICKET PARA IMPRESIÓN ── */
+.ticket-paper{background:#fff;color:#111;font-size:13px;line-height:1.4}
+.ticket-table{width:100%;border-collapse:collapse;margin:10px 0}
+.ticket-table th{text-align:left;font-size:11px;text-transform:uppercase;border-bottom:1px solid #ddd;padding:4px 0;color:#666}
+.ticket-table td{padding:6px 0;border-bottom:1px dashed #eee;vertical-align:top}
+.ticket-totales{border-top:1px dashed #999;margin-top:10px;padding-top:8px}
+.ticket-total-row{display:flex;justify-content:space-between;margin-bottom:4px;font-size:13px}
+.ticket-saldo-box{background:#f8f4ec;border:1px solid #d4af37;padding:8px 10px;border-radius:6px;text-align:center;margin-top:8px}
+
+/* ── COMANDA DE COCINA TÉRMICA 80MM (UNNION TP95W) ── */
+.comanda-cocina-paper{
+  background:#fff;
+  color:#000;
+  font-family:'Courier New',Courier,monospace;
+  padding:4px 6px;
+  line-height:1.25;
+}
+.comanda-header{text-align:center;border-bottom:2px dashed #000;padding-bottom:8px;margin-bottom:8px}
+.comanda-title{font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:1px}
+.comanda-pedido-num{font-size:26px;font-weight:900;margin:4px 0}
+.comanda-fecha-box{background:#000;color:#fff;padding:6px 8px;border-radius:4px;text-align:center;margin:8px 0;font-size:15px;font-weight:900}
+.comanda-cliente{font-size:14px;font-weight:700;margin-bottom:6px;border-bottom:1px solid #000;padding-bottom:4px}
+.comanda-table{width:100%;border-collapse:collapse;margin:8px 0;font-size:14px}
+.comanda-table th{border-bottom:1px solid #000;text-align:left;padding:3px 0;font-size:12px;font-weight:900}
+.comanda-table td{padding:6px 0;vertical-align:top;border-bottom:1px dotted #888}
+.comanda-cant{font-size:18px;font-weight:900;width:38px}
+.comanda-obs-box{border:2px solid #000;padding:8px;border-radius:4px;margin:10px 0;font-size:13px;font-weight:800;background:#f9f9f9}
+.comanda-footer{text-align:center;font-size:11px;border-top:1px dashed #000;padding-top:6px;margin-top:10px;color:#333}
+
+@media print{
+  @page{size:80mm auto;margin:0}
+  body *{visibility:hidden !important}
+  #m-ticket, #m-ticket *, #m-comanda-cocina, #m-comanda-cocina *{visibility:visible !important}
+  #m-ticket, #m-comanda-cocina{position:fixed;inset:0;background:#fff !important;display:flex !important;justify-content:center;align-items:flex-start;padding:0 !important;backdrop-filter:none !important;z-index:99999 !important}
+  #m-ticket .modal, #m-comanda-cocina .modal{box-shadow:none !important;border:none !important;width:100% !important;max-width:80mm !important;padding:4px !important;margin:0 auto !important}
+  .no-print{display:none !important}
 }
 </style>
 </head>
 <body>
 
-<!-- ══ LOGIN ══════════════════════════════════════════════════════════════ -->
+<!-- ══ LOGIN ══ -->
 <div id="login">
   <div class="login-wrap">
-    <div class="logo">🍰</div>
-    <h1>Gestión Local</h1>
-    <p> Ingresa con tu cuenta para continuar</p>
-    <label>Usuario</label>
-    <input id="l-u" type="text" placeholder="admin" autocomplete="username"/>
-    <label>Contraseña</label>
-    <input id="l-p" type="password" placeholder="••••••••" autocomplete="current-password"/>
-    <button class="btn btn-gold btn-full" onclick="doLogin()">Ingresar</button>
+    <div class="login-logo-wrap" style="width:80px;height:80px;background:var(--primary-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;border:2px solid rgba(128,35,52,0.15)">
+      <span style="font-size:2.4rem">👨‍🍳</span>
+    </div>
+    <h1 class="brand-title">Gestión de Pedidos</h1>
+    <div class="tagline brand-tagline">SISTEMA GASTRONÓMICO</div>
+    <p>Ingresá con tu cuenta para continuar</p>
+    <form id="form-login" onsubmit="event.preventDefault(); doLogin();" style="width:100%">
+      <label for="l-u">Usuario</label>
+      <input id="l-u" type="text" placeholder="admin" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" required/>
+      <label for="l-p">Contraseña</label>
+      <input id="l-p" type="password" placeholder="••••••••" autocomplete="current-password" required/>
+      <button type="submit" id="btn-login" class="btn btn-primary btn-full">Ingresar al Sistema</button>
+    </form>
   </div>
 </div>
 
-<!-- ══ APP ════════════════════════════════════════════════════════════════ -->
+<!-- ══ APP ══ -->
 <div id="app">
   <nav>
-    <span class="brand">🍰 Gestión Local</span>
+    <div class="brand">
+      <div style="width:38px;height:38px;background:var(--primary-light);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;border:1px solid rgba(128,35,52,0.2)">
+        <span>👨‍🍳</span>
+      </div>
+      <div class="brand-info">
+        <span class="brand-name">Gestión de Pedidos</span>
+        <span class="brand-sub">SISTEMA GASTRONÓMICO</span>
+      </div>
+    </div>
     <span class="tab on"  id="t-pedidos"   onclick="go('pedidos',this)">Pedidos</span>
     <span class="tab"     id="t-cocina"    onclick="go('cocina',this)">Cocina</span>
-    <span class="tab"     id="t-clientes"  onclick="go('clientes',this)">Clientes</span>
     <span class="tab"     id="t-productos" onclick="go('productos',this)">Productos</span>
+    <span class="tab"     id="t-reportes"  onclick="go('reportes',this)">📊 Ingresos</span>
     <span class="tab"     id="t-usuarios"  onclick="go('usuarios',this)">Usuarios</span>
+    <span class="tab"     id="t-licencia"  onclick="go('licencia',this)" style="display:none;color:var(--gold-text);font-weight:700">⚙️ Licencia</span>
     <div class="nav-r">
+      <button class="btn btn-ghost btn-sm" id="btn-notif" style="display:none;color:var(--text)" onclick="activarNotificaciones()">🔔 Alertas</button>
+      <button class="btn btn-ghost btn-sm" id="btn-install-pwa" style="display:none;color:var(--gold-text)" onclick="instalarPWA()">📲 Instalar App</button>
       <span class="rol-chip" id="chip-rol">—</span>
       <button class="btn btn-ghost btn-sm" onclick="logout()">Salir</button>
     </div>
@@ -183,8 +376,10 @@ main{padding:28px 20px;max-width:1120px;width:100%;margin:0 auto;flex:1}
         <button class="btn btn-gold btn-sm" id="btn-npedido" onclick="abrirPedido()">+ Nuevo pedido</button>
       </div>
       <div class="filters">
-        <input type="date" id="f-fecha" style="min-width:140px;margin:0" onchange="cambiarFecha()"/>
-        <input type="text" id="f-cliente" placeholder="Buscar cliente…" style="margin:0" oninput="aplicarFiltros()"/>
+        <button class="btn btn-gold btn-sm" id="btn-ver-todos" onclick="verTodosPedidos()">Todos</button>
+        <button class="btn btn-ghost btn-sm" id="btn-ver-hoy" onclick="verPedidosHoy()">Solo Hoy</button>
+        <input type="date" id="f-fecha" title="Filtrar por fecha específica" style="min-width:140px;margin:0" onchange="cambiarFecha()"/>
+        <input type="text" id="f-cliente" placeholder="Buscar por cliente o teléfono…" style="margin:0" oninput="aplicarFiltros()"/>
         <select id="f-estado" style="margin:0" onchange="aplicarFiltros()">
           <option value="">Todos los estados</option>
           <option value="PENDIENTE">Pendiente</option>
@@ -201,31 +396,112 @@ main{padding:28px 20px;max-width:1120px;width:100%;margin:0 auto;flex:1}
     <!-- COCINA -->
     <div class="sec" id="sec-cocina">
       <div class="sec-hdr">
-        <h2>Pedidos de hoy 📋</h2>
-        <button class="btn btn-ghost btn-sm" onclick="cargarCocina()">↻ Actualizar</button>
-      </div>
-      <div class="cocina-grid" id="lista-cocina"></div>
-    </div>
-
-    <!-- CLIENTES -->
-    <div class="sec" id="sec-clientes">
-      <div class="sec-hdr">
-        <h2>Clientes</h2>
-        <button class="btn btn-gold btn-sm" id="btn-ncli" onclick="abrirCliente()">+ Nuevo cliente</button>
+        <h2>Cocina & Producción 👩‍🍳</h2>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="abrirConfigComandera()" title="Configuración de la comandera Unnion TP95W">🖨️ Comandera Wi-Fi</button>
+          <button class="btn btn-ghost btn-sm" id="btn-fullscreen-cocina" onclick="togglePantallaCompletaCocina()" title="Aprovechar toda la pantalla de la tablet">📺 Pantalla Completa</button>
+          <button class="btn btn-ghost btn-sm" onclick="cargarCocina()">↻ Actualizar</button>
+          <button class="btn btn-gold btn-sm" onclick="imprimirTodasComandasCocina()" title="Imprimir todas las comandas del lote actual">🖨️ Imprimir Lote</button>
+          <button class="btn btn-ghost btn-sm" onclick="copiarListaProduccion()">📋 Copiar Lote</button>
+        </div>
       </div>
       <div class="filters">
-        <input id="s-cli" type="text" placeholder="Buscar por nombre o apellido…" oninput="buscarCli()"/>
+        <button class="btn btn-gold btn-sm" id="btn-cocina-hoy" onclick="setModoCocina('hoy')">Solo Hoy</button>
+        <button class="btn btn-ghost btn-sm" id="btn-cocina-manana" onclick="setModoCocina('manana')">Mañana</button>
+        <button class="btn btn-ghost btn-sm" id="btn-cocina-todos" onclick="setModoCocina('todos')">Todos los Activos</button>
+        <input type="date" id="c-f-fecha" title="Ver pedidos de otra fecha" style="min-width:140px;margin:0" onchange="cambiarFechaCocina()"/>
+        <select id="c-f-producto" style="margin:0" onchange="aplicarFiltrosCocina()">
+          <option value="">🎂 Todos los productos</option>
+        </select>
+        <select id="c-f-estado" style="margin:0" onchange="aplicarFiltrosCocina()">
+          <option value="">Todos los estados</option>
+          <option value="PENDIENTE">Solo Pendientes (A preparar)</option>
+          <option value="LISTO">Solo Listos</option>
+        </select>
+        <input type="text" id="c-f-buscar" placeholder="Buscar producto, cliente o nota…" style="margin:0" oninput="aplicarFiltrosCocina()"/>
+        <button class="btn btn-ghost btn-sm" onclick="limpiarFiltrosCocina()">✕ Limpiar</button>
       </div>
-      <div id="lista-clientes"></div>
+
+      <!-- Resumen Dinámico de Producción por Lotes -->
+      <div id="cocina-resumen-box" class="cocina-resumen" style="display:none">
+        <div class="cocina-resumen-hdr">
+          <span id="cocina-resumen-titulo"><strong>Lote de Producción</strong></span>
+          <span style="font-size:0.75rem;color:var(--muted)">Tocá un producto para filtrar la lista</span>
+        </div>
+        <div class="cocina-chips" id="cocina-chips-wrap"></div>
+      </div>
+
+      <div class="cocina-grid" id="lista-cocina"></div>
     </div>
 
     <!-- PRODUCTOS -->
     <div class="sec" id="sec-productos">
       <div class="sec-hdr">
-        <h2>Productos</h2>
+        <h2>Catálogo de Productos 🎂</h2>
         <button class="btn btn-gold btn-sm" id="btn-nprod" onclick="abrirProducto()">+ Nuevo producto</button>
       </div>
+      <div class="filters" style="margin-bottom:16px">
+        <input id="f-prod-buscar" type="text" placeholder="Buscar producto (ej: Rogel, Shots, Chocotorta)..." oninput="filtrarProductos()" style="flex:2;min-width:200px"/>
+        <select id="f-prod-tipo" onchange="filtrarProductos()" style="flex:1;min-width:150px">
+          <option value="">Todos los tipos</option>
+          <option value="TORTA_COMUN">Torta común</option>
+          <option value="TORTA_POR_KILO">Por kilo</option>
+          <option value="INDIVIDUAL">Individual</option>
+          <option value="MINI">Mini</option>
+          <option value="POR_DOCENA">Por docena</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="limpiarFiltrosProd()">✕ Limpiar</button>
+      </div>
       <div id="lista-productos"></div>
+    </div>
+
+    <!-- REPORTES E INGRESOS -->
+    <div class="sec" id="sec-reportes">
+      <div class="sec-hdr">
+        <h2>Ingresos y Ventas Mensuales 📊</h2>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input type="month" id="rep-mes-selector" style="margin:0;padding:6px 12px;background:var(--s2);color:var(--text);border:1px solid var(--border);border-radius:var(--r);font-family:inherit" onchange="cargarReporteMensual()"/>
+          <button class="btn btn-ghost btn-sm" onclick="cargarReporteMensual()">↻ Actualizar</button>
+          <button class="btn btn-gold btn-sm" onclick="exportarReporteExcel()">📥 Exportar a Excel / CSV</button>
+        </div>
+      </div>
+
+      <!-- Resumen General en Tarjetas -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:24px">
+        <div class="card" style="padding:16px;border-left:4px solid var(--gold)">
+          <div style="font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Total Facturado</div>
+          <div id="rep-total-facturado" style="font-size:1.6rem;font-weight:700;color:var(--gold);margin-top:4px">$0</div>
+          <div id="rep-pedidos-count" style="font-size:0.75rem;color:var(--muted);margin-top:2px">0 pedidos</div>
+        </div>
+        <div class="card" style="padding:16px;border-left:4px solid var(--ok)">
+          <div style="font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Señas Cobradas</div>
+          <div id="rep-total-senas" style="font-size:1.6rem;font-weight:700;color:var(--ok);margin-top:4px">$0</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:2px">Ingreso anticipado</div>
+        </div>
+        <div class="card" style="padding:16px;border-left:4px solid var(--warn)">
+          <div style="font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Saldos por Cobrar</div>
+          <div id="rep-total-saldo" style="font-size:1.6rem;font-weight:700;color:var(--warn);margin-top:4px">$0</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:2px">Pendiente al entregar</div>
+        </div>
+        <div class="card" style="padding:16px;border-left:4px solid var(--primary)">
+          <div style="font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Estado de Pedidos</div>
+          <div style="margin-top:6px;display:flex;flex-direction:column;gap:3px">
+            <div style="font-size:1.15rem;font-weight:700;color:var(--ok)">
+              <span id="rep-entregados-num">0</span> <span style="font-size:0.85rem;font-weight:500;color:var(--text)">entregados</span>
+            </div>
+            <div style="font-size:1.15rem;font-weight:700;color:var(--primary)">
+              <span id="rep-pendientes-num">0</span> <span style="font-size:0.85rem;font-weight:500;color:var(--text)">por entregar (activos)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desglose de Ventas por Producto -->
+      <div class="sec-hdr" style="margin-top:20px">
+        <h3 style="font-size:1.05rem;font-weight:600">Ventas por Producto en el Mes</h3>
+        <span id="rep-productos-count" style="font-size:0.85rem;color:var(--muted)">0 variedades vendidas</span>
+      </div>
+      <div id="lista-reporte-productos"></div>
     </div>
 
     <!-- USUARIOS -->
@@ -235,26 +511,198 @@ main{padding:28px 20px;max-width:1120px;width:100%;margin:0 auto;flex:1}
         <button class="btn btn-gold btn-sm" id="btn-nusr" onclick="abrirUsuario()">+ Nuevo usuario</button>
       </div>
       <div id="lista-usuarios"></div>
+
+      <!-- CONFIGURACIÓN DE ALERTAS Y TELEGRAM -->
+      <div class="card" style="margin-top:28px;padding:22px;border-left:4px solid var(--gold)">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:14px">
+          <div>
+            <h3 style="font-size:1.05rem;color:var(--gold);margin-bottom:2px">🔔 Alertas de Nuevos Pedidos en Tiempo Real</h3>
+            <p style="font-size:0.82rem;color:var(--muted)">Avisa a los administradores en el momento exacto en que alguien toma un pedido.</p>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="btn-permiso-notif" onclick="activarNotificaciones()">🔔 Activar en este dispositivo</button>
+        </div>
+
+        <div style="background:var(--s2);padding:16px;border-radius:var(--r);border:1px solid var(--border);margin-top:12px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <h4 style="font-size:0.92rem;font-weight:700">📱 Bot de Telegram para Grupo de Administradores</h4>
+            <span id="tg-status-badge" class="badge" style="background:#1a1a1a;color:var(--muted)">Sin configurar</span>
+          </div>
+          <p style="font-size:0.8rem;color:var(--muted);margin-bottom:14px">
+            Recibí un mensaje instantáneo en el grupo de Telegram con el cliente, fecha de entrega, total, seña y lista de tortas pedidas.
+          </p>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+            <div>
+              <label style="font-size:0.7rem;color:var(--gold)">Token del Bot (de @BotFather)</label>
+              <input id="tg-token" type="text" placeholder="123456789:ABCdefGHIjk..." style="margin:0;font-family:monospace;font-size:0.82rem"/>
+            </div>
+            <div>
+              <label style="font-size:0.7rem;color:var(--gold)">Chat ID del Grupo o Usuario</label>
+              <input id="tg-chat" type="text" placeholder="-100123456789" style="margin:0;font-family:monospace;font-size:0.82rem"/>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-gold btn-sm" onclick="guardarConfigTelegram()">💾 Guardar Configuración</button>
+            <button class="btn btn-ghost btn-sm" onclick="probarAlertaTelegram()">🚀 Enviar Mensaje de Prueba</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--muted)" onclick="toggleAyudaTelegram()">❓ ¿Cómo crear el bot?</button>
+          </div>
+
+          <div id="ayuda-telegram" style="display:none;margin-top:14px;padding:12px;background:var(--bg);border-radius:var(--r);font-size:0.8rem;color:var(--text);line-height:1.6">
+            <strong>Cómo configurar el bot en 2 minutos:</strong><br/>
+            1. En Telegram, buscá <code>@BotFather</code> y mandale el mensaje <code>/newbot</code>. Te dará el <b>Token</b>.<br/>
+            2. Creá un grupo en Telegram con los administradores y agregá al bot que creaste como miembro.<br/>
+            3. Para saber el <b>Chat ID</b> del grupo, podés agregar temporalmente a <code>@RawDataBot</code> al grupo (te mostrará el <code>id</code>, que suele empezar con <code>-100...</code>) y luego eliminarlo.<br/>
+            4. Pegá el Token y Chat ID arriba, tocá <b>Guardar</b> y <b>Enviar Mensaje de Prueba</b>.
+          </div>
+        </div>
+      </div>
+
+      <!-- RESUMEN MATUTINO 9:00 AM POR TELEGRAM -->
+      <div class="card" style="margin-top:18px;padding:22px;border-left:4px solid var(--primary)">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:10px">
+          <div>
+            <h3 style="font-size:1.05rem;color:var(--primary);margin-bottom:2px">☀️ Resumen Matutino por Telegram</h3>
+            <p style="font-size:0.82rem;color:var(--muted)">Todos los días a las <strong>9:00 AM</strong> te llega al celular: pedidos de hoy, lote de producción, saldos a cobrar y los pendientes de todos tus proyectos.</p>
+          </div>
+          <span id="rm-status" class="badge b-ENTREGADO">—</span>
+        </div>
+        <label>Pendientes de tus proyectos (se incluyen en el mensaje)</label>
+        <textarea id="rm-pendientes" rows="9" maxlength="1000" style="font-size:0.85rem;line-height:1.5" oninput="g('rm-count').textContent=this.value.length+'/1000'"></textarea>
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-gold btn-sm" onclick="guardarResumenMatutino()">💾 Guardar pendientes</button>
+            <button class="btn btn-primary btn-sm" onclick="enviarResumenMatutino()">📲 Enviarme el resumen ahora</button>
+            <button class="btn btn-ghost btn-sm" onclick="toggleVistaPreviaResumen()">👁️ Vista previa</button>
+          </div>
+          <span id="rm-count" style="font-size:0.72rem;color:var(--muted)">0/1000</span>
+        </div>
+        <pre id="rm-preview" style="display:none;margin-top:14px;padding:14px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);font-family:var(--font);font-size:0.82rem;white-space:pre-wrap;line-height:1.5"></pre>
+      </div>
+
+      <!-- PURGAR DATOS DE PRUEBA -->
+      <div class="card" style="margin-top:18px;padding:22px;border-left:4px solid var(--err)">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:8px">
+          <div>
+            <h3 style="font-size:1.05rem;color:var(--err);margin-bottom:2px">🗑️ Limpieza de Base de Datos (Datos de Prueba)</h3>
+            <p style="font-size:0.82rem;color:var(--muted)">Elimina todos los pedidos cargados y resetea las ventas e ingresos a cero para iniciar la operación comercial en limpio. <em>El catálogo de productos y los usuarios no se modifican.</em></p>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+          <button class="btn btn-warn btn-sm" onclick="purgarPedidosEntregados()">🗑️ Eliminar solo pedidos ya entregados (de prueba)</button>
+          <button class="btn btn-err btn-sm" onclick="purgarDatosPrueba()">⚠️ Eliminar TODOS los pedidos y ventas</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ⚙️ LICENCIA & PLANES (SUPERADMIN) -->
+    <div class="sec" id="sec-licencia">
+      <div class="sec-hdr">
+        <div>
+          <h2>Panel de Control de Licencia y Módulos</h2>
+          <p style="font-size:0.83rem;color:var(--muted)">Exclusivo rol SuperAdmin (Distribuidor). Configura el plan contratado, activa o desactiva módulos por hardware/suscripción y gestiona el estado de cobranza del cliente.</p>
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="guardarConfiguracionLicencia()">💾 Guardar Cambios</button>
+      </div>
+
+      <div class="card" style="margin-top:16px;padding:22px;border-left:4px solid var(--gold)">
+        <h3 style="font-size:1.05rem;color:var(--gold);margin-bottom:14px">🏢 Datos del Negocio y Plan Contratado</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));gap:16px">
+          <div>
+            <label>Nombre del Negocio / Cliente</label>
+            <input id="lic-nombre" type="text" placeholder="Ej: Rincón Dulce" />
+          </div>
+          <div>
+            <label>Plan de Suscripción</label>
+            <select id="lic-plan" onchange="seleccionarPlanPreset(this.value)">
+              <option value="STARTER">Starter (Básico - Sin hardware ni bot)</option>
+              <option value="PRO">Pro (KDS en vivo + Comandera + Telegram)</option>
+              <option value="ENTERPRISE">Enterprise (Mayorista + Costeo de Recetas)</option>
+            </select>
+          </div>
+          <div>
+            <label>Estado de Suscripción (Cobranza)</label>
+            <select id="lic-activo">
+              <option value="true">✅ Activo (Al día con el pago)</option>
+              <option value="false">🔴 Suspendido (Pausado por falta de pago)</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:14px">
+          <label>Notas internas / Vencimiento / Términos pactados</label>
+          <textarea id="lic-notas" rows="3" placeholder="Abono mensual contratado. Recordatorio de cobro los días 5 de cada mes."></textarea>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px;padding:22px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <h3 style="font-size:1.05rem;font-weight:700">🎛️ Banderas de Módulos (Feature Flags)</h3>
+          <span style="font-size:0.75rem;color:var(--muted)">Al cambiar de Plan arriba se seleccionan automáticamente, pero podés prender/apagar a medida.</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(270px, 1fr));gap:14px">
+          <label class="lic-switch-card">
+            <input type="checkbox" id="lic-flag-telegram">
+            <div>
+              <strong>🔔 Bot de Telegram & Alertas</strong>
+              <p>Envío de avisos instantáneos al móvil y reporte matutino 9 AM.</p>
+            </div>
+          </label>
+
+          <label class="lic-switch-card">
+            <input type="checkbox" id="lic-flag-impresora">
+            <div>
+              <strong>🖨️ Impresora Térmica 80mm</strong>
+              <p>Botones de comanda de cocina y ticket de empaque para caja (RawBT).</p>
+            </div>
+          </label>
+
+          <label class="lic-switch-card">
+            <input type="checkbox" id="lic-flag-lotes">
+            <div>
+              <strong>📦 Resumen de Lotes de Producción</strong>
+              <p>Consolidado diario/semanal de elaboración agrupada en cocina.</p>
+            </div>
+          </label>
+
+          <label class="lic-switch-card">
+            <input type="checkbox" id="lic-flag-sse">
+            <div>
+              <strong>⚡ Sincronización en Tiempo Real (SSE)</strong>
+              <p>Actualización instantánea en vivo entre mostrador y tablets de cocina.</p>
+            </div>
+          </label>
+
+          <label class="lic-switch-card">
+            <input type="checkbox" id="lic-flag-recetas">
+            <div>
+              <strong>📊 Costeo de Recetas & Escandallos</strong>
+              <p>Cálculo de materia prima, mermas y márgenes (Tier Enterprise).</p>
+            </div>
+          </label>
+        </div>
+      </div>
     </div>
 
   </main>
 </div>
 
-<!-- ══ MODAL CLIENTE ══════════════════════════════════════════════════════ -->
-<div class="overlay" id="m-cli">
-  <div class="modal">
-    <h3 id="m-cli-title">Nuevo cliente</h3>
-    <label>Nombre</label><input id="c-nom" type="text" placeholder="Juan"/>
-    <label>Apellido</label><input id="c-ape" type="text" placeholder="Pérez"/>
-    <label>Teléfono</label><input id="c-tel" type="text" placeholder="2235000000"/>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="cerrar('m-cli')">Cancelar</button>
-      <button class="btn btn-gold" onclick="guardarCliente()">Guardar</button>
+<!-- ══ BANNER DE SUSPENSIÓN POR FALTA DE PAGO ══ -->
+<div id="banner-suspension">
+  <div class="box">
+    <div style="font-size:2.8rem;margin-bottom:12px">⚠️</div>
+    <h2 style="font-family:var(--font-serif);color:var(--err);font-size:1.4rem;margin-bottom:10px">Servicio Temporalmente Pausado</h2>
+    <p style="font-size:0.9rem;color:var(--text);line-height:1.6;margin-bottom:18px">
+      La suscripción de este sistema se encuentra temporalmente suspendida por regularización de abono.
+    </p>
+    <div style="padding:12px;background:var(--s2);border-radius:8px;font-size:0.83rem;color:var(--muted);margin-bottom:20px">
+      Por favor, comuníquese con el administrador del software para reactivar el acceso inmediatamente.
     </div>
+    <button class="btn btn-ghost btn-sm" onclick="logout()">Cerrar sesión</button>
   </div>
 </div>
 
-<!-- ══ MODAL PRODUCTO ════════════════════════════════════════════════════ -->
+<!-- ══ MODAL PRODUCTO ══ -->
 <div class="overlay" id="m-prod">
   <div class="modal">
     <h3 id="m-prod-title">Nuevo producto</h3>
@@ -284,19 +732,58 @@ main{padding:28px 20px;max-width:1120px;width:100%;margin:0 auto;flex:1}
   </div>
 </div>
 
-<!-- ══ MODAL PEDIDO ══════════════════════════════════════════════════════ -->
+<!-- ══ MODAL PEDIDO ══ -->
 <div class="overlay" id="m-ped">
   <div class="modal">
     <h3>Nuevo pedido</h3>
-    <label>Cliente</label>
-    <select id="pd-cli"></select>
-    <label>Fecha y hora de entrega</label>
-    <input id="pd-fecha" type="datetime-local"/>
+    <label>Nombre del cliente</label>
+    <input id="pd-nombre" type="text" placeholder="Juan Pérez" list="dl-clientes" oninput="autocompletarTelefonoCliente()"/>
+    <datalist id="dl-clientes"></datalist>
+    <label>Teléfono</label>
+    <input id="pd-tel" type="text" placeholder="2235000000"/>
+    <label>Fecha y Hora de Entrega</label>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px">
+      <div>
+        <label style="font-size:0.7rem;color:var(--gold);margin-bottom:3px">Día de entrega</label>
+        <input id="pd-fecha" type="date" style="margin-bottom:0" required/>
+      </div>
+      <div>
+        <label for="pd-hora" style="font-size:0.7rem;color:var(--gold);margin-bottom:3px">Hora (manual o botones)</label>
+        <input id="pd-hora" type="text" inputmode="numeric" placeholder="12:00" value="12:00" style="margin-bottom:0;text-align:center;font-weight:700;font-size:1rem" maxlength="5" autocomplete="off" oninput="formatearHoraInput(this)" onblur="autoCompletarHora(this)" required/>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+      <button type="button" class="btn btn-ghost btn-sm" style="padding:4px 9px;font-size:0.75rem" onclick="setFechaPedido('hoy')">📅 Hoy</button>
+      <button type="button" class="btn btn-ghost btn-sm" style="padding:4px 9px;font-size:0.75rem" onclick="setFechaPedido('manana')">📅 Mañana</button>
+      <button type="button" class="btn btn-ghost btn-sm" style="padding:4px 9px;font-size:0.75rem" onclick="setHoraPedido('11:00')">🕚 11:00</button>
+      <button type="button" class="btn btn-ghost btn-sm" style="padding:4px 9px;font-size:0.75rem" onclick="setHoraPedido('14:00')">🕑 14:00</button>
+      <button type="button" class="btn btn-ghost btn-sm" style="padding:4px 9px;font-size:0.75rem" onclick="setHoraPedido('18:00')">🕕 18:00</button>
+      <button type="button" class="btn btn-ghost btn-sm" style="padding:4px 9px;font-size:0.75rem" onclick="setHoraPedido('20:00')">🕗 20:00</button>
+    </div>
     <label>Observaciones del pedido</label>
     <textarea id="pd-obs" placeholder="Sin azúcar, con dedicatoria…"></textarea>
     <label>Productos del pedido</label>
+    <div style="font-size:0.75rem;color:var(--muted);margin-bottom:8px;display:flex;flex-direction:column;gap:3px">
+      <div><span>💡</span> <span>Los productos <strong>mini</strong> tienen un pedido mínimo de <strong>12 unidades</strong>.</span></div>
+      <div><span>🎂</span> <span>Para <strong>tortas de tamaño grande</strong> (más de 1.5 kg y hasta 5 kg), la tarifa es fija a <strong>$45.000 / kg</strong>.</span></div>
+    </div>
     <div id="det-wrap"></div>
-    <button class="btn btn-ghost btn-sm" onclick="addDet()" style="margin-bottom:14px">+ Agregar producto</button>
+    <button type="button" class="btn btn-ghost btn-sm" onclick="addDet()" style="margin-bottom:12px">+ Agregar producto</button>
+
+    <!-- Resumen en vivo del total del pedido -->
+    <div id="pd-resumen-box" style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:12px">
+      <div>
+        <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;font-weight:700">Total Estimado</div>
+        <div id="pd-total-est" style="font-size:1.15rem;font-weight:800;color:var(--primary)">$0</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;font-weight:700">Saldo Restante</div>
+        <div id="pd-saldo-est" style="font-size:1.05rem;font-weight:700;color:var(--gold)">$0</div>
+      </div>
+    </div>
+
+    <label>Seña abonada al encargar ($)</label>
+    <input id="pd-sena" type="number" min="0" placeholder="0 (si no pagó seña, dejar en 0)" oninput="actualizarTotalesNuevoPedido()" onchange="actualizarTotalesNuevoPedido()"/>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="cerrar('m-ped')">Cancelar</button>
       <button class="btn btn-gold" onclick="guardarPedido()">Crear pedido</button>
@@ -304,7 +791,29 @@ main{padding:28px 20px;max-width:1120px;width:100%;margin:0 auto;flex:1}
   </div>
 </div>
 
-<!-- ══ MODAL USUARIO ═════════════════════════════════════════════════════ -->
+<!-- ══ MODAL MODIFICAR SEÑA ══ -->
+<div class="overlay" id="m-sena">
+  <div class="modal" style="width:380px">
+    <h3 style="color:var(--gold)">Registrar / Modificar Seña</h3>
+    <p id="sena-cliente-lbl" style="font-size:0.9rem;color:var(--muted);margin-bottom:12px"></p>
+    <div style="padding:12px;background:var(--s2);border-radius:var(--r);border:1px solid var(--border);margin-bottom:16px;font-size:0.9rem">
+      <div>Total del pedido: <strong id="sena-total-lbl" style="color:var(--text)">$0</strong></div>
+      <div style="margin-top:4px">Saldo restante actual: <strong id="sena-saldo-lbl" style="color:var(--gold)">$0</strong></div>
+    </div>
+    <label>Monto de Seña Acumulada ($)</label>
+    <input id="sena-input" type="number" min="0" placeholder="0" style="margin-bottom:10px"/>
+    <div style="display:flex;gap:8px;margin-bottom:18px">
+      <button class="btn btn-ghost btn-sm" style="flex:1" onclick="senaAlCincuenta()">50% seña</button>
+      <button class="btn btn-ok btn-sm" style="flex:1" onclick="saldarPedidoCompleto()">✓ Saldar 100%</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="cerrar('m-sena')">Cancelar</button>
+      <button class="btn btn-gold" onclick="guardarCambioSena()">Guardar Seña</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL USUARIO ══ -->
 <div class="overlay" id="m-usr">
   <div class="modal">
     <h3 id="m-usr-title">Nuevo usuario</h3>
@@ -316,8 +825,10 @@ main{padding:28px 20px;max-width:1120px;width:100%;margin:0 auto;flex:1}
     <div id="u-wrap-rol">
       <label>Rol</label>
       <select id="u-rol">
-        <option value="ADMIN">ADMIN</option>
-        <option value="EMPLEADO">EMPLEADO</option>
+        <option value="ADMIN">ADMIN (Dueño / Encargado)</option>
+        <option value="COCINA">COCINA (Operador KDS)</option>
+        <option value="EMPLEADO">EMPLEADO (Personal)</option>
+        <option value="SUPERADMIN" id="opt-superadmin" style="display:none">SUPERADMIN (Distribuidor)</option>
       </select>
     </div>
     <div class="modal-footer">
@@ -327,55 +838,263 @@ main{padding:28px 20px;max-width:1120px;width:100%;margin:0 auto;flex:1}
   </div>
 </div>
 
+<!-- ══ MODAL TICKET / COMANDA PARA CAJA ══ -->
+<div class="overlay" id="m-ticket">
+  <div class="modal" style="width:400px;max-width:100%">
+    <div style="text-align:center;padding-bottom:12px;border-bottom:1px dashed var(--border);margin-bottom:14px">
+      <div style="font-size:2rem;margin-bottom:4px">👨‍🍳</div>
+      <h3 class="brand-name" style="margin:0;font-family:var(--font-serif);color:var(--primary);font-size:1.3rem">Gestión de Pedidos</h3>
+      <div class="brand-sub" style="font-size:0.68rem;letter-spacing:0.2em;color:var(--gold);font-weight:700">SISTEMA GASTRONÓMICO</div>
+      <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;font-weight:600">COMANDA DE ENTREGA · CAJA</div>
+    </div>
+    <div id="ticket-contenido" class="ticket-paper"></div>
+    <div class="modal-footer no-print" style="margin-top:16px;padding-top:12px;justify-content:space-between">
+      <button class="btn btn-ghost btn-sm" onclick="cerrar('m-ticket')">Cerrar</button>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="copiarTicketTexto()">📋 Copiar</button>
+        <button class="btn btn-primary btn-sm" onclick="imprimirTicket()">🖨️ Imprimir Ticket</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL COMANDA DE COCINA (80MM TÉRMICA - UNNION TP95W) ══ -->
+<div class="overlay" id="m-comanda-cocina">
+  <div class="modal" style="width:380px;max-width:100%;padding:14px">
+    <div id="comanda-cocina-contenido" class="comanda-cocina-paper"></div>
+    <div class="modal-footer no-print" style="margin-top:14px;padding-top:10px;justify-content:space-between">
+      <button class="btn btn-ghost btn-sm" onclick="cerrar('m-comanda-cocina')">Cerrar</button>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="copiarComandaCocinaTexto()">📋 Copiar</button>
+        <button class="btn btn-primary btn-sm" onclick="ejecutarImpresionComandaCocina()">🖨️ Imprimir Comanda</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL CONFIGURACIÓN DE COMANDERA TÉRMICA ══ -->
+<div class="overlay" id="m-config-comandera">
+  <div class="modal" style="width:440px;max-width:100%">
+    <div class="modal-hdr">
+      <h3>🖨️ Comandera Wi-Fi (Unnion TP95W)</h3>
+      <button class="close-btn" onclick="cerrar('m-config-comandera')">✕</button>
+    </div>
+    <div style="font-size:0.83rem;color:var(--muted);margin-bottom:14px;line-height:1.4">
+      Configuración de impresión directa para la cocina (rollo 80mm con auto-corte de papel).
+    </div>
+
+    <label for="cfg-cmd-modo">Modo de Impresión en este dispositivo</label>
+    <select id="cfg-cmd-modo" style="width:100%;margin-bottom:12px">
+      <option value="rawbt">⚡ RawBT (Tablet Android en fondo — Cero clics / Auto-corte)</option>
+      <option value="browser">🖨️ Diálogo de Navegador Web (80mm Térmico)</option>
+    </select>
+
+    <label for="cfg-cmd-ip">IP de la Comandera en el Wi-Fi</label>
+    <input id="cfg-cmd-ip" type="text" placeholder="192.168.100.150" value="192.168.100.150" style="width:100%;margin-bottom:6px"/>
+    <div style="font-size:0.75rem;color:var(--muted);margin-bottom:14px">
+      Dirección IP local asignada a la comandera térmica en la red Wi-Fi del negocio.
+    </div>
+
+    <div style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;margin-bottom:16px">
+      <label style="display:flex;align-items:center;gap:8px;margin:0;cursor:pointer;font-weight:700;color:var(--primary)">
+        <input type="checkbox" id="cfg-cmd-auto" style="width:auto;margin:0"/>
+        <span>⚡ Impresión Automática en esta Tablet</span>
+      </label>
+      <div style="font-size:0.78rem;color:var(--muted);margin-top:4px;line-height:1.35">
+        Cuando esté activado, cada pedido nuevo cargado en el sistema se imprimirá automáticamente en la cocina sin tocar la tablet.
+      </div>
+    </div>
+
+    <div class="modal-footer" style="justify-content:space-between">
+      <button class="btn btn-ghost btn-sm" onclick="probarTicketComandera()">🧪 Ticket de Prueba</button>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="cerrar('m-config-comandera')">Cancelar</button>
+        <button class="btn btn-primary btn-sm" onclick="guardarConfigComandera()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
-// ══ CONFIG ════════════════════════════════════════════════════════════════════
-const API = '';  // mismo origen que Spring Boot
-let token = null, rol = null;
-let clientes = [], productos = [];
-let editCliId = null, editProdId = null, resetUsrId = null;
+// ══ HELPER DE SEGURIDAD XSS ══
+function esc(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
-// ══ AUTH ══════════════════════════════════════════════════════════════════════
+// ══ CONFIG ══
+// Soporte híbrido: en Docker/Nginx (mismo host) usa rutas relativas '',
+// en Vercel o Live Server puerto 5500 usa el backend de Render.
+const API = (typeof window !== 'undefined' && window.__API_URL__ !== undefined)
+  ? window.__API_URL__
+  : (window.location.port === '5500' || window.location.origin.includes('vercel.app')
+      ? 'https://gestion-8cuy.onrender.com'
+      : '');
+let token = null, rol = null;
+let productos = [];
+let editProdId = null, resetUsrId = null;
+
+// ══ AUTH ══
 async function doLogin(){
   const u = g('l-u').value.trim(), p = g('l-p').value.trim();
   if(!u||!p) return toast('Completá usuario y contraseña','err');
+  const btn = g('btn-login') || document.querySelector('.login-wrap .btn');
+  if(btn){
+    btn.disabled = true;
+    btn.textContent = 'Conectando… puede tardar unos segundos';
+  }
   try{
-    const r = await fetch(`${API}/api/auth/login`,{
+    let r = await fetch(`${API}/api/auth/login`,{
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({username:u,password:p})
     });
-    if(!r.ok) return toast('Usuario o contraseña incorrectos','err');
+    // Si falló y el usuario tiene mayúsculas (común en teclados de celulares), reintentar en minúsculas
+    if(!r.ok && u !== u.toLowerCase()){
+      const rLower = await fetch(`${API}/api/auth/login`,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({username:u.toLowerCase(),password:p})
+      });
+      if(rLower.ok) r = rLower;
+    }
+    if(!r.ok){
+      return toast('Usuario o contraseña incorrectos','err');
+    }
     const d = await r.json();
     token=d.token; rol=d.rol;
+    localStorage.setItem('token', token);
+    localStorage.setItem('rol', rol);
     initApp();
-  }catch{ toast('No se pudo conectar al servidor','err'); }
+  }catch(err){
+    console.error('Error de login:', err);
+    toast('No se pudo conectar al servidor. Verificá tu conexión a internet.','err');
+  }finally{
+    if(btn){
+      btn.disabled = false;
+      btn.textContent = 'Ingresar al Sistema';
+    }
+  }
 }
 
 function logout(){
+  if(sseSource){ try{ sseSource.close(); }catch(_){} sseSource=null; }
   token=null; rol=null;
+  localStorage.removeItem('token');
+  localStorage.removeItem('rol');
   g('app').style.display='none';
   g('login').style.display='flex';
   g('l-p').value='';
 }
 
-function initApp(){
-  g('login').style.display='none';
-  g('app').style.display='flex';
-  g('chip-rol').textContent=rol;
+let licenciaActual = null;
 
-  if(rol==='EMPLEADO'){
-    ['t-clientes','t-productos','t-usuarios'].forEach(t=>g(t).style.display='none');
-    g('btn-npedido')&&(g('btn-npedido').style.display='none');
-    cargarBase();
-    go('cocina', g('t-cocina'));
-  } else {
-    cargarBase();
-    go('pedidos', g('t-pedidos'));
+async function verificarLicenciaPublica(){
+  try {
+    const res = await fetch(API + '/api/licencia/public');
+    if(res.ok){
+      licenciaActual = await res.json();
+      aplicarLicenciaUI();
+    }
+  } catch(e){
+    console.warn("No se pudo cargar la configuración de licencia:", e);
   }
 }
 
-// ══ NAV ═══════════════════════════════════════════════════════════════════════
+function aplicarLicenciaUI(){
+  if(!licenciaActual) return;
+
+  // 1. Actualizar nombre de marca en toda la aplicación (Login, Nav, Tickets)
+  // En la versión Demo, si el backend compartido todavía dice 'Tortas Olivia', mantenemos el nombre neutro 'Gestión de Pedidos'
+  let nombre = licenciaActual.nombreCliente && licenciaActual.nombreCliente.trim() !== '' 
+                 ? licenciaActual.nombreCliente.trim() 
+                 : 'Gestión de Pedidos';
+  if (nombre.toLowerCase().includes('olivia')) {
+    nombre = 'Gestión de Pedidos';
+  }
+
+  document.querySelectorAll('.brand-name, .brand-title').forEach(el => el.textContent = nombre);
+  document.title = nombre + ' — Sistema Gastronómico';
+
+  // 2. Control de suspensión por falta de pago (bloqueo total para no-SuperAdmin)
+  const banner = g('banner-suspension');
+  if(banner){
+    if(!licenciaActual.activo && rol !== 'SUPERADMIN'){
+      banner.style.display = 'flex';
+      return;
+    } else {
+      banner.style.display = 'none';
+    }
+  }
+
+  // 3. Adaptar botones de hardware según plan
+  if(licenciaActual.featureImpresoraTermica === false){
+    document.querySelectorAll('.btn-ticket-imprimir, #btn-cfg-ticket').forEach(el => el.style.display = 'none');
+  }
+
+  // 4. Adaptar lote de producción en cocina
+  const btnLote = g('btn-resumen-lote');
+  if(btnLote && licenciaActual.featureResumenLotes === false){
+    btnLote.style.display = 'none';
+  }
+}
+
+function initApp(){
+  g('login').style.display='none';
+  g('app').style.display='flex';
+
+  const chip = g('chip-rol');
+  chip.textContent = rol;
+  chip.className = 'rol-chip ' + (rol ? rol.toLowerCase() : '');
+
+  // 1. Cargar catálogo desde caché local inmediatamente (0ms)
+  cargarBaseLocal();
+
+  // 2. Consultar estado de licencia y módulos
+  verificarLicenciaPublica();
+
+  if(rol==='EMPLEADO' || rol==='COCINA'){
+    ['t-pedidos','t-productos','t-reportes','t-usuarios','t-licencia'].forEach(t=>{
+      if(g(t)) g(t).style.display='none';
+    });
+    if(g('btn-npedido')) g('btn-npedido').style.display='none';
+    if(g('btn-notif')) g('btn-notif').style.display='inline-flex';
+    actualizarBotonNotifEstado();
+    go('cocina', g('t-cocina'));
+  } else if(rol==='SUPERADMIN'){
+    ['t-pedidos','t-cocina','t-productos','t-reportes','t-usuarios','t-licencia'].forEach(t=>{
+      if(g(t)) g(t).style.display='';
+    });
+    if(g('btn-npedido')) g('btn-npedido').style.display='';
+    if(g('btn-notif')) g('btn-notif').style.display='inline-flex';
+    actualizarBotonNotifEstado();
+    go('pedidos', g('t-pedidos'));
+  } else { // ADMIN (Dueño del local / negocio)
+    ['t-pedidos','t-cocina','t-productos','t-reportes','t-usuarios'].forEach(t=>{
+      if(g(t)) g(t).style.display='';
+    });
+    if(g('t-licencia')) g('t-licencia').style.display='none';
+    if(g('btn-npedido')) g('btn-npedido').style.display='';
+    if(g('btn-notif')) g('btn-notif').style.display='inline-flex';
+    actualizarBotonNotifEstado();
+    go('pedidos', g('t-pedidos'));
+  }
+
+  // 3. Conectar stream de alertas si SSE está habilitado
+  if(!licenciaActual || licenciaActual.featureSseRealtime !== false){
+    setTimeout(conectarAlertasStream, 1500);
+  }
+
+  // 4. Actualizar catálogo remoto en segundo plano
+  setTimeout(cargarBaseRemota, 1000);
+}
+
+// ══ NAV ══
 function go(name, tab){
   document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
@@ -384,13 +1103,14 @@ function go(name, tab){
   ({
     pedidos:  cargarPedidos,
     cocina:   cargarCocina,
-    clientes: renderClientes,
     productos:renderProductos,
-    usuarios: cargarUsuarios
+    reportes: cargarReporteMensual,
+    usuarios: () => { cargarUsuarios(); cargarConfigTelegram(); cargarResumenMatutino(); },
+    licencia: cargarLicenciaAdmin
   })[name]?.();
 }
 
-// ══ API ═══════════════════════════════════════════════════════════════════════
+// ══ API ══
 async function api(path, opts = {}) {
   const jwt = token || localStorage.getItem('token');
   const r = await fetch(API + path, {
@@ -402,105 +1122,231 @@ async function api(path, opts = {}) {
     }
   });
   if (!r.ok) {
-    const e = await r.json().catch(() => ({}));
-    throw new Error(e.mensaje || (e.errores ? Object.values(e.errores).join(', ') : `Error ${r.status}`));
+    if (r.status === 401 && path !== '/api/auth/login') {
+      console.warn("Sesión expirada o token inválido.");
+      logout();
+      toast('Tu sesión expiró. Por favor ingresá nuevamente.', 'err');
+      throw new Error('Sesión expirada');
+    }
+    const textError = await r.text();
+    console.error("Error en la API:", r.status, textError);
+    let e = {};
+    try { e = JSON.parse(textError); } catch(_) {}
+    throw new Error(e.mensaje || (e.errores ? Object.values(e.errores).join(', ') : `Error ${r.status}: ${textError}`));
   }
   if (r.status === 204) return null;
   return r.json();
 }
 
-async function cargarBase(){
-  try{
-    [clientes, productos] = await Promise.all([
-      api('/api/clientes'),
-      api('/api/productos')
-    ]);
-  }catch(e){ toast(e.message,'err'); }
+function cargarBaseLocal(){
+  const cache = localStorage.getItem('cache_productos');
+  if(cache){
+    try { productos = JSON.parse(cache); } catch(_) {}
+  }
 }
 
-// ══ PEDIDOS ═══════════════════════════════════════════════════════════════════
+async function cargarBaseRemota(){
+  try{
+    const remotos = await api('/api/productos');
+    if(Array.isArray(remotos) && remotos.length > 0){
+      productos = remotos;
+      localStorage.setItem('cache_productos', JSON.stringify(productos));
+    }
+  } catch(e){
+    console.warn('Error sincronizando catálogo remoto:', e);
+  }
+}
+
+async function cargarBase(){
+  cargarBaseLocal();
+  await cargarBaseRemota();
+}
+
+// ══ PEDIDOS ══
 let todosPedidos = [];
 
 async function cargarPedidos(){
-  const hoy = new Date().toISOString().split('T')[0];
-  g('f-fecha').value = hoy;
-  try{
-    todosPedidos = await api(`/api/pedidos/fecha?fecha=${hoy}`);
-    aplicarFiltros();
-  }catch(e){ toast(e.message,'err'); }
+  // Requisito clave: Al principio que se ingrese, se visualizan todos los pedidos cargados
+  g('f-fecha').value = '';
+  actualizarBotonesFiltro('todos');
+
+  // Carga instantánea desde caché si existe
+  const cache = localStorage.getItem('cache_pedidos_activos');
+  if(cache){
+    try {
+      todosPedidos = JSON.parse(cache);
+      aplicarFiltros();
+    } catch(_) {}
+  }
+
+  // Consulta en paralelo para actualizar con datos frescos
+  await traerPedidos('', !cache);
+}
+
+async function verTodosPedidos(){
+  g('f-fecha').value = '';
+  actualizarBotonesFiltro('todos');
+  await traerPedidos('');
+}
+
+async function verPedidosHoy(){
+  g('f-fecha').value = hoyLocal();
+  actualizarBotonesFiltro('hoy');
+  await traerPedidos(g('f-fecha').value);
 }
 
 async function cambiarFecha(){
   const fecha = g('f-fecha').value;
-  if(!fecha) return;
+  actualizarBotonesFiltro(fecha ? 'fecha' : 'todos');
+  await traerPedidos(fecha);
+}
+
+function actualizarBotonesFiltro(modo){
+  const bTodos = g('btn-ver-todos');
+  const bHoy = g('btn-ver-hoy');
+  if(!bTodos || !bHoy) return;
+  if(modo === 'todos'){
+    bTodos.className = 'btn btn-gold btn-sm';
+    bHoy.className = 'btn btn-ghost btn-sm';
+  } else if(modo === 'hoy'){
+    bTodos.className = 'btn btn-ghost btn-sm';
+    bHoy.className = 'btn btn-gold btn-sm';
+  } else {
+    bTodos.className = 'btn btn-ghost btn-sm';
+    bHoy.className = 'btn btn-ghost btn-sm';
+  }
+}
+
+async function traerPedidos(fecha, mostrarCargando = true){
+  const el = g('lista-pedidos');
+  if(mostrarCargando && !todosPedidos.length){
+    el.innerHTML = '<div class="empty">⏳ Conectando con el servidor...</div>';
+  }
   try{
-    todosPedidos = await api(`/api/pedidos/fecha?fecha=${fecha}`);
+    if(fecha){
+      todosPedidos = await api(`/api/pedidos/fecha?fecha=${fecha}`);
+    } else {
+      // Trae TODOS los pedidos activos del sistema y actualiza caché
+      todosPedidos = await api('/api/pedidos');
+      localStorage.setItem('cache_pedidos_activos', JSON.stringify(todosPedidos));
+    }
     aplicarFiltros();
-  }catch(e){ toast(e.message,'err'); }
+  }catch(e){
+    if(!todosPedidos.length){
+      el.innerHTML = `<div class="empty" style="color:var(--err)">❌ Error al cargar pedidos: ${e.message}</div>`;
+    }
+    toast(e.message,'err');
+  }
 }
 
 function aplicarFiltros(){
-  const cliente = g('f-cliente').value.toLowerCase().trim();
-  const estado  = g('f-estado').value;
+  const q      = g('f-cliente').value.toLowerCase().trim();
+  const estado = g('f-estado').value;
 
   let lista = todosPedidos;
 
-  if(cliente){
+  if(q){
     lista = lista.filter(p =>
-            `${p.clienteNombre} ${p.clienteApellido}`.toLowerCase().includes(cliente)
+            `${p.nombreCliente||''} ${p.telefonoCliente||''}`.toLowerCase().includes(q)
     );
   }
   if(estado){
     lista = lista.filter(p => p.estado === estado);
   }
 
+  lista = lista.slice().sort((a,b) => (a.fechaEntrega||'').localeCompare(b.fechaEntrega||''));
   renderPedidos(lista);
 }
 
 async function limpiarFiltros(){
   g('f-cliente').value = '';
   g('f-estado').value  = '';
-  const hoy = new Date().toISOString().split('T')[0];
-  g('f-fecha').value = hoy;
-  try{
-    todosPedidos = await api(`/api/pedidos/fecha?fecha=${hoy}`);
-    aplicarFiltros();
-  }catch(e){ toast(e.message,'err'); }
+  g('f-fecha').value   = '';
+  actualizarBotonesFiltro('todos');
+  await traerPedidos('');
 }
 
 function renderPedidos(list){
   const el = g('lista-pedidos');
-  if(!list.length){ el.innerHTML='<div class="empty">No hay pedidos</div>'; return; }
-  el.innerHTML = list.map(p=>`
+  if(!list.length){
+    el.innerHTML='<div class="empty">No hay pedidos para mostrar con los filtros actuales.</div>';
+    return;
+  }
+
+  const totalFacturado = list.reduce((acc, p) => acc + (p.total || 0), 0);
+  const totalSenas = list.reduce((acc, p) => acc + (p.sena || 0), 0);
+  const totalSaldos = Math.max(0, totalFacturado - totalSenas);
+
+  const resumenHdr = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:10px 16px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);font-size:.85rem;flex-wrap:wrap;gap:10px">
+      <span>Mostrando: <strong style="color:var(--text)">${list.length} pedidos</strong></span>
+      <span>Total Ventas: <strong style="color:var(--gold)">$${totalFacturado.toLocaleString('es-AR')}</strong></span>
+      <span>Señas cobradas: <strong style="color:var(--ok)">$${totalSenas.toLocaleString('es-AR')}</strong></span>
+      <span>Resta cobrar: <strong style="color:var(--warn)">$${totalSaldos.toLocaleString('es-AR')}</strong></span>
+    </div>`;
+
+  el.innerHTML = resumenHdr + list.map(p=>{
+    const tot = p.total || 0;
+    const sen = p.sena || 0;
+    const saldo = Math.max(0, tot - sen);
+    const cliSafe = (p.nombreCliente || '').replace(/'/g, "\\'");
+    const num = p.id ? `#${p.id}` : `#${(p.publicId||'').slice(0,5)}`;
+    const fechaFmt = formatearFechaEntrega(p.fechaEntrega);
+    return `
     <div class="card">
       <div class="card-row">
         <div class="card-info">
-          <h3>${p.clienteNombre} ${p.clienteApellido}</h3>
-          <p>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span class="order-id">${num}</span>
+            <h3 style="margin:0">${esc(p.nombreCliente)} <span style="color:var(--muted);font-weight:400;font-size:.8rem">· ${esc(p.telefonoCliente||'Sin teléfono')}</span></h3>
+          </div>
+          <p style="margin-top:2px">
             <span class="badge b-${p.estado}">${p.estado}</span>
-            &nbsp; Entrega: <strong>${p.fechaEntrega||'—'}</strong>
-            &nbsp; Total: <strong>$${p.total?.toFixed(0)??'—'}</strong>
+            &nbsp; Entrega: ${fechaFmt}
           </p>
-          ${p.observaciones?`<p style="color:var(--warn);margin-top:3px">📝 ${p.observaciones}</p>`:''}
+          <div style="margin-top:6px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:0.88rem">
+            <span>Total: <strong>$${tot.toLocaleString('es-AR')}</strong></span>
+            ${sen > 0 ? `<span style="color:var(--ok)">Seña: <strong>$${sen.toLocaleString('es-AR')}</strong></span>` : '<span style="color:var(--muted)">Sin seña</span>'}
+            ${saldo > 0 ? `<span style="color:var(--warn);font-weight:600">Resta: $${saldo.toLocaleString('es-AR')}</span>` : '<span style="color:var(--ok);font-weight:700">✓ Saldado</span>'}
+          </div>
+          ${p.observaciones?`<p style="color:var(--warn);margin-top:4px">📝 ${esc(p.observaciones)}</p>`:''}
           <div style="margin-top:8px">
             ${(p.detalles||[]).map(d=>`
               <p style="font-size:.8rem;color:var(--muted)">
-                ${d.cantidad}× <strong style="color:var(--text)">${d.productoNombre}</strong>
+                ${d.cantidad}× <strong style="color:var(--text)">${esc(d.productoNombre)}</strong>
                 ${d.pesoKg?` — ${d.pesoKg}kg`:''}
-                ${d.observaciones?` — ${d.observaciones}`:''}
+                ${d.observaciones?` — ${esc(d.observaciones)}`:''}
               </p>`).join('')}
           </div>
         </div>
         <div class="card-actions">
+          <button class="btn btn-ghost btn-sm" onclick="abrirTicket('${p.publicId}')">🖨️ Ticket</button>
+          ${p.estado!=='CANCELADO'
+            ?`<button class="btn btn-ghost btn-sm" onclick="abrirModalSena('${p.publicId}', ${tot}, ${sen}, '${cliSafe}')">💵 Seña ($${sen.toLocaleString('es-AR')})</button>`:''}
           ${p.estado==='PENDIENTE'||p.estado==='LISTO'
             ?`<button class="btn btn-ok btn-sm" onclick="avanzar('${p.publicId}')">▶ Avanzar</button>`:''}
           ${p.estado!=='ENTREGADO'&&p.estado!=='CANCELADO'&&p.estado!=='NO_RETIRO'
             ?`<button class="btn btn-err btn-sm" onclick="cancelar('${p.publicId}')">✕ Cancelar</button>`:''}
           ${p.estado==='LISTO'
             ?`<button class="btn btn-warn btn-sm" onclick="noRetiro('${p.publicId}')">⚠ No retiró</button>`:''}
+          ${rol==='ADMIN'
+            ?`<button class="btn btn-ghost btn-sm" style="color:var(--err)" onclick="eliminarPedidoDefinitivo('${p.publicId}')" title="Eliminar permanentemente de la BD">🗑️</button>`:''}
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
+}
+
+async function eliminarPedidoDefinitivo(id){
+  if(rol !== 'ADMIN') return toast('Solo un administrador puede eliminar pedidos','warn');
+  if(!confirm('¿Eliminar permanentemente este pedido de la base de datos?')) return;
+  try{
+    await api(`/api/pedidos/${id}`,{method:'DELETE'});
+    toast('Pedido eliminado de la base de datos','ok');
+    cargarPedidos();
+    if(g('sec-cocina')?.classList.contains('on')) cargarCocina();
+    if(g('sec-reportes')?.classList.contains('on')) cargarReporteMensual();
+  }catch(e){ toast(e.message,'err'); }
 }
 
 async function avanzar(id){
@@ -520,50 +1366,428 @@ async function noRetiro(id){
   catch(e){ toast(e.message,'err'); }
 }
 
-// ══ COCINA ════════════════════════════════════════════════════════════════════
-async function cargarCocina(){
-  try{
-    const list = await api('/api/pedidos/cocina/hoy');
-    const el = g('lista-cocina');
-    if(!list.length){ el.innerHTML='<div class="empty">Sin pedidos para hoy 🎉</div>'; return; }
-    // ordenar por hora entrega
-    list.sort((a,b)=>(a.fechaEntrega||'').localeCompare(b.fechaEntrega||''));
-    el.innerHTML = list.map(p=>`
-      <div class="ccard">
-        <div class="hora">${soloHora(p.fechaEntrega)}</div>
-        <div class="nombre">${p.clienteNombre} ${p.clienteApellido}</div>
-        <div style="margin-bottom:10px"><span class="badge b-${p.estado}">${p.estado}</span></div>
-        <div>
-          ${(p.detalles||[]).map(d=>`
-            <div class="ditem">
-              <strong>${d.cantidad}×</strong> ${d.productoNombre}
-              ${d.pesoKg?` <span style="color:var(--gold)">${d.pesoKg}kg</span>`:''}
-              ${d.observaciones?`<br><span style="font-size:.78rem">${d.observaciones}</span>`:''}
-            </div>`).join('')}
-        </div>
-        ${p.observaciones?`<div class="obs">📝 ${p.observaciones}</div>`:''}
-        ${p.estado==='PENDIENTE'
-          ?`<button class="btn btn-ok btn-full" style="margin-top:14px" onclick="avanzarCocina('${p.publicId}')">✓ Marcar como LISTO</button>`:''}
-      </div>`).join('');
-  }catch(e){ toast(e.message,'err'); }
+// ══ COCINA & PRODUCCIÓN ══
+let todosPedidosCocina = [];
+let filtroCocinaModo = 'hoy'; // 'hoy', 'manana', 'todos', 'fecha'
+let filtroCocinaProducto = '';
+
+async function setModoCocina(modo){
+  filtroCocinaModo = modo;
+  const bHoy = g('btn-cocina-hoy');
+  const bManana = g('btn-cocina-manana');
+  const bTodos = g('btn-cocina-todos');
+  const inpFecha = g('c-f-fecha');
+
+  if(bHoy) bHoy.className = modo === 'hoy' ? 'btn btn-gold btn-sm' : 'btn btn-ghost btn-sm';
+  if(bManana) bManana.className = modo === 'manana' ? 'btn btn-gold btn-sm' : 'btn btn-ghost btn-sm';
+  if(bTodos) bTodos.className = modo === 'todos' ? 'btn btn-gold btn-sm' : 'btn btn-ghost btn-sm';
+
+  if(modo === 'hoy'){
+    if(inpFecha) inpFecha.value = hoyLocal();
+    await cargarCocina(hoyLocal());
+  } else if(modo === 'manana'){
+    if(inpFecha) inpFecha.value = mananaLocal();
+    await cargarCocina(mananaLocal());
+  } else if(modo === 'todos'){
+    if(inpFecha) inpFecha.value = '';
+    await cargarCocina('');
+  }
 }
+
+async function cambiarFechaCocina(){
+  const f = g('c-f-fecha')?.value;
+  filtroCocinaModo = f ? 'fecha' : 'todos';
+  const bHoy = g('btn-cocina-hoy');
+  const bManana = g('btn-cocina-manana');
+  const bTodos = g('btn-cocina-todos');
+  if(bHoy) bHoy.className = 'btn btn-ghost btn-sm';
+  if(bManana) bManana.className = 'btn btn-ghost btn-sm';
+  if(bTodos) bTodos.className = (!f) ? 'btn btn-gold btn-sm' : 'btn btn-ghost btn-sm';
+  await cargarCocina(f || '');
+}
+
+async function cargarCocina(fechaParam = null){
+  let f = fechaParam;
+  if(f === null){
+    if(filtroCocinaModo === 'hoy') f = hoyLocal();
+    else if(filtroCocinaModo === 'manana') f = mananaLocal();
+    else if(filtroCocinaModo === 'fecha') f = g('c-f-fecha')?.value || '';
+    else f = '';
+  }
+
+  const el = g('lista-cocina');
+  if(!todosPedidosCocina.length) {
+    el.innerHTML = '<div class="empty">⏳ Consultando pedidos de cocina...</div>';
+  }
+
+  try {
+    let url = '/api/pedidos/cocina';
+    if(f){
+      url += `?fecha=${f}`;
+    }
+    todosPedidosCocina = await api(url);
+    if(!Array.isArray(todosPedidosCocina)) todosPedidosCocina = [];
+    actualizarOpcionesProductosCocina();
+    aplicarFiltrosCocina();
+  } catch(e) {
+    // Si la API falla (fallback de seguridad)
+    try {
+      if(f === hoyLocal() || !f){
+        todosPedidosCocina = await api('/api/pedidos/cocina/hoy');
+      } else {
+        const todos = await api('/api/pedidos');
+        todosPedidosCocina = (todos||[]).filter(p => (p.fechaEntrega||'').startsWith(f) && (p.estado==='PENDIENTE'||p.estado==='LISTO'));
+      }
+      actualizarOpcionesProductosCocina();
+      aplicarFiltrosCocina();
+    } catch(errFallback){
+      el.innerHTML = `<div class="empty" style="color:var(--err)">❌ Error al cargar pedidos de cocina: ${e.message}</div>`;
+      toast(e.message, 'err');
+    }
+  }
+}
+
+function actualizarOpcionesProductosCocina(){
+  const sel = g('c-f-producto');
+  if(!sel) return;
+  const prodMap = new Map();
+  todosPedidosCocina.forEach(p => {
+    (p.detalles || []).forEach(d => {
+      if(d.productoNombre) prodMap.set(d.productoNombre, d.productoNombre);
+    });
+  });
+
+  const valActual = sel.value;
+  const sortedProds = Array.from(prodMap.keys()).sort();
+  sel.innerHTML = '<option value="">🎂 Todos los productos</option>' +
+    sortedProds.map(p => `<option value="${p}">${p}</option>`).join('');
+
+  if(prodMap.has(valActual)){
+    sel.value = valActual;
+  } else {
+    filtroCocinaProducto = '';
+    sel.value = '';
+  }
+}
+
+function aplicarFiltrosCocina(){
+  const prod = g('c-f-producto')?.value || filtroCocinaProducto || '';
+  const est  = g('c-f-estado')?.value || '';
+  const q    = (g('c-f-buscar')?.value || '').toLowerCase().trim();
+
+  let lista = todosPedidosCocina.slice();
+
+  if(prod){
+    lista = lista.filter(p => (p.detalles||[]).some(d => d.productoNombre === prod));
+  }
+  if(est){
+    lista = lista.filter(p => p.estado === est);
+  }
+  if(q){
+    lista = lista.filter(p => {
+      const cli = `${p.nombreCliente||''} ${p.telefonoCliente||''} ${p.observaciones||''}`.toLowerCase();
+      const prods = (p.detalles||[]).map(d => `${d.productoNombre||''} ${d.observaciones||''}`).join(' ').toLowerCase();
+      return cli.includes(q) || prods.includes(q);
+    });
+  }
+
+  lista.sort((a,b)=>(a.fechaEntrega||'').localeCompare(b.fechaEntrega||''));
+  renderCocinaResumen(lista, prod);
+  renderCocinaTarjetas(lista);
+}
+
+function filtrarCocinaPorChip(productoNombre){
+  const sel = g('c-f-producto');
+  if(filtroCocinaProducto === productoNombre){
+    filtroCocinaProducto = '';
+    if(sel) sel.value = '';
+  } else {
+    filtroCocinaProducto = productoNombre;
+    if(sel) sel.value = productoNombre;
+  }
+  aplicarFiltrosCocina();
+}
+
+function renderCocinaResumen(list, prodSeleccionado){
+  const box = g('cocina-resumen-box');
+  const chipsWrap = g('cocina-chips-wrap');
+  const tit = g('cocina-resumen-titulo');
+  if(!box || !chipsWrap) return;
+
+  if(!list.length){
+    box.style.display = 'none';
+    return;
+  }
+
+  const resumen = {};
+  let totalItemsElaborar = 0;
+
+  list.forEach(p => {
+    (p.detalles || []).forEach(d => {
+      const nom = d.productoNombre || 'Varios';
+      if(!resumen[nom]){
+        resumen[nom] = { cantidad: 0, pesoKg: 0 };
+      }
+      resumen[nom].cantidad += (d.cantidad || 0);
+      if(d.pesoKg) resumen[nom].pesoKg += Number(d.pesoKg);
+      totalItemsElaborar += (d.cantidad || 0);
+    });
+  });
+
+  const prods = Object.keys(resumen).sort();
+  if(!prods.length){
+    box.style.display = 'none';
+    return;
+  }
+
+  box.style.display = 'block';
+  if(tit){
+    tit.innerHTML = `<strong>Lote de Producción</strong> (${totalItemsElaborar} u. en ${list.length} pedidos)`;
+  }
+
+  chipsWrap.innerHTML = prods.map(nom => {
+    const r = resumen[nom];
+    const isActivo = prodSeleccionado === nom;
+    const kgStr = r.pesoKg > 0 ? ` · ${r.pesoKg.toFixed(1)}kg` : '';
+    const safeNom = nom.replace(/'/g, "\\'");
+    return `
+      <div class="cocina-chip ${isActivo ? 'on' : ''}" onclick="filtrarCocinaPorChip('${safeNom}')" title="Filtrar pedidos de ${nom}">
+        <span>${isActivo ? '✓ ' : ''}${nom}</span>
+        <strong style="color:var(--primary);margin-left:2px">${r.cantidad} u.${kgStr}</strong>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderCocinaTarjetas(list){
+  const el = g('lista-cocina');
+  if(!list.length){
+    el.innerHTML = '<div class="empty">No hay pedidos de cocina con los filtros actuales 🍰</div>';
+    return;
+  }
+
+  el.innerHTML = list.map(p => {
+    const num = p.id ? `#${p.id}` : `#${(p.publicId||'').slice(0,5)}`;
+    const fechaFmt = formatearFechaCorta(p.fechaEntrega);
+    return `
+    <div class="ccard">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <span class="order-id">${num}</span>
+        <span class="badge b-${p.estado}">${p.estado}</span>
+      </div>
+      <div class="hora">${soloHora(p.fechaEntrega)}</div>
+      <div style="font-size:0.8rem;color:var(--primary);font-weight:600;margin-bottom:8px">📅 ${fechaFmt}</div>
+      <div class="nombre">${esc(p.nombreCliente)} <span style="font-size:0.8rem;font-weight:400;color:var(--muted)">· ${esc(p.telefonoCliente||'Sin teléfono')}</span></div>
+      
+      <div style="margin-top:10px">
+        ${(p.detalles||[]).map(d=>`
+          <div class="ditem">
+            <strong>${d.cantidad}×</strong> <span style="color:var(--text);font-weight:600">${esc(d.productoNombre)}</span>
+            ${d.pesoKg ? `<span style="color:var(--gold);font-weight:700"> (${d.pesoKg}kg)</span>` : ''}
+            ${d.observaciones ? `<div style="font-size:.78rem;color:var(--muted);margin-top:2px">↳ ${esc(d.observaciones)}</div>` : ''}
+          </div>`).join('')}
+      </div>
+
+      ${p.observaciones ? `<div class="obs">📝 ${esc(p.observaciones)}</div>` : ''}
+
+      <div class="ccard-actions">
+        ${p.estado === 'PENDIENTE'
+          ? `<button class="btn btn-ok btn-full" onclick="avanzarCocina('${p.publicId}')">✓ Marcar como LISTO</button>`
+          : `<div style="text-align:center;padding:7px;background:var(--ok-bg);color:var(--ok);border-radius:var(--r);font-weight:700;font-size:0.82rem;border:1px solid #bce5c3">✓ Listo para retiro</div>`}
+        <div style="display:flex;gap:6px;margin-top:2px">
+          <button class="btn btn-primary btn-full btn-sm" onclick="abrirComandaCocina('${p.publicId}')" title="Imprimir comanda de producción para la cocina">👩‍🍳 Comanda Cocina</button>
+          <button class="btn btn-ghost btn-sm" onclick="abrirTicket('${p.publicId}')" title="Ver ticket con precios y saldos de caja">🧾 Caja</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function limpiarFiltrosCocina(){
+  filtroCocinaProducto = '';
+  if(g('c-f-producto')) g('c-f-producto').value = '';
+  if(g('c-f-estado')) g('c-f-estado').value = '';
+  if(g('c-f-buscar')) g('c-f-buscar').value = '';
+  setModoCocina('hoy');
+}
+
+function copiarListaProduccion(){
+  if(!todosPedidosCocina.length) return toast('No hay pedidos en la lista de cocina', 'warn');
+  
+  const resumen = {};
+  todosPedidosCocina.forEach(p => {
+    (p.detalles || []).forEach(d => {
+      const nom = d.productoNombre || 'Producto';
+      if(!resumen[nom]) resumen[nom] = { cant: 0, kg: 0 };
+      resumen[nom].cant += (d.cantidad || 0);
+      if(d.pesoKg) resumen[nom].kg += Number(d.pesoKg);
+    });
+  });
+
+  const fTitulo = filtroCocinaModo === 'hoy' ? 'HOY' : (filtroCocinaModo === 'manana' ? 'MAÑANA' : 'PRODUCCIÓN');
+  let texto = `👨‍🍳 LOTE DE ${fTitulo}\n`;
+  texto += `Total pedidos: ${todosPedidosCocina.length}\n`;
+  texto += `------------------------------------\n`;
+  for(const [nom, r] of Object.entries(resumen)){
+    const kgStr = r.kg > 0 ? ` (${r.kg.toFixed(1)} kg)` : '';
+    texto += `• ${r.cant}x ${nom}${kgStr}\n`;
+  }
+  texto += `------------------------------------\n`;
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(texto).then(()=>{
+      toast('¡Lote de producción copiado al portapapeles! 📋', 'ok');
+    }).catch(()=>{
+      toast('No se pudo copiar al portapapeles', 'warn');
+    });
+  } else {
+    toast('Portapapeles no soportado en este navegador', 'warn');
+  }
+}
+
 async function avanzarCocina(id){
   try{ await api(`/api/pedidos/${id}/avanzar`,{method:'PATCH'}); toast('¡Pedido listo!','ok'); cargarCocina(); }
   catch(e){ toast(e.message,'err'); }
 }
 
-// ══ NUEVO PEDIDO ══════════════════════════════════════════════════════════════
+function togglePantallaCompletaCocina(){
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    const el = document.documentElement;
+    if (el.requestFullscreen) {
+      el.requestFullscreen().catch(()=>{});
+    } else if (el.webkitRequestFullscreen) {
+      el.webkitRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen().catch(()=>{});
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  }
+}
+
+document.addEventListener('fullscreenchange', actualizarBotonFullscreen);
+document.addEventListener('webkitfullscreenchange', actualizarBotonFullscreen);
+
+function actualizarBotonFullscreen(){
+  const btn = g('btn-fullscreen-cocina');
+  if (btn) {
+    const isFull = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    btn.innerHTML = isFull ? '🗗 Salir de Pantalla Completa' : '📺 Pantalla Completa';
+  }
+}
+
+// ══ AUTOCOMPLETAR CLIENTE ══
+function actualizarDatalistClientes(){
+  const dl = g('dl-clientes');
+  if(!dl) return;
+  const clientesVistos = new Map();
+  (todosPedidos || []).forEach(p => {
+    if(p.nombreCliente && !clientesVistos.has(p.nombreCliente.toLowerCase())){
+      clientesVistos.set(p.nombreCliente.toLowerCase(), {
+        nombre: p.nombreCliente,
+        tel: p.telefonoCliente || ''
+      });
+    }
+  });
+  dl.innerHTML = Array.from(clientesVistos.values())
+    .map(c => `<option value="${c.nombre}">${c.tel ? c.tel : ''}</option>`)
+    .join('');
+}
+
+function autocompletarTelefonoCliente(){
+  const nom = (g('pd-nombre')?.value || '').trim().toLowerCase();
+  if(!nom) return;
+  const p = (todosPedidos || []).find(x => (x.nombreCliente || '').trim().toLowerCase() === nom);
+  if(p && p.telefonoCliente && g('pd-tel') && !g('pd-tel').value){
+    g('pd-tel').value = p.telefonoCliente;
+  }
+}
+
+// ══ NUEVO PEDIDO ══
+function setFechaPedido(cuando){
+  const d = new Date();
+  if(cuando === 'manana'){
+    d.setDate(d.getDate() + 1);
+  }
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  if(g('pd-fecha')) g('pd-fecha').value = `${d.getFullYear()}-${m}-${day}`;
+}
+
+function setHoraPedido(hora){
+  if(g('pd-hora')) g('pd-hora').value = hora;
+}
+
+function formatearHoraInput(input){
+  let v = input.value.replace(/[^0-9:]/g, '');
+  if (!v.includes(':') && v.length >= 3) {
+    v = v.slice(0, 2) + ':' + v.slice(2, 4);
+  }
+  input.value = v;
+}
+
+function autoCompletarHora(input){
+  let v = (input.value || '').trim();
+  if (!v) { input.value = '12:00'; return; }
+  if (/^\d{1,2}$/.test(v)) {
+    let h = parseInt(v, 10);
+    if (h < 0) h = 0; if (h > 23) h = 23;
+    input.value = `${String(h).padStart(2, '0')}:00`;
+  } else if (/^\d{3,4}$/.test(v)) {
+    let h = v.length === 3 ? v.slice(0, 1) : v.slice(0, 2);
+    let m = v.slice(-2);
+    input.value = `${h.padStart(2, '0')}:${m}`;
+  }
+}
+
+function normalizarHora(val){
+  if(!val) return '12:00:00';
+  val = String(val).trim().replace(/\s+/g, '');
+  if (/^\d{1,2}$/.test(val)) {
+    const h = Math.min(23, Math.max(0, parseInt(val, 10)));
+    return `${String(h).padStart(2, '0')}:00:00`;
+  }
+  if (/^\d{3,4}$/.test(val)) {
+    const h = val.length === 3 ? val.slice(0, 1) : val.slice(0, 2);
+    const m = val.slice(-2);
+    return `${h.padStart(2, '0')}:${m}:00`;
+  }
+  const partes = val.split(':');
+  if (partes.length >= 2) {
+    const h = partes[0].padStart(2, '0');
+    const m = (partes[1] || '00').padStart(2, '0').slice(0, 2);
+    const s = partes[2] ? partes[2].padStart(2, '0').slice(0, 2) : '00';
+    return `${h}:${m}:${s}`;
+  }
+  return '12:00:00';
+}
+
 function abrirPedido(){
-  const sel = g('pd-cli');
-  sel.innerHTML = clientes.filter(c=>c.activo).map(c=>
-    `<option value="${c.publicId}">${c.nombre} ${c.apellido}</option>`
-  ).join('');
-  if(!sel.options.length){ toast('No hay clientes activos','err'); return; }
-  g('pd-fecha').value='';
-  g('pd-obs').value='';
-  g('det-wrap').innerHTML='';
+  g('pd-nombre').value = '';
+  g('pd-tel').value = '';
+  actualizarDatalistClientes();
+  setFechaPedido('hoy');
+  if(g('pd-hora')) g('pd-hora').value = '12:00';
+  g('pd-obs').value = '';
+  g('pd-sena').value = '';
+  g('det-wrap').innerHTML = '';
   addDet();
   abrir('m-ped');
+}
+
+function esProductoMini(tipo, nombre = ''){
+  const nom = (nombre || '').toLowerCase();
+  if (nom.includes('mini torta')) return false;
+  return tipo === 'MINI' || (nom.startsWith('mini ') && !nom.includes('torta'));
+}
+
+function esTortaParaTamano(tipo, nombre = ''){
+  if (tipo === 'TORTA_COMUN' || tipo === 'TORTA_POR_KILO' || tipo === 'TORTA_POR_KILO_FRUTA') return true;
+  if (tipo === 'MINI' || tipo === 'INDIVIDUAL' || tipo === 'POR_DOCENA') return false;
+  const nom = (nombre || '').toLowerCase();
+  return nom.includes('torta') || nom.includes('tarta') || nom.includes('pie') || nom.includes('cake') || nom.includes('rogel') || nom.includes('brownie') || nom.includes('marquise') || nom.includes('merengada') || nom.includes('delicia') || nom.includes('quemado') || nom.includes('gustavo') || nom.includes('africano');
 }
 
 function addDet(){
@@ -571,132 +1795,267 @@ function addDet(){
   const i = w.children.length;
   const d = document.createElement('div');
   d.className='det-row';
+  const prods = productos.filter(p=>p.activo).slice().sort((a,b)=>(a.nombre||'').localeCompare(b.nombre||''));
   d.innerHTML=`
-    <select id="ds${i}" onchange="toggleKg(${i})">
-      ${productos.filter(p=>p.activo).map(p=>
-        `<option value="${p.publicId}" data-tipo="${p.tipo}">${p.nombre}</option>`
+    <select id="ds${i}" onchange="toggleKg(${i}); actualizarTotalesNuevoPedido()">
+      ${prods.map(p=>
+        `<option value="${p.publicId}" data-tipo="${p.tipo}" data-precio="${p.precio||0}" data-nombre="${(p.nombre||'').replace(/"/g, '&quot;')}">${p.nombre} (${tipoLabel(p.tipo)} · ${precioLabel(p)})</option>`
       ).join('')}
     </select>
-    <input id="dc${i}" type="number" min="1" value="1" placeholder="Cant."/>
-    <input id="dk${i}" type="number" min="0.1" step="0.1" placeholder="Kg" style="display:none"/>
-    <button class="del" onclick="this.parentElement.remove()">×</button>
+    <div id="dtz-wrap${i}" class="dtz-wrap" style="margin:0">
+      <select id="dtz${i}" onchange="cambiarTamano(${i}); actualizarTotalesNuevoPedido()">
+        <option value="ESTANDAR">🎂 Estándar</option>
+        <option value="GRANDE">⚖️ Grande ($45.000/kg)</option>
+      </select>
+    </div>
+    <input id="dc${i}" type="number" min="1" value="1" placeholder="Cant." oninput="validarCantMin(${i}); actualizarTotalesNuevoPedido()" onchange="validarCantMin(${i}); actualizarTotalesNuevoPedido()"/>
+    <input id="dk${i}" type="number" min="1.6" max="5.0" step="0.1" value="2.0" placeholder="Kilos (1.6 a 5)" style="display:none" oninput="validarPesoKg(${i}); actualizarTotalesNuevoPedido()" onchange="validarPesoKg(${i}); actualizarTotalesNuevoPedido()"/>
+    <button type="button" class="del" onclick="this.parentElement.remove(); actualizarTotalesNuevoPedido()">×</button>
+    <div id="dsub${i}" style="grid-column:1/-1;font-size:0.75rem;color:var(--muted);display:flex;justify-content:space-between;align-items:center;padding:2px 4px;margin-top:-2px"></div>
   `;
   w.appendChild(d);
   toggleKg(i);
+  actualizarTotalesNuevoPedido();
 }
 
 function toggleKg(i){
   const sel = g('ds'+i);
   if(!sel) return;
-  const tipo = sel.options[sel.selectedIndex]?.dataset.tipo||'';
-  const needKg = tipo==='TORTA_POR_KILO'||tipo==='TORTA_POR_KILO_FRUTA';
-  g('dk'+i).style.display = needKg?'block':'none';
+  const opt = sel.options[sel.selectedIndex];
+  const tipo = opt?.dataset.tipo||'';
+  const nombre = opt?.dataset.nombre||'';
+  const selTam = g('dtz'+i);
+  const wrapTam = g('dtz-wrap'+i);
+  const inpKg = g('dk'+i);
+  const inpCant = g('dc'+i);
+
+  const esTorta = esTortaParaTamano(tipo, nombre);
+  if (wrapTam) {
+    wrapTam.style.display = esTorta ? 'block' : 'none';
+  }
+
+  if (tipo === 'TORTA_POR_KILO' || tipo === 'TORTA_POR_KILO_FRUTA') {
+    if (selTam) selTam.value = 'GRANDE';
+    if (inpKg) {
+      inpKg.style.display = 'block';
+      if (!inpKg.value || Number(inpKg.value) <= 1.5) inpKg.value = "2.0";
+    }
+  } else if (!esTorta) {
+    if (selTam) selTam.value = 'ESTANDAR';
+    if (inpKg) inpKg.style.display = 'none';
+  } else {
+    const esGrande = selTam && selTam.value === 'GRANDE';
+    if (inpKg) inpKg.style.display = esGrande ? 'block' : 'none';
+  }
+
+  if(inpCant){
+    if(esProductoMini(tipo, nombre)){
+      inpCant.min = "12";
+      if(Number(inpCant.value) < 12){
+        inpCant.value = "12";
+      }
+      inpCant.placeholder = "Mín. 12";
+      inpCant.title = "Los productos mini deben ser por un mínimo de 12 unidades";
+    } else {
+      inpCant.min = "1";
+      inpCant.placeholder = "Cant.";
+      inpCant.title = "";
+    }
+  }
+
+  actualizarTotalesNuevoPedido();
+}
+
+function cambiarTamano(i){
+  const selTam = g('dtz'+i);
+  const inpKg = g('dk'+i);
+  if(!selTam || !inpKg) return;
+  const esGrande = selTam.value === 'GRANDE';
+  inpKg.style.display = esGrande ? 'block' : 'none';
+  if(esGrande && (!inpKg.value || Number(inpKg.value) <= 1.5)){
+    inpKg.value = "2.0";
+  }
+  actualizarTotalesNuevoPedido();
+}
+
+function validarPesoKg(i){
+  const inpKg = g('dk'+i);
+  if(!inpKg || inpKg.style.display === 'none') return;
+  const val = Number(inpKg.value);
+  if(val > 0 && val <= 1.5){
+    toast('⚠️ Las tortas grandes deben superar el kilo y medio (mayor a 1.5 kg).', 'warn');
+  } else if(val > 5.0){
+    toast('⚠️ El tamaño máximo permitido para tortas por kilo es de 5 kg.', 'warn');
+  }
+}
+
+function validarCantMin(i){
+  const sel = g('ds'+i);
+  const inpCant = g('dc'+i);
+  if(!sel || !inpCant) return;
+  const opt = sel.options[sel.selectedIndex];
+  const tipo = opt?.dataset.tipo||'';
+  const nombre = opt?.dataset.nombre||'';
+  if(esProductoMini(tipo, nombre)){
+    const val = Number(inpCant.value);
+    if(val > 0 && val < 12){
+      toast(`⚠️ En productos mini (${nombre}), el pedido debe ser a partir de 12 unidades.`, 'warn');
+    }
+  }
+}
+
+function actualizarTotalesNuevoPedido(){
+  const wrap = g('det-wrap');
+  if(!wrap) return;
+  const rows = wrap.children;
+  let total = 0;
+
+  for(let i=0; i<rows.length; i++){
+    const selProd = rows[i].querySelector('select[id^="ds"]');
+    const selTam  = rows[i].querySelector('select[id^="dtz"]');
+    const inpCant = rows[i].querySelector('input[id^="dc"]');
+    const inpKg   = rows[i].querySelector('input[id^="dk"]');
+    const subLbl  = rows[i].querySelector('div[id^="dsub"]');
+    if(!selProd || !inpCant) continue;
+
+    const opt = selProd.options[selProd.selectedIndex];
+    const precioBase = Number(opt?.dataset.precio) || 0;
+    const tipo = opt?.dataset.tipo || '';
+    const cant = Math.max(1, Number(inpCant.value) || 1);
+    const esGrande = (selTam && selTam.value === 'GRANDE') || tipo === 'TORTA_POR_KILO' || tipo === 'TORTA_POR_KILO_FRUTA';
+
+    let subfila = 0;
+    let textoSub = '';
+
+    if(esGrande){
+      const kg = Number(inpKg?.value) || 2.0;
+      const PRECIO_KG = 45000;
+      subfila = PRECIO_KG * kg * cant;
+      if(kg <= 1.5){
+        textoSub = `<span style="color:var(--err)">⚠️ Debe ser > 1.5 kg (hasta 5 kg)</span> · <strong style="color:var(--primary)">$${subfila.toLocaleString('es-AR')}</strong>`;
+      } else if(kg > 5.0){
+        textoSub = `<span style="color:var(--err)">⚠️ Máx. 5 kg</span> · <strong style="color:var(--primary)">$${subfila.toLocaleString('es-AR')}</strong>`;
+      } else {
+        textoSub = `<span style="color:var(--gold);font-weight:600">⚖️ Grande: ${kg} kg × $45.000/kg</span> · <strong style="color:var(--primary)">$${subfila.toLocaleString('es-AR')}</strong>`;
+      }
+    } else {
+      subfila = precioBase * cant;
+      textoSub = `<span>Precio unitario: $${precioBase.toLocaleString('es-AR')}</span> · <strong style="color:var(--primary)">$${subfila.toLocaleString('es-AR')}</strong>`;
+    }
+
+    if(subLbl) subLbl.innerHTML = textoSub;
+    total += subfila;
+  }
+
+  const sena = Number(g('pd-sena')?.value) || 0;
+  const saldo = Math.max(0, total - sena);
+  if(g('pd-total-est')) g('pd-total-est').textContent = `$${total.toLocaleString('es-AR')}`;
+  if(g('pd-saldo-est')) g('pd-saldo-est').textContent = `$${saldo.toLocaleString('es-AR')}`;
 }
 
 async function guardarPedido(){
-  const clientePublicId = g('pd-cli').value;
-  const fechaEntrega    = g('pd-fecha').value;
-  if(!fechaEntrega) return toast('Seleccioná la fecha y hora de entrega','err');
+  const nombreCliente = g('pd-nombre').value.trim();
+  const telefonoCliente = g('pd-tel').value.trim();
+  if(!nombreCliente || !telefonoCliente) return toast('Completá nombre y teléfono','err');
+
+  const fechaVal = g('pd-fecha').value;
+  if(!fechaVal) return toast('Seleccioná la fecha de entrega','err');
+  const horaVal = normalizarHora(g('pd-hora')?.value || '12:00');
+  const fechaISO = `${fechaVal}T${horaVal}`;
+
   const rows = g('det-wrap').children;
   if(!rows.length) return toast('Agregá al menos un producto','err');
+
   const detalles=[];
   for(let i=0;i<rows.length;i++){
-    const sel=rows[i].querySelector('select');
-    const cnt=rows[i].querySelector(`#dc${i}`);
-    const kg=rows[i].querySelector(`#dk${i}`);
-    const tipo=sel?.options[sel.selectedIndex]?.dataset.tipo||'';
-    const needKg=tipo==='TORTA_POR_KILO'||tipo==='TORTA_POR_KILO_FRUTA';
-    if(needKg&&!kg?.value) return toast('Indicá el peso en kg para tortas por kilo','err');
+    const sel=rows[i].querySelector('select[id^="ds"]');
+    const cnt=rows[i].querySelector('input[id^="dc"]');
+    const kg=rows[i].querySelector('input[id^="dk"]');
+    const selTam=rows[i].querySelector('select[id^="dtz"]');
+    const opt=sel?.options[sel.selectedIndex];
+    const tipo=opt?.dataset.tipo||'';
+    const prodNombre=opt?.dataset.nombre || opt?.text || 'Producto';
+    const cantVal = Number(cnt?.value) || 0;
+
+    if(esProductoMini(tipo, prodNombre) && cantVal < 12){
+      if(cnt) cnt.focus();
+      return toast(`⚠️ El pedido de "${prodNombre}" debe ser a partir de 12 unidades (mínimo 12 u.).`, 'warn');
+    }
+
+    const esGrande = (selTam && selTam.value === 'GRANDE') || tipo==='TORTA_POR_KILO'||tipo==='TORTA_POR_KILO_FRUTA';
+    let pesoVal = null;
+    if(esGrande){
+      pesoVal = Number(kg?.value);
+      if(!pesoVal || pesoVal <= 1.5){
+        if(kg) kg.focus();
+        return toast(`⚠️ Para torta grande de "${prodNombre}", el peso debe superar el kilo y medio (mayor a 1.5 kg).`, 'warn');
+      }
+      if(pesoVal > 5.0){
+        if(kg) kg.focus();
+        return toast(`⚠️ El tamaño máximo permitido para torta por kilo es de 5 kg.`, 'warn');
+      }
+    }
+
     detalles.push({
-      productoPublicId:sel.value,
-      cantidad:Number(cnt.value)||1,
-      pesoKg:kg?.value?Number(kg.value):null
+      productoPublicId: sel.value,
+      cantidad: cantVal || 1,
+      pesoKg: esGrande ? pesoVal : null
     });
   }
+  const sena = Number(g('pd-sena')?.value) || 0;
   const obs = g('pd-obs').value.trim();
 
-  const fechaISO = fechaEntrega.length === 16 ? `${fechaEntrega}:00` : fechaEntrega;
   try{
     await api('/api/pedidos',{method:'POST',body:JSON.stringify({
-      clientePublicId, fechaEntrega:fechaISO, observaciones:obs||null, detalles
+      nombreCliente,
+      telefonoCliente,
+      fechaEntrega: fechaISO,
+      sena: sena > 0 ? sena : 0,
+      observaciones: obs || null,
+      detalles
     })});
-    toast('Pedido creado','ok'); cerrar('m-ped'); cargarPedidos();
+    toast('¡Pedido registrado con éxito!','ok');
+    cerrar('m-ped');
+    cargarPedidos();
+    if(g('sec-cocina').classList.contains('on')) cargarCocina();
   }catch(e){ toast(e.message,'err'); }
 }
 
-// ══ CLIENTES ══════════════════════════════════════════════════════════════════
-function renderClientes(lista){
-  const data=lista??clientes;
-  const el=g('lista-clientes');
-  if(!data.length){ el.innerHTML='<div class="empty">No hay clientes</div>'; return; }
-  el.innerHTML=data.map(c=>`
-    <div class="card">
-      <div class="card-row">
-        <div class="card-info">
-          <h3>${c.nombre} ${c.apellido}</h3>
-          <p>${c.numero||'Sin teléfono'} &nbsp;·&nbsp;
-            ${c.activo?'<span style="color:var(--ok)">Activo</span>':'<span style="color:var(--err)">Inactivo</span>'}
-          </p>
-        </div>
-        <div class="card-actions" style="flex-direction:row">
-          <button class="btn btn-ghost btn-sm" onclick="editarCliente('${c.publicId}')">Editar</button>
-          ${c.activo
-            ?`<button class="btn btn-err btn-sm" onclick="bajaCliente('${c.publicId}')">Baja</button>`
-            :`<button class="btn btn-ok btn-sm" onclick="reactivarCliente('${c.publicId}')">Reactivar</button>`}
-        </div>
-      </div>
-    </div>`).join('');
+// ══ PRODUCTOS ══
+function filtrarProductos(){
+  const q = (g('f-prod-buscar')?.value || '').trim().toLowerCase();
+  const t = g('f-prod-tipo')?.value || '';
+  let filtrados = productos.slice();
+  if (q) filtrados = filtrados.filter(p => (p.nombre||'').toLowerCase().includes(q));
+  if (t) filtrados = filtrados.filter(p => p.tipo === t);
+  filtrados.sort((a,b)=>(a.nombre||'').localeCompare(b.nombre||''));
+  renderProductosLista(filtrados);
 }
 
-function buscarCli(){
-  const q=g('s-cli').value.toLowerCase();
-  if(!q) return renderClientes();
-  renderClientes(clientes.filter(c=>
-    c.nombre.toLowerCase().includes(q)||c.apellido.toLowerCase().includes(q)
-  ));
+function limpiarFiltrosProd(){
+  if(g('f-prod-buscar')) g('f-prod-buscar').value = '';
+  if(g('f-prod-tipo')) g('f-prod-tipo').value = '';
+  filtrarProductos();
 }
 
-function abrirCliente(){
-  editCliId=null;
-  g('m-cli-title').textContent='Nuevo cliente';
-  g('c-nom').value=''; g('c-ape').value=''; g('c-tel').value='';
-  abrir('m-cli');
-}
-
-function editarCliente(pid){
-  const c=clientes.find(x=>x.publicId===pid); if(!c) return;
-  editCliId=pid;
-  g('m-cli-title').textContent='Editar cliente';
-  g('c-nom').value=c.nombre; g('c-ape').value=c.apellido; g('c-tel').value=c.numero||'';
-  abrir('m-cli');
-}
-
-async function guardarCliente(){
-  const body={nombre:g('c-nom').value.trim(),apellido:g('c-ape').value.trim(),numero:g('c-tel').value.trim()};
-  if(!body.nombre||!body.apellido||!body.numero) return toast('Nombre, apellido y teléfono son obligatorios','err');
-  try{
-    if(editCliId) await api(`/api/clientes/${editCliId}`,{method:'PUT',body:JSON.stringify(body)});
-    else          await api('/api/clientes',{method:'POST',body:JSON.stringify(body)});
-    toast(editCliId?'Cliente actualizado':'Cliente creado','ok');
-    cerrar('m-cli'); await cargarBase(); renderClientes();
-  }catch(e){ toast(e.message,'err'); }
-}
-
-async function bajaCliente(pid){
-  if(!confirm('¿Dar de baja este cliente?')) return;
-  try{ await api(`/api/clientes/${pid}`,{method:'DELETE'}); toast('Cliente dado de baja','ok'); await cargarBase(); renderClientes(); }
-  catch(e){ toast(e.message,'err'); }
-}
-async function reactivarCliente(pid){
-  try{ await api(`/api/clientes/${pid}/reactivar`,{method:'PATCH'}); toast('Cliente reactivado','ok'); await cargarBase(); renderClientes(); }
-  catch(e){ toast(e.message,'err'); }
-}
-
-// ══ PRODUCTOS ═════════════════════════════════════════════════════════════════
 function renderProductos(){
+  filtrarProductos();
+}
+
+function renderProductosLista(list){
   const el=g('lista-productos');
-  if(!productos.length){ el.innerHTML='<div class="empty">No hay productos</div>'; return; }
-  el.innerHTML=productos.map(p=>`
+  if(!list.length){
+    el.innerHTML='<div class="empty">No se encontraron productos con ese filtro.</div>';
+    return;
+  }
+  const total = list.length;
+  const activos = list.filter(p => p.activo).length;
+  const resumen = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:8px 14px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);font-size:.85rem">
+      <span style="color:var(--muted)">Mostrando: <strong style="color:var(--text)">${total} productos</strong> (${activos} activos)</span>
+    </div>`;
+
+  el.innerHTML = resumen + list.map(p=>`
     <div class="card">
       <div class="card-row">
         <div class="card-info">
@@ -769,7 +2128,7 @@ async function reactivarProducto(pid){
   catch(e){ toast(e.message,'err'); }
 }
 
-// ══ USUARIOS ══════════════════════════════════════════════════════════════════
+// ══ USUARIOS ══
 async function cargarUsuarios(){
   try{
     const list=await api('/api/auth/usuarios');
@@ -793,11 +2152,13 @@ async function cargarUsuarios(){
 function abrirUsuario(){
   resetUsrId=null;
   g('m-usr-title').textContent='Nuevo usuario';
-  g('u-user').value=''; g('u-pass').value=''; g('u-rol').value='EMPLEADO';
+  g('u-user').value=''; g('u-pass').value=''; g('u-rol').value='COCINA';
   g('u-wrap-user').style.display='block';
   g('u-wrap-rol').style.display='block';
   g('u-pass-lbl').textContent='Contraseña';
   g('u-btn').textContent='Crear usuario';
+  const optSuper = g('opt-superadmin');
+  if(optSuper) optSuper.style.display = (rol === 'SUPERADMIN') ? '' : 'none';
   abrir('m-usr');
 }
 
@@ -830,14 +2191,235 @@ async function guardarUsuario(){
   }
 }
 
-// ══ MODALES ═══════════════════════════════════════════════════════════════════
+// ══ LICENCIA & PLANES (SUPERADMIN) ══
+async function cargarLicenciaAdmin(){
+  if(rol !== 'SUPERADMIN') return;
+  try{
+    const lic = await api('/api/licencia');
+    licenciaActual = lic;
+    g('lic-nombre').value = lic.nombreCliente || '';
+    g('lic-plan').value = lic.plan || 'PRO';
+    g('lic-activo').value = lic.activo ? 'true' : 'false';
+    g('lic-notas').value = lic.notas || '';
+    g('lic-flag-telegram').checked = !!lic.featureTelegram;
+    g('lic-flag-impresora').checked = !!lic.featureImpresoraTermica;
+    g('lic-flag-lotes').checked = !!lic.featureResumenLotes;
+    g('lic-flag-sse').checked = !!lic.featureSseRealtime;
+    g('lic-flag-recetas').checked = !!lic.featureCostosRecetas;
+  }catch(e){
+    toast('Error al consultar licencia: ' + e.message, 'err');
+  }
+}
+
+function seleccionarPlanPreset(plan){
+  if(plan === 'STARTER'){
+    g('lic-flag-telegram').checked = false;
+    g('lic-flag-impresora').checked = false;
+    g('lic-flag-lotes').checked = false;
+    g('lic-flag-sse').checked = false;
+    g('lic-flag-recetas').checked = false;
+  } else if(plan === 'PRO'){
+    g('lic-flag-telegram').checked = true;
+    g('lic-flag-impresora').checked = true;
+    g('lic-flag-lotes').checked = true;
+    g('lic-flag-sse').checked = true;
+    g('lic-flag-recetas').checked = false;
+  } else if(plan === 'ENTERPRISE'){
+    g('lic-flag-telegram').checked = true;
+    g('lic-flag-impresora').checked = true;
+    g('lic-flag-lotes').checked = true;
+    g('lic-flag-sse').checked = true;
+    g('lic-flag-recetas').checked = true;
+  }
+}
+
+async function guardarConfiguracionLicencia(){
+  if(rol !== 'SUPERADMIN') return toast('Solo SuperAdmin puede modificar la licencia', 'warn');
+  const body = {
+    nombreCliente: g('lic-nombre').value.trim(),
+    plan: g('lic-plan').value,
+    activo: g('lic-activo').value === 'true',
+    notas: g('lic-notas').value.trim(),
+    featureTelegram: g('lic-flag-telegram').checked,
+    featureImpresoraTermica: g('lic-flag-impresora').checked,
+    featureResumenLotes: g('lic-flag-lotes').checked,
+    featureSseRealtime: g('lic-flag-sse').checked,
+    featureCostosRecetas: g('lic-flag-recetas').checked
+  };
+
+  try{
+    const res = await api('/api/licencia', {
+      method: 'PUT',
+      body: JSON.stringify(body)
+    });
+    licenciaActual = res;
+    aplicarLicenciaUI();
+    toast('¡Licencia y módulos guardados con éxito!', 'ok');
+  }catch(e){
+    toast('Error al guardar licencia: ' + e.message, 'err');
+  }
+}
+
+// ══ SEÑA ══
+let senaPedidoId = null;
+let senaTotalPedido = 0;
+
+function abrirModalSena(publicId, total, senaActual, cliente){
+  senaPedidoId = publicId;
+  senaTotalPedido = total;
+  g('sena-cliente-lbl').textContent = `Cliente: ${cliente}`;
+  g('sena-total-lbl').textContent = `$${total.toLocaleString('es-AR')}`;
+  g('sena-saldo-lbl').textContent = `$${Math.max(0, total - senaActual).toLocaleString('es-AR')}`;
+  g('sena-input').value = senaActual || '';
+  abrir('m-sena');
+}
+
+function senaAlCincuenta(){
+  g('sena-input').value = Math.round(senaTotalPedido * 0.5);
+}
+
+function saldarPedidoCompleto(){
+  g('sena-input').value = senaTotalPedido;
+}
+
+async function guardarCambioSena(){
+  if (!senaPedidoId) return;
+  const val = Number(g('sena-input').value) || 0;
+  try {
+    await api(`/api/pedidos/${senaPedidoId}/sena`, {
+      method: 'PATCH',
+      body: JSON.stringify({ sena: val })
+    });
+    toast('Seña actualizada correctamente', 'ok');
+    cerrar('m-sena');
+    await traerPedidos(g('f-fecha')?.value || '');
+  } catch(e) {
+    toast(e.message, 'err');
+  }
+}
+
+// ══ REPORTES E INGRESOS ══
+async function cargarReporteMensual(){
+  const sel = g('rep-mes-selector');
+  let [anio, mes] = (sel?.value || '').split('-').map(Number);
+  if (!anio || !mes) {
+    const hoy = new Date();
+    anio = hoy.getFullYear();
+    mes = hoy.getMonth() + 1;
+    if (sel) sel.value = `${anio}-${String(mes).padStart(2,'0')}`;
+  }
+
+  const el = g('lista-reporte-productos');
+  el.innerHTML = '<div class="empty">⏳ Calculando ingresos del mes...</div>';
+
+  try {
+    const data = await api(`/api/pedidos/reportes/mensual?anio=${anio}&mes=${mes}`);
+    ultimoReporteData = data;
+
+    g('rep-total-facturado').textContent = `$${(data.totalFacturado || 0).toLocaleString('es-AR')}`;
+    g('rep-total-senas').textContent     = `$${(data.totalSenas || 0).toLocaleString('es-AR')}`;
+    g('rep-total-saldo').textContent     = `$${(data.totalSaldoPendiente || 0).toLocaleString('es-AR')}`;
+    g('rep-pedidos-count').textContent   = `${data.totalPedidos || 0} pedidos en el mes`;
+    if (g('rep-entregados-num')) g('rep-entregados-num').textContent = data.pedidosEntregados || 0;
+    if (g('rep-pendientes-num')) g('rep-pendientes-num').textContent = data.pedidosPendientesOListos || 0;
+    if (g('rep-pedidos-estados')) g('rep-pedidos-estados').textContent = `${data.pedidosEntregados || 0} / ${data.pedidosPendientesOListos || 0}`;
+
+    const wrapPurga = g('rep-btn-purgar-entregados-wrap');
+    if (wrapPurga) {
+      wrapPurga.style.display = (rol === 'ADMIN' && (data.pedidosEntregados || 0) > 0) ? 'block' : 'none';
+    }
+
+    const prods = data.productos || [];
+    g('rep-productos-count').textContent = `${prods.length} productos con ventas`;
+
+    if (!prods.length) {
+      el.innerHTML = '<div class="empty">No se registraron ventas en este mes.</div>';
+      return;
+    }
+
+    const totalMes = data.totalFacturado || 1;
+
+    el.innerHTML = prods.map((p, idx) => {
+      const pct = p.porcentajeVentas || Math.round((p.totalVenta / totalMes) * 100);
+      return `
+        <div class="card" style="margin-bottom:10px">
+          <div class="card-row">
+            <div class="card-info" style="flex:1">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:0.8rem;font-weight:700;color:var(--gold);background:var(--s2);padding:2px 8px;border-radius:4px">#${idx+1}</span>
+                <h3 style="margin:0">${p.nombre}</h3>
+              </div>
+              <p style="margin-top:4px">
+                Cantidad vendida: <strong style="color:var(--text)">${p.unidades} unidades</strong>
+                ${p.pesoKgTotal ? ` · <strong>${p.pesoKgTotal.toFixed(1)} kg</strong>` : ''}
+                &nbsp;·&nbsp; ${pct}% del total del mes
+              </p>
+              <div style="width:100%;height:6px;background:var(--border);border-radius:99px;margin-top:8px;overflow:hidden">
+                <div style="width:${Math.min(100, Math.max(3, pct))}%;height:100%;background:var(--gold);border-radius:99px"></div>
+              </div>
+            </div>
+            <div style="text-align:right;flex-shrink:0">
+              <div style="font-size:1.15rem;font-weight:700;color:var(--gold)">$${(p.totalVenta || 0).toLocaleString('es-AR')}</div>
+              <div style="font-size:0.75rem;color:var(--muted)">total ventas</div>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+
+  } catch(e) {
+    el.innerHTML = `<div class="empty" style="color:var(--err)">❌ Error al cargar reporte: ${e.message}</div>`;
+    toast(e.message, 'err');
+  }
+}
+
+let ultimoReporteData = null;
+
+function exportarReporteExcel(){
+  if (!ultimoReporteData) return toast('Cargá un mes para exportar', 'err');
+  const d = ultimoReporteData;
+  const mesNom = String(d.mes).padStart(2,'0');
+  const filename = `Reporte-Ventas-${d.anio}-${mesNom}.csv`;
+
+  let csv = '\uFEFF'; // BOM para que Excel abra UTF-8 con acentos y pesos correctos
+  csv += `"REPORTE MENSUAL DE INGRESOS - SISTEMA GASTRONÓMICO 📊"\n`;
+  csv += `"Período:","${mesNom}/${d.anio}"\n`;
+  csv += `"Fecha de emisión:","${new Date().toLocaleDateString('es-AR')}"\n\n`;
+
+  csv += `"RESUMEN FINANCIERO DEL MES"\n`;
+  csv += `"Concepto","Monto ($)"\n`;
+  csv += `"Total Facturado (Ventas brutas)","${d.totalFacturado || 0}"\n`;
+  csv += `"Total Señas Cobradas","${d.totalSenas || 0}"\n`;
+  csv += `"Total Saldos por Cobrar","${d.totalSaldoPendiente || 0}"\n`;
+  csv += `"Cantidad Total de Pedidos","${d.totalPedidos || 0}"\n`;
+  csv += `"Pedidos Entregados","${d.pedidosEntregados || 0}"\n`;
+  csv += `"Pedidos en Curso / Listos","${d.pedidosPendientesOListos || 0}"\n\n`;
+
+  csv += `"DESGLOSE DE VENTAS POR PRODUCTO"\n`;
+  csv += `"Ranking","Producto","Unidades Vendidas","Kilos Totales","Total Ventas ($)","% Participación"\n`;
+  (d.productos || []).forEach((p, idx) => {
+    csv += `"${idx + 1}","${(p.nombre || '').replace(/"/g, '""')}","${p.unidades}","${p.pesoKgTotal || 0}","${p.totalVenta || 0}","${p.porcentajeVentas || 0}%"\n`;
+  });
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('Planilla CSV descargada con éxito', 'ok');
+}
+
+// ══ MODALES ══
 function abrir(id){ g(id).classList.add('on'); }
 function cerrar(id){ g(id).classList.remove('on'); }
 document.querySelectorAll('.overlay').forEach(o=>
   o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('on'); })
 );
 
-// ══ TOAST ═════════════════════════════════════════════════════════════════════
+// ══ TOAST ══
 let _tt;
 function toast(msg,type='ok'){
   const el=g('toast');
@@ -845,13 +2427,457 @@ function toast(msg,type='ok'){
   clearTimeout(_tt); _tt=setTimeout(()=>el.className='',3200);
 }
 
-// ══ HELPERS ═══════════════════════════════════════════════════════════════════
+// ══ HELPERS & FORMATOS ══
 const g = id => document.getElementById(id);
 
 function soloHora(dt){
   if(!dt) return '—';
-  const p=dt.split(' ');
-  return p[1]?p[1].substring(0,5):dt;
+  const clean = dt.replace('T', ' ');
+  const p = clean.split(' ');
+  return p[1] ? p[1].substring(0,5) : clean;
+}
+
+function hoyLocal(){
+  const d = new Date();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+
+function mananaLocal(){
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+
+function formatearFechaCorta(dt){
+  if(!dt) return '—';
+  const clean = dt.replace('T', ' ');
+  const [fPart] = clean.split(' ');
+  const [anio, mes, dia] = (fPart || '').split('-').map(Number);
+  if(!dia || !mes) return dt;
+  const hoy = new Date();
+  const dObj = new Date(anio, mes - 1, dia);
+  const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+  const diaNom = dias[dObj.getDay()] || '';
+  if(hoy.getFullYear() === anio && (hoy.getMonth()+1) === mes && hoy.getDate() === dia){
+    return `HOY (${diaNom} ${dia}/${mes})`;
+  }
+  const manana = new Date();
+  manana.setDate(hoy.getDate() + 1);
+  if(manana.getFullYear() === anio && (manana.getMonth()+1) === mes && manana.getDate() === dia){
+    return `MAÑANA (${diaNom} ${dia}/${mes})`;
+  }
+  return `${diaNom} ${dia}/${mes}`;
+}
+
+function formatearFechaEntrega(dt){
+  if(!dt) return '—';
+  const clean = dt.replace('T', ' ');
+  const [fPart, hPart] = clean.split(' ');
+  const [anio, mes, dia] = (fPart || '').split('-').map(Number);
+  const hora = hPart ? hPart.substring(0, 5) : '';
+  if(!dia || !mes) return dt;
+
+  const hoy = new Date();
+  const dObj = new Date(anio, mes - 1, dia);
+  const dias = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+  const diaNom = dias[dObj.getDay()] || '';
+
+  let badge = '';
+  if(hoy.getFullYear() === anio && (hoy.getMonth()+1) === mes && hoy.getDate() === dia){
+    badge = '<span class="fecha-pill fecha-pill-hoy">HOY</span> ';
+  } else {
+    const manana = new Date();
+    manana.setDate(hoy.getDate() + 1);
+    if(manana.getFullYear() === anio && (manana.getMonth()+1) === mes && manana.getDate() === dia){
+      badge = '<span class="fecha-pill fecha-pill-manana">MAÑANA</span> ';
+    }
+  }
+
+  return `${badge}<strong>${diaNom} ${dia}/${mes}</strong>${hora ? ` · 🕒 ${hora} hs` : ''}`;
+}
+
+function formatearFechaCompleta(dt){
+  if(!dt) return '—';
+  const clean = dt.replace('T', ' ');
+  const [fPart, hPart] = clean.split(' ');
+  const [anio, mes, dia] = (fPart || '').split('-').map(Number);
+  const hora = hPart ? hPart.substring(0, 5) : '';
+  if(!dia || !mes) return dt;
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const dObj = new Date(anio, mes - 1, dia);
+  const diaNom = dias[dObj.getDay()] || '';
+  const mesNom = meses[mes - 1] || '';
+  return `${diaNom} ${dia} de ${mesNom}${hora ? ` · ${hora} hs` : ''}`;
+}
+
+// ══ COMANDA / TICKET DE CAJA ══
+let ticketActualPedido = null;
+
+function abrirTicket(publicId){
+  let p = (todosPedidos || []).find(x => x.publicId === publicId);
+  if(!p) p = (todosPedidosCocina || []).find(x => x.publicId === publicId);
+  if(!p) return toast('No se encontró el pedido', 'err');
+
+  ticketActualPedido = p;
+  const num = p.id ? `#${p.id}` : `#${(p.publicId||'').slice(0,5)}`;
+  const tot = p.total || 0;
+  const sen = p.sena || 0;
+  const saldo = Math.max(0, tot - sen);
+  const fechaFmt = formatearFechaCompleta(p.fechaEntrega);
+
+  const html = `
+    <div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #eee;padding-bottom:8px">
+      <span style="font-weight:700;font-size:14px;color:#111">PEDIDO ${num}</span>
+      <span class="badge b-${p.estado}">${p.estado}</span>
+    </div>
+
+    <div style="margin-bottom:10px">
+      <div style="font-size:11px;color:#666;text-transform:uppercase;font-weight:700">CLIENTE</div>
+      <div style="font-weight:700;font-size:15px;color:#000">${esc(p.nombreCliente)}</div>
+      <div style="font-size:13px;color:#444">📞 ${esc(p.telefonoCliente || 'Sin teléfono registrado')}</div>
+    </div>
+
+    <div style="background:#FAF6F0;border:1px solid #E8DCCF;border-radius:8px;padding:8px 10px;margin-bottom:12px">
+      <div style="font-size:11px;color:#802334;text-transform:uppercase;font-weight:700">FECHA Y HORA DE RETIRO</div>
+      <div style="font-weight:800;font-size:16px;color:#802334">${fechaFmt}</div>
+    </div>
+
+    ${p.observaciones ? `
+      <div style="background:#FFF8E7;border:1px solid #F6D899;border-radius:8px;padding:8px 10px;margin-bottom:12px">
+        <div style="font-size:11px;color:#8C6208;text-transform:uppercase;font-weight:700">📝 DEDICATORIA / NOTA ESPECIAL</div>
+        <div style="font-weight:600;font-size:13px;color:#2C221E">${esc(p.observaciones)}</div>
+      </div>
+    ` : ''}
+
+    <div style="font-size:11px;color:#666;text-transform:uppercase;font-weight:700;margin-top:10px">PRODUCTOS</div>
+    <table class="ticket-table">
+      <thead>
+        <tr>
+          <th>Cant</th>
+          <th>Producto</th>
+          <th style="text-align:right">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${(p.detalles||[]).map(d=>`
+          <tr>
+            <td style="font-weight:700;width:38px">${d.cantidad}×</td>
+            <td>
+              <div style="font-weight:600">${esc(d.productoNombre)}</div>
+              ${d.pesoKg ? `<div style="font-size:11px;color:#666">Peso: ${d.pesoKg} kg</div>` : ''}
+              ${d.observaciones ? `<div style="font-size:11px;color:#888">↳ ${esc(d.observaciones)}</div>` : ''}
+            </td>
+            <td style="text-align:right;font-weight:600">$${(d.subtotal||0).toLocaleString('es-AR')}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+
+    <div class="ticket-totales">
+      <div class="ticket-total-row">
+        <span>Total Pedido:</span>
+        <strong>$${tot.toLocaleString('es-AR')}</strong>
+      </div>
+      <div class="ticket-total-row" style="color:#2E7D32">
+        <span>Seña abonada:</span>
+        <strong>$${sen.toLocaleString('es-AR')}</strong>
+      </div>
+      <div class="ticket-saldo-box">
+        ${saldo > 0 ? `
+          <div style="font-size:11px;color:#8C6208;text-transform:uppercase;font-weight:700">SALDO A COBRAR EN MOSTRADOR</div>
+          <div style="font-size:22px;font-weight:800;color:#802334">$${saldo.toLocaleString('es-AR')}</div>
+        ` : `
+          <div style="font-size:16px;font-weight:800;color:#2E7D32">✓ TOTALMENTE SALDADO</div>
+        `}
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:14px;font-size:11px;color:#777;border-top:1px dashed #ddd;padding-top:10px">
+      ¡Muchas gracias por su compra! 🍽️<br>
+      Conservar en frío según corresponda hasta consumir.
+    </div>
+  `;
+
+  g('ticket-contenido').innerHTML = html;
+  abrir('m-ticket');
+}
+
+function imprimirTicket(){
+  window.print();
+}
+
+function copiarTicketTexto(){
+  if(!ticketActualPedido) return;
+  const p = ticketActualPedido;
+  const num = p.id ? `#${p.id}` : `#${(p.publicId||'').slice(0,5)}`;
+  const tot = p.total || 0;
+  const sen = p.sena || 0;
+  const saldo = Math.max(0, tot - sen);
+  const fechaFmt = formatearFechaCompleta(p.fechaEntrega);
+
+  let msg = `🍽️ *GESTIÓN DE PEDIDOS — Comanda ${num}*\n`;
+  msg += `👤 *Cliente:* ${p.nombreCliente} (📞 ${p.telefonoCliente||'Sin tel'})\n`;
+  msg += `📅 *Entrega:* ${fechaFmt}\n`;
+  if(p.observaciones) msg += `📝 *Nota:* ${p.observaciones}\n`;
+  msg += `------------------------------------\n`;
+  (p.detalles||[]).forEach(d => {
+    const kgStr = d.pesoKg ? ` (${d.pesoKg}kg)` : '';
+    msg += `• ${d.cantidad}× ${d.productoNombre}${kgStr}\n`;
+  });
+  msg += `------------------------------------\n`;
+  msg += `*Total:* $${tot.toLocaleString('es-AR')}\n`;
+  msg += `*Seña abonada:* $${sen.toLocaleString('es-AR')}\n`;
+  msg += saldo > 0 ? `*Resta cobrar:* $${saldo.toLocaleString('es-AR')}\n` : `*Estado:* ✓ SALDADO\n`;
+  msg += `_Conservar en frío hasta servir._`;
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(msg).then(()=>{
+      toast('Ticket copiado al portapapeles 📋', 'ok');
+    }).catch(()=>{
+      toast('No se pudo copiar', 'warn');
+    });
+  }
+}
+
+// ══ COMANDERA DE COCINA TÉRMICA 80MM (UNNION TP95W) ══
+let comandaActualPedido = null;
+
+function getConfigComandera(){
+  return {
+    modo: localStorage.getItem('olivia_cmd_modo') || 'rawbt',
+    ip: localStorage.getItem('olivia_cmd_ip') || '192.168.100.150',
+    autoPrint: localStorage.getItem('olivia_cmd_auto') === 'true'
+  };
+}
+
+function abrirConfigComandera(){
+  const cfg = getConfigComandera();
+  if(g('cfg-cmd-modo')) g('cfg-cmd-modo').value = cfg.modo;
+  if(g('cfg-cmd-ip')) g('cfg-cmd-ip').value = cfg.ip;
+  if(g('cfg-cmd-auto')) g('cfg-cmd-auto').checked = cfg.autoPrint;
+  abrir('m-config-comandera');
+}
+
+function guardarConfigComandera(){
+  const modo = g('cfg-cmd-modo')?.value || 'rawbt';
+  const ip = (g('cfg-cmd-ip')?.value || '192.168.100.150').trim();
+  const auto = g('cfg-cmd-auto')?.checked ? 'true' : 'false';
+
+  localStorage.setItem('olivia_cmd_modo', modo);
+  localStorage.setItem('olivia_cmd_ip', ip);
+  localStorage.setItem('olivia_cmd_auto', auto);
+
+  cerrar('m-config-comandera');
+  toast('Configuración de comandera guardada 🖨️', 'ok');
+}
+
+function renderComandaCocinaHtml(p){
+  const num = p.id ? `#${p.id}` : `#${(p.publicId||'').slice(0,5)}`;
+  const fechaFmt = formatearFechaCompleta(p.fechaEntrega);
+
+  return `
+    <div class="comanda-header">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#555">PRODUCCIÓN GASTRONÓMICA</div>
+      <div class="comanda-title">👨‍🍳 COMANDA DE COCINA</div>
+      <div class="comanda-pedido-num">ORDEN ${num}</div>
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase">ESTADO: ${p.estado}</div>
+    </div>
+
+    <div class="comanda-fecha-box">
+      📅 ENTREGA: ${fechaFmt.toUpperCase()}
+    </div>
+
+    <div class="comanda-cliente">
+      👤 CLIENTE: <strong>${esc(p.nombreCliente)}</strong><br>
+      📞 TELÉFONO: ${esc(p.telefonoCliente || 'No especificado')}
+    </div>
+
+    ${p.observaciones ? `
+      <div class="comanda-obs-box">
+        ⚠️ DEDICATORIA / NOTA ESPECIAL:<br>
+        <span style="font-size:15px;color:#000">"${esc(p.observaciones)}"</span>
+      </div>
+    ` : ''}
+
+    <table class="comanda-table">
+      <thead>
+        <tr>
+          <th style="width:40px">CANT</th>
+          <th>PRODUCTO A ELABORAR</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${(p.detalles||[]).map(d => `
+          <tr>
+            <td class="comanda-cant">[ ${d.cantidad} ]</td>
+            <td>
+              <div style="font-weight:800;font-size:15px">${esc(d.productoNombre)}</div>
+              ${d.pesoKg ? `<div style="font-size:12px;font-weight:700">⚖️ Peso: ${d.pesoKg} kg</div>` : ''}
+              ${d.observaciones ? `<div style="font-size:12px;font-weight:600;color:#222">↳ ${esc(d.observaciones)}</div>` : ''}
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+
+    <div class="comanda-footer">
+      Registrado: ${new Date().toLocaleString('es-AR')}<br>
+      SISTEMA GASTRONÓMICO · CONTROL DE PRODUCCIÓN
+    </div>
+  `;
+}
+
+function abrirComandaCocina(publicId){
+  let p = (todosPedidosCocina || []).find(x => x.publicId === publicId);
+  if(!p) p = (todosPedidos || []).find(x => x.publicId === publicId);
+  if(!p) return toast('No se encontró el pedido', 'err');
+
+  comandaActualPedido = p;
+  g('comanda-cocina-contenido').innerHTML = renderComandaCocinaHtml(p);
+  abrir('m-comanda-cocina');
+}
+
+function generarTextoPlanoComanda(p){
+  const num = p.id ? `#${p.id}` : `#${(p.publicId||'').slice(0,5)}`;
+  const fechaFmt = formatearFechaCompleta(p.fechaEntrega);
+
+  let t = `================================\n`;
+  t += `   👨‍🍳 COMANDA DE COCINA       \n`;
+  t += `          ORDEN ${num}          \n`;
+  t += `================================\n`;
+  t += `📅 ENTREGA:\n${fechaFmt.toUpperCase()}\n`;
+  t += `--------------------------------\n`;
+  t += `CLIENTE: ${p.nombreCliente}\n`;
+  if(p.telefonoCliente) t += `TEL: ${p.telefonoCliente}\n`;
+  t += `--------------------------------\n`;
+  t += `PRODUCTOS:\n`;
+  (p.detalles||[]).forEach(d => {
+    const kg = d.pesoKg ? ` (${d.pesoKg}kg)` : '';
+    t += `[ ${d.cantidad} ] ${d.productoNombre}${kg}\n`;
+    if(d.observaciones) t += `   ↳ ${d.observaciones}\n`;
+  });
+  t += `--------------------------------\n`;
+  if(p.observaciones){
+    t += `📝 NOTA / DEDICATORIA:\n"${p.observaciones}"\n`;
+    t += `--------------------------------\n`;
+  }
+  t += `Hora registro: ${new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}\n`;
+  t += `================================\n\n\n\n`;
+  return t;
+}
+
+// Envío a RawBT (impresión silenciosa en tablet Android con auto-corte)
+async function enviarImpresionRawBT(textoPlano){
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+    const resp = await fetch('http://127.0.0.1:40213/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+      body: textoPlano,
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+
+    if (resp.ok) {
+      toast('Comanda enviada a la impresora Unnion 🖨️', 'ok');
+      return true;
+    }
+  } catch(e) {
+    try {
+      const b64 = btoa(unescape(encodeURIComponent(textoPlano)));
+      window.location.href = `rawbt:data:base64,${b64}`;
+      toast('Enviado a RawBT 🖨️', 'ok');
+      return true;
+    } catch(err2) {
+      console.warn('Fallo RawBT, usando diálogo de navegador:', err2);
+    }
+  }
+  return false;
+}
+
+async function ejecutarImpresionComandaCocina(pedidoParam = null, silencioso = false){
+  const p = pedidoParam || comandaActualPedido;
+  if(!p) return toast('No hay pedido seleccionado', 'err');
+
+  const cfg = getConfigComandera();
+  const textoPlano = generarTextoPlanoComanda(p);
+
+  if(cfg.modo === 'rawbt'){
+    const ok = await enviarImpresionRawBT(textoPlano);
+    if(ok){
+      if(!silencioso) cerrar('m-comanda-cocina');
+      return;
+    }
+  }
+
+  // Fallback si no está en tablet o no usa RawBT
+  if(!silencioso){
+    window.print();
+  }
+}
+
+function copiarComandaCocinaTexto(){
+  if(!comandaActualPedido) return;
+  const txt = generarTextoPlanoComanda(comandaActualPedido);
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(()=>{
+      toast('Comanda de cocina copiada 📋', 'ok');
+    }).catch(()=>{
+      toast('No se pudo copiar', 'warn');
+    });
+  }
+}
+
+async function imprimirTodasComandasCocina(){
+  if(!todosPedidosCocina.length) return toast('No hay pedidos en la lista de cocina', 'warn');
+
+  const pendientes = todosPedidosCocina.filter(p => p.estado === 'PENDIENTE');
+  const listaAImprimir = pendientes.length ? pendientes : todosPedidosCocina;
+
+  toast(`Imprimiendo ${listaAImprimir.length} comandas en la Unnion... 🖨️`, 'ok');
+
+  for(const p of listaAImprimir){
+    await ejecutarImpresionComandaCocina(p, true);
+    await new Promise(r => setTimeout(r, 600));
+  }
+}
+
+function probarTicketComandera(){
+  const ticketTest = `================================\n` +
+    `   👨‍🍳 TEST COMANDERA 80MM    \n` +
+    `================================\n` +
+    `Impresora: Térmica 80mm\n` +
+    `Conexión: Wi-Fi / USB OK\n` +
+    `Fecha: ${new Date().toLocaleString('es-AR')}\n` +
+    `Auto-corte: ACTIVADO\n` +
+    `--------------------------------\n` +
+    `¡Comandera lista para trabajar!\n` +
+    `================================\n\n\n\n`;
+
+  enviarImpresionRawBT(ticketTest).then(ok => {
+    if(!ok){
+      g('comanda-cocina-contenido').innerHTML = `
+        <div class="comanda-header">
+          <div class="comanda-title">👨‍🍳 TEST COMANDERA 80MM</div>
+          <div style="font-size:16px;font-weight:900;margin:6px 0">IMPRESORA TÉRMICA 80MM</div>
+        </div>
+        <div style="padding:10px;text-align:center;font-size:14px;font-weight:700">
+          ✓ Rollo térmico 80mm detectado<br>
+          ✓ Auto-corte preparado<br>
+          Fecha: ${new Date().toLocaleString('es-AR')}
+        </div>
+      `;
+      abrir('m-comanda-cocina');
+      window.print();
+    }
+  });
 }
 
 function tipoLabel(t){
@@ -870,122 +2896,462 @@ function precioLabel(p){
 }
 
 g('l-p').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
-</script>
-</body>
-</html>
-<div class="card-actions" style="flex-direction:row">
-  <button class="btn btn-ghost btn-sm" onclick="abrirResetPassword('${u.id}', '${u.username}')">Cambiar clave</button>
-  ${u.activo
-  ?`<button class="btn btn-err btn-sm" onclick="bajaUsuario('${u.id}')">Baja</button>`
-  :`<button class="btn btn-ok btn-sm" onclick="reactivarUsuario('${u.id}')">Reactivar</button>`}
-</div>
-</div>
-</div>`).join('');
-}catch(e){ toast(e.message,'err'); }
-}
 
-function abrirUsuario(){
-resetUsrId = null;
-g('m-usr-title').textContent = 'Nuevo usuario';
-g('u-wrap-user').style.display = 'block';
-g('u-wrap-rol').style.display = 'block';
-g('u-pass-lbl').textContent = 'Contraseña';
-g('u-user').value = '';
-g('u-pass').value = '';
-g('u-rol').value = 'ADMIN';
-g('u-btn').textContent = 'Crear usuario';
-abrir('m-usr');
-}
-
-function abrirResetPassword(id, username){
-resetUsrId = id;
-g('m-usr-title').textContent = `Cambiar contraseña de ${username}`;
-g('u-wrap-user').style.display = 'none';
-g('u-wrap-rol').style.display = 'none';
-g('u-pass-lbl').textContent = 'Nueva contraseña';
-g('u-pass').value = '';
-g('u-btn').textContent = 'Actualizar contraseña';
-abrir('m-usr');
-}
-
-async function guardarUsuario(){
-const pass = g('u-pass').value.trim();
-if(!pass) return toast('La contraseña es obligatoria','err');
-
-try{
-if(resetUsrId){
-await api(`/api/auth/usuarios/${resetUsrId}/password`, {
-method: 'PATCH',
-body: JSON.stringify({ nuevaPassword: pass })
+// Auto-login si ya inició sesión previamente y pre-calentamiento de Render
+window.addEventListener('DOMContentLoaded', ()=>{
+  const savedToken = localStorage.getItem('token');
+  const savedRol   = localStorage.getItem('rol');
+  if(savedToken && savedRol){
+    token = savedToken;
+    rol   = savedRol;
+    initApp();
+  } else {
+    // Si no está logueado, pre-calentar el servidor silenciosamente
+    fetch(`${API}/api/auth/health`, { method: 'GET' }).catch(()=>{});
+  }
 });
-toast('Contraseña actualizada con éxito','ok');
-} else {
-const username = g('u-user').value.trim();
-const rol = g('u-rol').value;
-if(!username) return toast('El username es obligatorio','err');
 
-await api('/api/auth/usuarios', {
-method: 'POST',
-body: JSON.stringify({ username, password: pass, rol })
+// ══ PWA SERVICE WORKER & INSTALACIÓN ══
+let deferredInstallPrompt = null;
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      // Chequear actualizaciones activas de la app en segundo plano
+      reg.update().catch(()=>{});
+    }).catch(err => console.log('SW error:', err));
+  });
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!window._swReloaded) {
+      window._swReloaded = true;
+      window.location.reload();
+    }
+  });
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  const btn = g('btn-install-pwa');
+  if (btn) btn.style.display = 'inline-flex';
 });
-toast('Usuario creado con éxito','ok');
-}
-cerrar('m-usr');
-cargarUsuarios();
-}catch(e){ toast(e.message,'err'); }
-}
 
-async function bajaUsuario(id){
-if(!confirm('¿Dar de baja este usuario?')) return;
-try{
-await api(`/api/auth/usuarios/${id}`, { method: 'DELETE' });
-toast('Usuario dado de baja','ok');
-cargarUsuarios();
-}catch(e){ toast(e.message,'err'); }
-}
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  const btn = g('btn-install-pwa');
+  if (btn) btn.style.display = 'none';
+  toast('¡Aplicación instalada en tu dispositivo!', 'ok');
+});
 
-async function reactivarUsuario(id){
-try{
-await api(`/api/auth/usuarios/${id}/reactivar`, { method: 'PATCH' });
-toast('Usuario reactivado','ok');
-cargarUsuarios();
-}catch(e){ toast(e.message,'err'); }
-}
-
-// ══ UTILS ═════════════════════════════════════════════════════════════════════
-function g(id){ return document.getElementById(id); }
-function abrir(id){ g(id).classList.add('on'); }
-function cerrar(id){ g(id).classList.remove('on'); }
-
-function toast(msg, type='ok'){
-const t = g('toast');
-t.textContent = msg;
-t.className = `show ${type}`;
-setTimeout(()=> t.className='', 3000);
+async function instalarPWA() {
+  if (deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    const { outcome } = await deferredInstallPrompt.userChoice;
+    if (outcome === 'accepted') {
+      const btn = g('btn-install-pwa');
+      if (btn) btn.style.display = 'none';
+      toast('¡Instalando aplicación…!', 'ok');
+    }
+    deferredInstallPrompt = null;
+  } else {
+    // Para Safari en iOS u otros navegadores
+    toast('En iPhone: tocá Compartir ⎋ y elegí "Agregar a pantalla de inicio ⊞"', 'ok');
+  }
 }
 
-function soloHora(iso){
-if(!iso) return '';
-const d = new Date(iso);
-return isNaN(d) ? iso.split('T')[1]?.substring(0,5) || '' : d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12:false});
+// ══ NOTIFICACIONES EN VIVO Y TELEGRAM ══
+let sseSource = null;
+
+function sonarAlerta(){
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const now = ctx.currentTime;
+
+    const osc1 = ctx.createOscillator();
+    const gain1 = ctx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(880, now);
+    gain1.gain.setValueAtTime(0.2, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+    osc1.connect(gain1);
+    gain1.connect(ctx.destination);
+    osc1.start(now);
+    osc1.stop(now + 0.35);
+
+    const osc2 = ctx.createOscillator();
+    const gain2 = ctx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(1320, now + 0.12);
+    gain2.gain.setValueAtTime(0.25, now + 0.12);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+    osc2.connect(gain2);
+    gain2.connect(ctx.destination);
+    osc2.start(now + 0.12);
+    osc2.stop(now + 0.55);
+  } catch(_) {}
 }
 
-function tipoLabel(t){
-return {
-'TORTA_COMUN': 'Torta común',
-'TORTA_POR_KILO': 'Torta por kilo',
-'TORTA_POR_KILO_FRUTA': 'Torta por kilo con fruta',
-'INDIVIDUAL': 'Individual',
-'MINI': 'Mini',
-'POR_DOCENA': 'Por docena'
-}[t] || t;
+function conectarAlertasStream(){
+  if (sseSource) {
+    try { sseSource.close(); } catch(_) {}
+    sseSource = null;
+  }
+  const jwt = token || localStorage.getItem('token');
+  if (!jwt) return;
+
+  try {
+    sseSource = new EventSource(`${API}/api/notificaciones/stream?token=${jwt}`);
+
+    sseSource.addEventListener('nuevo_pedido', (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        sonarAlerta();
+
+        const montoStr = Number(data.total || 0).toLocaleString('es-AR');
+        const senaStr = Number(data.sena || 0).toLocaleString('es-AR');
+        const tit = '🍰 ¡Nuevo Pedido Recibido!';
+        const msg = `${data.nombreCliente} — Total: $${montoStr} (Seña: $${senaStr})`;
+
+        // 1. Notificación Nativa del Sistema / Celular (Service Worker o ventana)
+        if ('Notification' in window && Notification.permission === 'granted') {
+          if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+              type: 'SHOW_NOTIFICATION',
+              title: tit,
+              body: msg,
+              url: './'
+            });
+          } else {
+            new Notification(tit, { body: msg, icon: './icons/icon-192.png' });
+          }
+        }
+
+        // 2. Cartel emergente en la app
+        toast(`🍰 ¡Nuevo pedido de ${data.nombreCliente}! ($${montoStr})`, 'ok');
+
+        // 3. Recarga automática instantánea en todas las pantallas activas
+        if (g('sec-pedidos')?.classList.contains('on')) cargarPedidos();
+        if (g('sec-cocina')?.classList.contains('on')) cargarCocina();
+
+        // 4. Impresión automática en comandera de cocina si la tablet lo tiene activado
+        try {
+          const cfg = getConfigComandera();
+          if (cfg.autoPrint && data.pedidoPublicId) {
+            setTimeout(async () => {
+              try {
+                let p = (todosPedidosCocina || []).find(x => x.publicId === data.pedidoPublicId);
+                if (!p && typeof api === 'function') {
+                  p = await api(`/api/pedidos/${data.pedidoPublicId}`);
+                }
+                if (p) {
+                  await ejecutarImpresionComandaCocina(p, true);
+                  toast(`🖨️ Comanda enviada a la Unnion TP95W (#${p.id || ''})`, 'ok');
+                }
+              } catch(ePrint) {
+                console.warn('Error imprimiendo comanda automática:', ePrint);
+              }
+            }, 800);
+          }
+        } catch(_) {}
+      } catch(err) {
+        console.error('Error parseando evento SSE nuevo_pedido:', err);
+      }
+    });
+
+    sseSource.addEventListener('pedido_actualizado', (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        const num = data.pedidoId ? `#${data.pedidoId}` : '';
+        const cliente = data.nombreCliente || 'Cliente';
+
+        if (data.nuevoEstado === 'LISTO') {
+          sonarAlerta();
+          toast(`🎂 ¡Pedido ${num} de ${cliente} LISTO para retirar!`, 'ok');
+
+          if ('Notification' in window && Notification.permission === 'granted') {
+            const tit = '🎂 ¡Pedido Listo para Retiro!';
+            const msg = `El pedido ${num} de ${cliente} ya está listo en cocina.`;
+            if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+              navigator.serviceWorker.controller.postMessage({
+                type: 'SHOW_NOTIFICATION',
+                title: tit,
+                body: msg,
+                url: './'
+              });
+            } else {
+              new Notification(tit, { body: msg, icon: './icons/icon-192.png' });
+            }
+          }
+        } else if (data.nuevoEstado === 'ENTREGADO') {
+          toast(`✅ Pedido ${num} de ${cliente} ENTREGADO`, 'ok');
+        } else if (data.nuevoEstado === 'CANCELADO') {
+          toast(`⚠️ Pedido ${num} de ${cliente} CANCELADO`, 'warn');
+        }
+
+        // Recarga automática instantánea
+        if (g('sec-pedidos')?.classList.contains('on')) cargarPedidos();
+        if (g('sec-cocina')?.classList.contains('on')) cargarCocina();
+        if (g('sec-reportes')?.classList.contains('on')) cargarReporteMensual();
+      } catch(err) {
+        console.error('Error parseando evento SSE pedido_actualizado:', err);
+      }
+    });
+
+    sseSource.onerror = () => {
+      // Reconexión automática nativa de EventSource
+    };
+  } catch(err) {
+    console.error('No se pudo conectar a SSE:', err);
+  }
 }
 
-function precioLabel(p){
-if(p.precioFijo) return `$${p.precioFijo}`;
-if(p.precioPorKilo) return `$${p.precioPorKilo} / kg`;
-if(p.precioDocena) return `$${p.precioDocena} / doc`;
-return '—';
+// ══ AUTO-SINCRONIZACIÓN PERIÓDICA EN SEGUNDO PLANO (HEARTBEAT) ══
+if (!window._syncInterval) {
+  window._syncInterval = setInterval(() => {
+    if (document.visibilityState === 'visible' && (token || localStorage.getItem('token'))) {
+      if (g('sec-cocina')?.classList.contains('on')) {
+        cargarCocina();
+      } else if (g('sec-pedidos')?.classList.contains('on')) {
+        cargarPedidos();
+      }
+    }
+  }, 15000);
+}
+
+async function activarNotificaciones(){
+  if (!('Notification' in window)) {
+    return toast('Este dispositivo no soporta notificaciones de sistema', 'warn');
+  }
+
+  if (Notification.permission === 'granted') {
+    toast('Notificaciones ya están activadas en este dispositivo ✅', 'ok');
+    sonarAlerta();
+    actualizarBotonNotifEstado();
+    return;
+  }
+
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      toast('¡Notificaciones activadas exitosamente! 🎉', 'ok');
+      sonarAlerta();
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+          type: 'SHOW_NOTIFICATION',
+          title: '🔔 Gestión de Pedidos - Alertas Activadas',
+          body: 'A partir de ahora recibirás aquí los avisos de nuevos pedidos.'
+        });
+      }
+    } else {
+      toast('Permiso de notificaciones denegado en el navegador', 'warn');
+    }
+  } catch(e) {
+    console.error(e);
+  }
+  actualizarBotonNotifEstado();
+}
+
+function actualizarBotonNotifEstado(){
+  const btn = g('btn-permiso-notif');
+  const btnNav = g('btn-notif');
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'granted') {
+    if (btn) {
+      btn.textContent = '🔔 Notificaciones Activas ✅';
+      btn.style.borderColor = 'var(--ok)';
+      btn.style.color = 'var(--ok)';
+    }
+    if (btnNav) {
+      btnNav.textContent = '🔔 Alertas ✅';
+      btnNav.style.color = 'var(--gold)';
+    }
+  } else {
+    if (btn) {
+      btn.textContent = '🔔 Activar en este dispositivo';
+      btn.style.borderColor = 'var(--border)';
+      btn.style.color = 'var(--text)';
+    }
+    if (btnNav) {
+      btnNav.textContent = '🔔 Alertas';
+      btnNav.style.color = 'var(--text)';
+    }
+  }
+}
+
+async function cargarConfigTelegram(){
+  if (rol !== 'ADMIN') return;
+  try {
+    const c = await api('/api/notificaciones/config');
+    if (c) {
+      if (c.telegramToken && g('tg-token')) g('tg-token').value = c.telegramToken;
+      if (c.telegramChatId && g('tg-chat')) g('tg-chat').value = c.telegramChatId;
+      const badge = g('tg-status-badge');
+      if (badge) {
+        if (c.telegramActivo) {
+          badge.textContent = 'Activo y Conectado ✓';
+          badge.style.background = '#0a2e18';
+          badge.style.color = '#4caf7d';
+        } else {
+          badge.textContent = 'Sin configurar';
+          badge.style.background = '#1a1a1a';
+          badge.style.color = 'var(--muted)';
+        }
+      }
+    }
+  } catch(e) {
+    console.log('Error cargando config telegram:', e);
+  }
+}
+
+async function guardarConfigTelegram(){
+  const tokenVal = (g('tg-token')?.value || '').trim();
+  const chatVal = (g('tg-chat')?.value || '').trim();
+  if (!tokenVal || !chatVal) return toast('Completá el Token y el Chat ID', 'err');
+
+  try {
+    await api('/api/notificaciones/config', {
+      method: 'POST',
+      body: JSON.stringify({
+        telegramToken: tokenVal,
+        telegramChatId: chatVal
+      })
+    });
+    toast('Configuración de Telegram guardada con éxito', 'ok');
+    cargarConfigTelegram();
+  } catch(e) {
+    toast(e.message, 'err');
+  }
+}
+
+async function probarAlertaTelegram(){
+  try {
+    toast('Enviando mensaje de prueba a Telegram…');
+    const r = await api('/api/notificaciones/telegram/test', { method: 'POST' });
+    toast(r.mensaje || '¡Alerta enviada a Telegram con éxito!', 'ok');
+    cargarConfigTelegram();
+  } catch(e) {
+    toast(e.message || 'Error al conectar con Telegram', 'err');
+  }
+}
+
+function toggleAyudaTelegram(){
+  const el = g('ayuda-telegram');
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+// ══ RESUMEN MATUTINO (9:00 AM) ══
+let ultimoResumenData = null;
+
+async function cargarResumenMatutino(){
+  if (rol !== 'ADMIN') return;
+  try {
+    const data = await api('/api/notificaciones/resumen-matutino');
+    ultimoResumenData = data;
+    const txt = g('rm-pendientes');
+    if (txt && typeof data.pendientes === 'string') {
+      txt.value = data.pendientes;
+      const cnt = g('rm-count');
+      if (cnt) cnt.textContent = `${txt.value.length}/1000`;
+    }
+    const badge = g('rm-status');
+    if (badge) {
+      if (data.telegramConfigurado) {
+        badge.textContent = 'Programado 09:00 ✓';
+        badge.className = 'badge b-ENTREGADO';
+      } else {
+        badge.textContent = 'Telegram sin configurar';
+        badge.className = 'badge b-PENDIENTE';
+      }
+    }
+    const pre = g('rm-preview');
+    if (pre && data.vistaPrevia) {
+      pre.textContent = data.vistaPrevia;
+    }
+  } catch(e) {
+    console.log('Error cargando resumen matutino:', e);
+  }
+}
+
+async function guardarResumenMatutino(){
+  const val = (g('rm-pendientes')?.value || '').trim();
+  try {
+    const r = await api('/api/notificaciones/resumen-matutino', {
+      method: 'PUT',
+      body: JSON.stringify({ pendientes: val })
+    });
+    toast(r.mensaje || 'Pendientes guardados', 'ok');
+    cargarResumenMatutino();
+  } catch(e) {
+    toast(e.message, 'err');
+  }
+}
+
+async function enviarResumenMatutino(){
+  try {
+    toast('Generando y enviando resumen matutino a Telegram…');
+    const r = await api('/api/notificaciones/resumen-matutino/enviar', { method: 'POST' });
+    toast(r.mensaje || '¡Resumen enviado a Telegram!', 'ok');
+  } catch(e) {
+    toast(e.message || 'Error al enviar resumen matutino', 'err');
+  }
+}
+
+function toggleVistaPreviaResumen(){
+  const pre = g('rm-preview');
+  if (!pre) return;
+  const visible = pre.style.display !== 'none';
+  if (visible) {
+    pre.style.display = 'none';
+  } else {
+    if (ultimoResumenData && ultimoResumenData.vistaPrevia) {
+      pre.textContent = ultimoResumenData.vistaPrevia;
+    }
+    pre.style.display = 'block';
+  }
+}
+
+async function purgarDatosPrueba(){
+  if(rol !== 'ADMIN') return toast('Solo un administrador puede purgar la base de datos','warn');
+  const conf = confirm("⚠️ ATENCIÓN: Esta acción eliminará permanentemente TODOS los pedidos y el historial de ventas cargados en la base de datos para comenzar a operar en limpio.\n\n¿Estás seguro de que deseás continuar?");
+  if (!conf) return;
+  const conf2 = prompt("Escribí 'ELIMINAR' para confirmar la purga definitiva de pedidos y ventas:");
+  if (conf2 !== 'ELIMINAR') {
+    return toast('Operación cancelada', 'warn');
+  }
+  try {
+    toast('Eliminando pedidos y ventas de prueba de la base de datos…');
+    const r = await api('/api/pedidos/admin/purgar-pruebas', { method: 'DELETE' });
+    localStorage.removeItem('pedidos_cache');
+    toast(`✅ ${r.message || 'Pedidos y ventas eliminados correctamente'} (${r.totalEliminados || 0} pedidos purgados)`, 'ok');
+    setTimeout(() => {
+      cargarPedidos();
+      cargarCocina();
+      cargarReporteMensual();
+    }, 500);
+  } catch (e) {
+    toast(e.message || 'Error al purgar los pedidos de prueba', 'err');
+  }
+}
+
+async function purgarPedidosEntregados(){
+  if (rol !== 'ADMIN') return toast('Solo un administrador puede gestionar la base de datos', 'warn');
+  const conf = confirm("⚠️ ¿Querés eliminar de la base de datos todos los pedidos que figuran como ENTREGADOS (los que se usaron para probar la app)?\n\nLos pedidos nuevos que tomaste a futuro (activos o por entregar) NO se borrarán.");
+  if (!conf) return;
+
+  try {
+    toast('Eliminando pedidos entregados de prueba…');
+    const r = await api('/api/pedidos/admin/purgar-entregados', { method: 'DELETE' });
+    localStorage.removeItem('pedidos_cache');
+    toast(`✅ ${r.message || 'Pedidos entregados eliminados'} (${r.totalEliminados || 0} eliminados)`, 'ok');
+    setTimeout(() => {
+      cargarPedidos();
+      cargarCocina();
+      cargarReporteMensual();
+    }, 400);
+  } catch (e) {
+    toast(e.message || 'Error al eliminar los pedidos entregados', 'err');
+  }
 }
 </script>
 </body>

@@ -1,0 +1,25 @@
+{
+  "name": "Gestión de Pedidos — Sistema Gastronómico",
+  "short_name": "Gestión Pedidos",
+  "description": "Sistema de gestión de pedidos, cocina e ingresos gastronómicos",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#FAF6F0",
+  "theme_color": "#802334",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

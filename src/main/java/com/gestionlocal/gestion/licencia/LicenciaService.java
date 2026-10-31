@@ -18,7 +18,7 @@ public class LicenciaService {
     @Value("${app.plan:PRO}")
     private String defaultPlan;
 
-    @Value("${app.cliente.nombre:Tortas Olivia}")
+    @Value("${app.cliente.nombre:Gestión de Pedidos}")
     private String defaultNombreCliente;
 
     public LicenciaService(LicenciaRepository licenciaRepository) {
